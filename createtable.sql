@@ -8,8 +8,15 @@ CREATE TABLE User (
     password VARCHAR(255),
     birth_date DATE,
     country VARCHAR(255),
-    friend INT,
     PRIMARY KEY (uid)
+);
+
+CREATE TABLE Friend(
+    first_uid INT,
+    second_uid INT,
+    PRIMARY KEY (first_uid, second_uid),
+    FOREIGN KEY (first_uid) REFERENCES User(uid) ON DELETE CASCADE,
+    FOREIGN KEY (second_uid) REFERENCES User(uid) ON DELETE CASCADE
 );
 
 CREATE TABLE Recipe (

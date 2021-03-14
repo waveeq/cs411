@@ -7,7 +7,7 @@
 <h1> These are the authorized users: 
    <ul>
 	{% for row in tabledata %}
-		<li> <a href='/zeqbkx/pa1/albums?username={{row}}'> {{row}}</a></li>
+		<li>{{row[0]}}</li>
 	{% endfor %}
    </ul> 
 </h1>

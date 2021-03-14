@@ -16,7 +16,6 @@ app = flask.Flask(__name__)
 
 class Root(flask.views.MethodView):
     def get(self):
-        print("here")
         mysqlUN = settings.MYSQL_USER
         mysqlPW = settings.MYSQL_PASSWORD
         dbname = settings.MYSQL_DB
@@ -24,13 +23,13 @@ class Root(flask.views.MethodView):
 
         myDatabase = 'mysql://%(UN)s:%(PW)s@%(host)s/%(name)s?charset=utf8&use_unicode=0' % \
         {'UN': mysqlUN, 'PW': mysqlPW, 'host': dbhost, 'name': dbname} 
-        query = "SELECT user_name FROM User"
+        query = "SELECT user_name, profile_image FROM User"
         engine = create_engine(myDatabase, pool_recycle=3600) 
         connection = engine.connect()
         tabledata = engine.execute(query)
         newtabledata = []
         for row in tabledata:
-            newtabledata.append(row[0])
+            newtabledata.append(row)
         connection.close()
         return flask.render_template('index.html', tabledata=newtabledata)
 

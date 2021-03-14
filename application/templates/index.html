@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Welcome!</h1>
+    <p>This is a website for CS 411. It stores many recipes for its many users.</p>
+{% endblock %}
+{% block nav %}
+<h1> These are the authorized users: 
+   <ul>
+	{% for row in tabledata %}
+		<li> <a href='/zeqbkx/pa1/albums?username={{row}}'> {{row}}</a></li>
+	{% endfor %}
+   </ul> 
+</h1>
+
+{% endblock %}

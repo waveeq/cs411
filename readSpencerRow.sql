@@ -1,0 +1,1 @@
+SELECT uid FROM User WHERE user_name = 'spencer boojah';

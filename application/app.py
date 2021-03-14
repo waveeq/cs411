@@ -6,6 +6,7 @@ import json
 import logging
 from logging.handlers import RotatingFileHandler
 from sqlalchemy import create_engine, MetaData 
+import settings
 from main import Main
 
 app = flask.Flask(__name__)
@@ -23,7 +24,7 @@ class Root(flask.views.MethodView):
 
         myDatabase = 'mysql://%(UN)s:%(PW)s@%(host)s/%(name)s?charset=utf8&use_unicode=0' % \
         {'UN': mysqlUN, 'PW': mysqlPW, 'host': dbhost, 'name': dbname} 
-        query = "SELECT usern_ame FROM User"
+        query = "SELECT user_name FROM User"
         engine = create_engine(myDatabase, pool_recycle=3600) 
         connection = engine.connect()
         tabledata = engine.execute(query)
@@ -33,7 +34,8 @@ class Root(flask.views.MethodView):
         connection.close()
         return flask.render_template('index.html', tabledata=newtabledata)
 
-app.add_url_rule('/', view_func=Main.as_view('page'), methods=["GET"])
+app.add_url_rule('/', view_func=Root.as_view('root'))
+app.add_url_rule('/<page>/', view_func=Main.as_view('page'), methods=["GET"])
 
 if __name__ == '__main__':
     formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
@@ -41,5 +43,4 @@ if __name__ == '__main__':
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     app.logger.addHandler(handler)
-    print("hello")
     app.run(host="0.0.0.0", port=8080)

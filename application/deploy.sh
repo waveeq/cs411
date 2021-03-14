@@ -1,1 +1,1 @@
-gunicorn -b 0.0.0.0:5000 -w 4 app:app
+gunicorn -b 0.0.0.0:80 -w 4 app:app

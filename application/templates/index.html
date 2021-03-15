@@ -4,7 +4,8 @@
     <p>This is a website for CS 411. It stores many recipes for its many users.</p>
 {% endblock %}
 {% block nav %}
-<h1> These are the authorized users: 
+<h1> Querying Mysql database on AWS 
+     These are the authorized users in the User table : 
    <ul>
 	{% for row in tabledata %}
 		<li>{{row[0]}}</li>

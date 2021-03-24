@@ -8,7 +8,9 @@ CREATE TABLE User (
     password VARCHAR(255),
     birth_date DATE,
     country VARCHAR(255),
-    PRIMARY KEY (uid)
+    PRIMARY KEY (uid),
+    UNIQUE KEY (`user_name`),
+    UNIQUE KEY (`email`)
 );
 
 CREATE TABLE Friend(
@@ -23,13 +25,17 @@ CREATE TABLE Recipe (
     recipeid INT AUTO_INCREMENT,
     title VARCHAR(255),
     cookingTime TIME,
-    recipe_text VARCHAR(255),
-    summary VARCHAR(255),
-    ingredients VARCHAR(255),
+    recipe_text TEXT,
+    summary TEXT,
+    ingredients TEXT,
     directions VARCHAR(255),
     main_image VARCHAR(255),
     nutritional_calories INT,
-    PRIMARY KEY (recipeid)
+    PRIMARY KEY (recipeid),
+    INDEX (`title`),
+    FULLTEXT(recipe_text),
+    FULLTEXT(`summary`),
+    FULLTEXT(`ingredients`)
 );
 
 CREATE TABLE Nutritional_Food_Group (

@@ -8,6 +8,7 @@ from logging.handlers import RotatingFileHandler
 from sqlalchemy import create_engine, MetaData 
 import settings
 from main import Main
+from userFavorites import UserFavorites
 
 app = flask.Flask(__name__)
 
@@ -34,6 +35,7 @@ class Root(flask.views.MethodView):
         return flask.render_template('index.html', tabledata=newtabledata)
 
 app.add_url_rule('/', view_func=Root.as_view('root'))
+app.add_url_rule('/favorites', view_func=UserFavorites.as_view('favorites'), methods=["GET"])
 app.add_url_rule('/<page>/', view_func=Main.as_view('page'), methods=["GET"])
 
 if __name__ == '__main__':

@@ -7,12 +7,26 @@
 
 import UIKit
 
-public class RootViewController: UIViewController, FooterDelegate {
+@objc public protocol RootResponderChainAction: AnyObject {
+  func showProfileView(_ sender: Any?)
+}
+
+public class RootViewController: UIViewController,
+                                 FooterDelegate,
+                                 RootResponderChainAction,
+                                 UINavigationControllerDelegate,
+                                 UIPageViewControllerDataSource {
 
   let footerViewController = FooterViewController()
   lazy var footerHeightConstraint = footerViewController.view!.heightAnchor.constraint(equalToConstant: 0)
 
+  let pageViewController = UIPageViewController(
+    transitionStyle: .scroll,
+    navigationOrientation: .horizontal,
+    options: nil
+  )
   let tabContainerViewController = TabContainerViewController()
+  let profileViewController = ProfileViewController()
 
   public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
     return .portrait
@@ -23,21 +37,30 @@ public class RootViewController: UIViewController, FooterDelegate {
 
     view.backgroundColor = .white
 
-    // Set up Content Navigation VC.
-
-    addChild(tabContainerViewController)
-
-    let tabContainerView = tabContainerViewController.view!
-    view.addSubview(tabContainerView)
-    tabContainerView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      tabContainerView.topAnchor.constraint(equalTo: view.topAnchor),
-      tabContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-      tabContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      tabContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-    ])
+    // Set up pages
 
     tabContainerViewController.showTab(.myRecipes)
+
+    pageViewController.dataSource = self
+    pageViewController.setViewControllers(
+      [tabContainerViewController],
+      direction: .forward,
+      animated: false,
+      completion: nil
+    )
+    addChild(pageViewController)
+
+    let pageView = pageViewController.view!
+    view.addSubview(pageView)
+    pageView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      pageView.topAnchor.constraint(equalTo: view.topAnchor),
+      pageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      pageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      pageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+    ])
+
+    pageViewController.didMove(toParent: self)
 
     // Set up Footer VC.
 
@@ -60,7 +83,7 @@ public class RootViewController: UIViewController, FooterDelegate {
 
     footerViewController.didMove(toParent: self)
 
-    tabContainerViewController.additionalSafeAreaInsets = UIEdgeInsets(
+    pageViewController.additionalSafeAreaInsets = UIEdgeInsets(
       top: 0,
       left: 0,
       bottom: footerHeight,
@@ -68,12 +91,12 @@ public class RootViewController: UIViewController, FooterDelegate {
     )
   }
 
-
   public override func viewSafeAreaInsetsDidChange() {
     super.viewSafeAreaInsetsDidChange()
 
     let footerView = footerViewController.view!
-    footerHeightConstraint.constant = footerView.intrinsicContentSize.height + view.safeAreaInsets.bottom
+    footerHeightConstraint.constant =
+      footerView.intrinsicContentSize.height + view.safeAreaInsets.bottom
   }
 
   // MARK: - FooterDelegate
@@ -81,7 +104,48 @@ public class RootViewController: UIViewController, FooterDelegate {
   public func footerButtonTapped(sender: Any?) {
     guard let footerButton = sender as? FooterButton else { return }
 
-    tabContainerViewController.showTab(footerButton.targetTabType)
-  }  
-}
+    if let _ = pageViewController.viewControllers?.first as? TabContainerViewController {
+      tabContainerViewController.showTab(footerButton.targetTabType)
+    } else {
 
+      UIView.performWithoutAnimation {
+        self.tabContainerViewController.showTab(footerButton.targetTabType)
+      }
+
+      pageViewController.setViewControllers(
+        [tabContainerViewController],
+        direction: .reverse,
+        animated: true,
+        completion: nil
+      )
+    }
+  }
+
+  // MARK: - UIPageViewControllerDataSource
+
+  public func pageViewController(
+    _ pageViewController: UIPageViewController,
+    viewControllerAfter viewController: UIViewController
+  ) -> UIViewController? {
+    return viewController.isKind(of: TabContainerViewController.self) ? profileViewController : nil
+  }
+
+  public func pageViewController(
+    _ pageViewController: UIPageViewController,
+    viewControllerBefore viewController: UIViewController
+  ) -> UIViewController? {
+    return viewController.isKind(of: ProfileViewController.self) ? tabContainerViewController : nil
+  }
+
+  // MARK: - Target Actions
+
+  @objc public func showProfileView(_ sender: Any?) {
+    print("helloo")
+    pageViewController.setViewControllers(
+      [profileViewController],
+      direction: .forward,
+      animated: true,
+      completion: nil
+    )
+  }
+}

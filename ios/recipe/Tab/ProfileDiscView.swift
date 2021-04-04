@@ -31,6 +31,14 @@ public class ProfileDiscView: UIView {
 
     profileImageView.layer.cornerRadius = imageSize * 0.5
     profileImageView.clipsToBounds = true
+
+    // TODO(Dikra): Investigate why sending action to target nil does not work.
+    addGestureRecognizer(
+      UITapGestureRecognizer(
+        target: self,
+        action: #selector(profileDiscDidTap(_:))
+      )
+    )
   }
 
   required init?(coder: NSCoder) {
@@ -47,4 +55,14 @@ public class ProfileDiscView: UIView {
     profileImageView.layer.cornerRadius = frame.height * 0.5
   }
 
+  // MARK: - Target Actions
+
+  @objc func profileDiscDidTap(_ sender: Any?) {
+    UIApplication.shared.sendAction(
+      #selector(RootResponderChainAction.showProfileView(_:)),
+      to: nil,
+      from: self,
+      for: nil
+    )
+  }
 }

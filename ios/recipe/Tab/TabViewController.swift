@@ -13,15 +13,15 @@ public enum TabType {
   case messages
 }
 
-public class TabViewController: UINavigationController {
+public class TabViewController: UINavigationController, UINavigationControllerDelegate {
 
   var profileDiscView: ProfileDiscView!
   var bottomConstraint: NSLayoutConstraint!
   var topConstraint: NSLayoutConstraint!
 
-  public var displayAtBottomRight: Bool = true {
+  public var displayProfileDiscAtBottomRight: Bool = true {
     didSet {
-      guard oldValue != displayAtBottomRight else { return }
+      guard oldValue != displayProfileDiscAtBottomRight else { return }
       updateProfileDiscPosition()
     }
   }
@@ -40,6 +40,7 @@ public class TabViewController: UINavigationController {
 
     super.init(rootViewController: rootViewController)
 
+    delegate = self
     navigationBar.prefersLargeTitles = true
 
     profileDiscView = ProfileDiscView()
@@ -47,8 +48,14 @@ public class TabViewController: UINavigationController {
 
     profileDiscView.translatesAutoresizingMaskIntoConstraints = false
 
-    bottomConstraint = profileDiscView.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: -8)
-    topConstraint = profileDiscView.topAnchor.constraint(equalTo: navigationBar.topAnchor, constant: 8)
+    bottomConstraint = profileDiscView.bottomAnchor.constraint(
+      equalTo: navigationBar.bottomAnchor,
+      constant: -8
+    )
+    topConstraint = profileDiscView.topAnchor.constraint(
+      equalTo: navigationBar.topAnchor,
+      constant: 2
+    )
     NSLayoutConstraint.activate([
       profileDiscView.heightAnchor.constraint(equalToConstant: profileDiscView.imageSize),
       profileDiscView.widthAnchor.constraint(equalTo: profileDiscView.heightAnchor),
@@ -65,8 +72,8 @@ public class TabViewController: UINavigationController {
 
     // TODO(Dikra): Consider custom pane transition.
     UIView.animate(withDuration: 0.3) {
-      self.bottomConstraint.isActive = self.displayAtBottomRight
-      self.topConstraint.isActive = !self.displayAtBottomRight
+      self.bottomConstraint.isActive = self.displayProfileDiscAtBottomRight
+      self.topConstraint.isActive = !self.displayProfileDiscAtBottomRight
       self.navigationBar.setNeedsLayout()
       self.profileDiscView.setNeedsLayout()
       self.navigationBar.layoutIfNeeded()
@@ -74,10 +81,14 @@ public class TabViewController: UINavigationController {
     }
   }
 
-}
+  // MARK: - UINavigationControllerDelegate
 
-public extension UIViewController {
-  var hostTabViewController: TabViewController? {
-    return self.navigationController as? TabViewController
+  public func navigationController(
+    _ navigationController: UINavigationController,
+    willShow viewController: UIViewController,
+    animated: Bool
+  ) {
+    displayProfileDiscAtBottomRight = !viewController.isKind(of: MessageDetailViewController.self)
   }
+
 }

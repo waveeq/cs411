@@ -27,16 +27,4 @@ public class MessageDetailViewController: UIViewController {
 
     view.backgroundColor = .white
   }
-
-  public override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-
-    hostTabViewController?.displayAtBottomRight = false
-  }
-
-  public override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
-    hostTabViewController?.displayAtBottomRight = true
-  }
-
 }

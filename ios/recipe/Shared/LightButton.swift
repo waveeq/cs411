@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class ProfileLightButton: UIButton {
+public class LightButton: UIButton {
 
   public override init(frame: CGRect) {
     super.init(frame: frame)

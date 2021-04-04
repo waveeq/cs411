@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class ProfileDarkButton: UIButton {
+public class DarkButton: UIButton {
 
   public override init(frame: CGRect) {
     super.init(frame: frame)

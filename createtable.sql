@@ -105,3 +105,12 @@ CREATE TABLE User_Rates_Recipe (
     FOREIGN KEY (recipeid) REFERENCES Recipe(recipeid) ON DELETE CASCADE,
     FOREIGN KEY (uid) REFERENCES User(uid) ON DELETE CASCADE
 );
+
+Create TABLE User_Notes_Recipe (
+    uid INT,
+    recipeid INT,
+    note TEXT,
+    PRIMARY KEY (uid, recipeid),
+    FOREIGN KEY (recipeid) REFERENCES Recipe(recipeid) ON DELETE CASCADE,
+    FOREIGN KEY (uid) REFERENCES User(uid) ON DELETE CASCADE
+);

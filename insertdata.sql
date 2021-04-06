@@ -10,3 +10,6 @@ VALUES ('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1oEqijEs3QbbwL6w
 );
 INSERT INTO FRIEND(first_uid,second_uid) VALUES ((SELECT uid FROM User WHERE user_name = 'claire molens'),(SELECT uid FROM User WHERE user_name = 'spencer boojah'));
 INSERT INTO FRIEND(first_uid ,second_uid ) VALUES ((SELECT uid FROM User WHERE user_name = 'spencer boojah'),(SELECT uid FROM User WHERE user_name = 'claire molens'));
+INSERT INTO Recipe(title, recipe_text, main_image) VALUES ("chocolate chip cookies","1. make dough 2. put in oven","https://kirbiecravings.com/wp-content/uploads/2020/10/no-bake-keto-choc-chip-cookies-3a.jpg");
+INSERT INTO User_Notes_Recipe(uid, recipeid, note) VALUES ((SELECT uid FROM User WHERE user_name = 'spencer boojah'), (SELECT recipeid FROM Recipe WHERE title = "chocolate chip cookies"),"so goooooood");
+INSERT INTO User_Rates_Recipe(uid, recipeid, value) VALUES ((SELECT uid FROM User WHERE user_name = 'spencer boojah'), (SELECT recipeid FROM Recipe WHERE title = "chocolate chip cookies"),4);

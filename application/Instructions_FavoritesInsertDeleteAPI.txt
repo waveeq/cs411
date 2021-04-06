@@ -1,0 +1,38 @@
+CS411 Project
+How to Access FavoritesInsertDelete API 
+
+Make sure that the API is running properly first and server is setup properly ;) 
+
+Import Requests 
+
+BASE =  The base URL of the server —to be provided by Atif
+
+
+For delete favorite:
+
+response = requests.delete(BASE+'recipe/1/3')
+
+The end point: 
+'/recipe/<user_id>/<recipe_id>'
+
+If successful, then return 200 and favorite will be deleted in db
+	Sample response message in console: 127.0.0.1 - - [05/Apr/2021 22:57:27] "DELETE /recipe/1/3 HTTP/1.1" 200 -
+If failure, return 404 or 500
+	Sample response message in console 127.0.0.1 - - [05/Apr/2021 22:59:03] "DELETE /recipe/1/3 HTTP/1.1" 404 -
+
+
+For insert favorite:
+
+response = requests.post(BASE+'recipe/1/3')
+
+The end point:
+'/recipe/<user_id>/<recipe_id>'
+
+
+If successful, then return 200 and favorite will be inserted in db
+	Sample response message in console: 127.0.0.1 - - [05/Apr/2021 23:00:26] "POST /recipe/1/3 HTTP/1.1" 200 -
+If failure, return 404 or 500
+	Sample response message in console 127.0.0.1 - - [05/Apr/2021 23:00:58] "POST /recipe/1/3 HTTP/1.1" 404 -
+
+
+

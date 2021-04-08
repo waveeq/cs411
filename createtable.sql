@@ -28,14 +28,15 @@ CREATE TABLE Recipe (
     recipe_text TEXT,
     summary TEXT,
     ingredients TEXT,
-    directions VARCHAR(255),
+    directions TEXT,
     main_image VARCHAR(255),
     nutritional_calories INT,
     PRIMARY KEY (recipeid),
     INDEX (`title`),
     FULLTEXT(recipe_text),
     FULLTEXT(`summary`),
-    FULLTEXT(`ingredients`)
+    FULLTEXT(`ingredients`),
+    FULLTEXT(`directions`)
 );
 
 CREATE TABLE Nutritional_Food_Group (

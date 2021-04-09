@@ -1,0 +1,19 @@
+API instructions:
+
+
+
+Delete Favorites:
+response = requests.delete(BASE+"recipe?user_id=1&recipe_id=6")
+
+Insert Favorites:
+response=requests.post(BASE+"recipe?user_id=1&recipe_id=6")
+
+Explore:
+Go to the explore endpoint
+
+response = requests.get(BASE+"explore")
+print(response.json)
+
+Or go to 
+http://127.0.0.1:5000/explore
+

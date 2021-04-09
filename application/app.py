@@ -11,6 +11,9 @@ from main import Main
 from userFavorites import UserFavorites
 from recipeDetails import RecipeDetails
 from recipeNote import RecipeNote
+from favoritesDelete import FavoritesDelete
+from searchAPI import SearchAPI
+from favoritesInsert import FavoritesInsert
 
 app = flask.Flask(__name__)
 
@@ -42,10 +45,17 @@ app.add_url_rule('/<page>/', view_func=Main.as_view('page'), methods=["GET"])
 app.add_url_rule('/recipe/details',view_func=RecipeDetails.as_view('recipeDetails'), methods=["GET"])
 app.add_url_rule('/recipe/note',view_func=RecipeNote.as_view('recipeNote'), methods=["PUT"])
 
+app.add_url_rule('/recipe',view_func=FavoritesDelete.as_view('FavoritesDelete'), methods=["DELETE"])
+
+app.add_url_rule('/recipe',view_func=FavoritesInsert.as_view('FavoritesInsert'), methods=["POST"])
+
+app.add_url_rule('/explore',view_func=SearchAPI.as_view('searchAPI'), methods=["GET"])
+
+
 if __name__ == '__main__':
     formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
     handler = RotatingFileHandler('app.log', maxBytes=10000000, backupCount=5)
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     app.logger.addHandler(handler)
-    app.run(host="0.0.0.0", port=8080)
+    app.run()

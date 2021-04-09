@@ -17,13 +17,13 @@ class FavoritesDelete(flask.views.MethodView):
         engine = create_engine(myDatabase, pool_recycle=3600)
         connection = engine.connect()
         with connection:
-            result = connection.execute('select 1 from user_favorites_recipe fr where (uid = %s and recipeid = %s)',
+            result = connection.execute('select 1 from User_Favorites_Recipe fr where (uid = %s and recipeid = %s)',
                                         [user_id, recipe_id])
             data = [[str(row[0])] for row in result]
             if not data:
                 return flask.abort(404)
             else:
-                connection.execute('delete from user_favorites_recipe where (uid = %s and recipeid = %s)', [user_id, recipe_id])
+                connection.execute('delete from User_Favorites_Recipe where (uid = %s and recipeid = %s)', [user_id, recipe_id])
                 return Response(status=200)
 
     def delete(self):

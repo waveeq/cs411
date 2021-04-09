@@ -19,7 +19,7 @@ class SearchAPI(flask.views.MethodView):
         engine = create_engine(myDatabase, pool_recycle=3600)
         connection = engine.connect()
         with connection:
-            result = connection.execute('select recipeid, title, main_image from recipe r limit 10')
+            result = connection.execute('select recipeid, title, main_image from Recipe r limit 10')
             list_result = [dict(row) for row in result]
         if not list_result:
             return flask.abort(404)

@@ -37,7 +37,7 @@ class RecipeDetails(flask.views.MethodView):
                 *
                 FROM 
                 Recipe r,
-                USER u
+                User u
                 WHERE
                 u.uid = %s
                 AND r.recipeid = %s

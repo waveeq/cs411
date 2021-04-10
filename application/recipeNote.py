@@ -21,9 +21,9 @@ class RecipeNote(flask.views.MethodView):
         with engine.connect() as connection:
             result = connection.execute(
                 """
-                UPDATE User_Notes_Recipe 
-                SET note = %s
-                WHERE uid = %s AND recipeid = %s;
+                INSERT INTO User_Notes_Recipe  (note, uid, recipeid)
+                VALUES (%s,%s,%s)
+                ON DUPLICATE KEY UPDATE note=VALUES(note), recipeid=VALUES(recipeid)
                 """,
                 [note, user_id, recipe_id])
             return Response(status=200)

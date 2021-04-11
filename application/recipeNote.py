@@ -22,7 +22,7 @@ class RecipeNote(flask.views.MethodView):
             result = connection.execute(
                 """
                 INSERT INTO User_Notes_Recipe  (note, uid, recipeid)
-                VALUES (%s,%s,%s)
+                VALUES ("%s",%s,%s)
                 ON DUPLICATE KEY UPDATE note=VALUES(note), recipeid=VALUES(recipeid)
                 """,
                 [note, user_id, recipe_id])

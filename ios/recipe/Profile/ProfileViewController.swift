@@ -18,22 +18,30 @@ public class ProfileViewController: UIViewController, ProfileViewDelegate {
   // MARK: - ProfileViewDelegate
 
   public func editProfileButtonDidTap() {
-    let editViewNavigationController = UINavigationController(rootViewController: ProfileEditViewController())
-    editViewNavigationController.modalTransitionStyle = .coverVertical
-    editViewNavigationController.modalPresentationStyle = .fullScreen
-    present(editViewNavigationController, animated: true, completion: nil)
+    let profileEditNavigationController = UINavigationController(
+      rootViewController: ProfileEditViewController()
+    )
+    profileEditNavigationController.modalTransitionStyle = .coverVertical
+    profileEditNavigationController.modalPresentationStyle = .fullScreen
+    present(profileEditNavigationController, animated: true, completion: nil)
   }
 
-  public func logoutButttonDidTap() {
+  public func logoutButtonDidTap() {
     let alert = UIAlertController(
       title: nil,
       message: "Are you sure you want to log out?",
       preferredStyle: .alert
     )
 
-    alert.addAction(
-      UIAlertAction(title: "Log Out", style: .destructive, handler: { (action) in
+    let profileView = view as! ProfileView
 
+    alert.addAction(
+      UIAlertAction(title: "Log out", style: .destructive, handler: { (action) in
+        profileView.loadingIndicatorView.startAnimating()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+          profileView.loadingIndicatorView.stopAnimating()
+          self.navigationController?.popToRootViewController(animated: true)
+        }
       })
     )
     alert.addAction(

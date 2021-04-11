@@ -38,8 +38,9 @@ public class ProfileEditView: UIView {
   let reenterNewPasswordLabel = UILabel()
   let reenterNewPasswordTextField = UITextField()
 
+  public let loadingIndicatorView = UIActivityIndicatorView()
 
-  public weak var profileEditDelegate: ProfileEditViewDelegate?
+  public weak var delegate: ProfileEditViewDelegate?
   public weak var textFieldDelegate: UITextFieldDelegate? {
     didSet {
       nameTextField.delegate = textFieldDelegate
@@ -355,7 +356,7 @@ public class ProfileEditView: UIView {
     newPasswordTextField.text = nil
     newPasswordTextField.placeholder = "New Password"
     newPasswordTextField.isSecureTextEntry = true
-    newPasswordTextField.textContentType = .password
+    newPasswordTextField.textContentType = .newPassword
     newPasswordTextField.delegate = textFieldDelegate
     containerView.addSubview(newPasswordTextField)
     newPasswordTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -387,7 +388,7 @@ public class ProfileEditView: UIView {
     reenterNewPasswordTextField.text = nil
     reenterNewPasswordTextField.placeholder = "Re-enter New Password"
     reenterNewPasswordTextField.isSecureTextEntry = true
-    reenterNewPasswordTextField.textContentType = .password
+    reenterNewPasswordTextField.textContentType = .newPassword
     reenterNewPasswordTextField.delegate = textFieldDelegate
     containerView.addSubview(reenterNewPasswordTextField)
     reenterNewPasswordTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -402,6 +403,18 @@ public class ProfileEditView: UIView {
     ])
     addUnderlineForView(reenterNewPasswordTextField)
 
+    // Loading indicator view
+
+    addSubview(loadingIndicatorView)
+    loadingIndicatorView.hidesWhenStopped = true
+    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      loadingIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
+      loadingIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
+      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
+      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
+    ])
+    
     // Register KVO
 
     NotificationCenter.default.addObserver(
@@ -438,7 +451,7 @@ public class ProfileEditView: UIView {
   // MARK: - Target Actions
 
   @objc public func profileImageChangeDidTap(_ sender: Any?) {
-    profileEditDelegate?.profileImageChangeDidTap()
+    delegate?.profileImageChangeDidTap()
   }
 
   // MARK: - KVO

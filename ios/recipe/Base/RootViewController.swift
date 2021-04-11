@@ -7,18 +7,19 @@
 
 import UIKit
 
-@objc public protocol RootResponderChainAction: AnyObject {
+@objc public protocol RootResponderChainActions: AnyObject {
   func showProfileView(_ sender: Any?)
 }
 
 public class RootViewController: UIViewController,
                                  FooterDelegate,
-                                 RootResponderChainAction,
+                                 RootResponderChainActions,
                                  UINavigationControllerDelegate,
                                  UIPageViewControllerDataSource {
 
   let footerViewController = FooterViewController()
-  lazy var footerHeightConstraint = footerViewController.view!.heightAnchor.constraint(equalToConstant: 0)
+  lazy var footerHeightConstraint =
+    footerViewController.view!.heightAnchor.constraint(equalToConstant: 0)
 
   let pageViewController = UIPageViewController(
     transitionStyle: .scroll,
@@ -27,10 +28,6 @@ public class RootViewController: UIViewController,
   )
   let tabContainerViewController = TabContainerViewController()
   let profileViewController = ProfileViewController()
-
-  public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-    return .portrait
-  }
 
   public override func viewDidLoad() {
     super.viewDidLoad()
@@ -140,7 +137,6 @@ public class RootViewController: UIViewController,
   // MARK: - Target Actions
 
   @objc public func showProfileView(_ sender: Any?) {
-    print("helloo")
     pageViewController.setViewControllers(
       [profileViewController],
       direction: .forward,

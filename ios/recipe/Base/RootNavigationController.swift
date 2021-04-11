@@ -18,4 +18,19 @@ public class RootNavigationController: UINavigationController {
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+
+  public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    return .portrait
+  }
+}
+
+public extension UINavigationController {
+
+  var rootViewController: RootViewController? {
+    if let rootViewController = viewControllers.first as? RootViewController {
+      return rootViewController
+    } else {
+      return parent?.navigationController?.rootViewController
+    }
+  }
 }

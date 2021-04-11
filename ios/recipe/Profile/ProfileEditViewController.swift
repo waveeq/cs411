@@ -7,12 +7,15 @@
 
 import UIKit
 
-public class ProfileEditViewController: UIViewController, UITextFieldDelegate {
+public class ProfileEditViewController: UIViewController,
+                                        ProfileEditViewDelegate,
+                                        UITextFieldDelegate {
 
   var dismissTextEditingTapRecognizer: UIGestureRecognizer?
 
   public override func loadView() {
     let profileEditView = ProfileEditView()
+    profileEditView.delegate = self
     profileEditView.textFieldDelegate = self
     view = profileEditView
   }
@@ -64,9 +67,15 @@ public class ProfileEditViewController: UIViewController, UITextFieldDelegate {
       preferredStyle: .alert
     )
 
+    let profileEditView = view as! ProfileEditView
+
     alert.addAction(
       UIAlertAction(title: "Save Changes", style: .default, handler: { (action) in
-        self.dismiss(animated: true, completion: nil)
+        profileEditView.loadingIndicatorView.startAnimating()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+          profileEditView.loadingIndicatorView.stopAnimating()
+          self.dismiss(animated: true, completion: nil)
+        }
       })
     )
     alert.addAction(
@@ -75,6 +84,12 @@ public class ProfileEditViewController: UIViewController, UITextFieldDelegate {
 
     dismissTextEditing(nil)
     present(alert, animated: true, completion: nil)
+  }
+
+  // MARK: - ProfileEditViewDelegate
+
+  public func profileImageChangeDidTap() {
+    
   }
 
   // MARK: - UITextFieldDelegate

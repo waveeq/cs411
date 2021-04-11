@@ -32,11 +32,15 @@ public class TabContainerViewController: UIViewController {
       activeTabViewController.didMove(toParent: self)
 
       if let oldValue = oldValue {
-        UIView .transition(from: oldValue.view, to: tabView, duration: 0.2, options: .transitionCrossDissolve, completion: { (Bool) in
+        UIView .transition(
+          from: oldValue.view,
+          to: tabView, duration: 0.2,
+          options: .transitionCrossDissolve
+        ) { (Bool) in
           oldValue.willMove(toParent: nil)
           oldValue.view.removeFromSuperview()
           oldValue.removeFromParent()
-        })
+        }
       }
     }
   }

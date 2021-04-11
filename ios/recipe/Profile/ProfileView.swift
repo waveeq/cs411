@@ -9,7 +9,7 @@ import UIKit
 
 public protocol ProfileViewDelegate: class {
   func editProfileButtonDidTap()
-  func logoutButttonDidTap()
+  func logoutButtonDidTap()
 }
 
 public class ProfileView: UIView {
@@ -22,8 +22,10 @@ public class ProfileView: UIView {
   let emailLabel = UILabel()
   let birthdayLabel = UILabel()
 
-  let editProfileButton = ProfileLightButton()
-  let logoutButton = ProfileDarkButton()
+  let editProfileButton = LightButton()
+  let logoutButton = DarkButton()
+
+  public let loadingIndicatorView = UIActivityIndicatorView()
 
   public override init(frame: CGRect) {
     super.init(frame: frame)
@@ -112,7 +114,10 @@ public class ProfileView: UIView {
     NSLayoutConstraint.activate([
       birthdayLabel.topAnchor.constraint(equalTo: emailLabel.bottomAnchor, constant: 16),
       birthdayLabel.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
-      birthdayLabel.widthAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.6),
+      birthdayLabel.widthAnchor.constraint(
+        lessThanOrEqualTo: safeAreaLayoutGuide.widthAnchor,
+        multiplier: 0.6
+      ),
     ])
 
     // Log out button
@@ -121,10 +126,16 @@ public class ProfileView: UIView {
     addSubview(logoutButton)
     logoutButton.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      logoutButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -16),
+      logoutButton.bottomAnchor.constraint(
+        equalTo: safeAreaLayoutGuide.bottomAnchor,
+        constant: -16
+      ),
       logoutButton.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
       logoutButton.heightAnchor.constraint(equalToConstant: 44),
-      logoutButton.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.9),
+      logoutButton.widthAnchor.constraint(
+        equalTo: safeAreaLayoutGuide.widthAnchor,
+        multiplier: 0.9
+      ),
     ])
     logoutButton.addTarget(self, action: #selector(logoutButtonDidTap(_:)), for: .touchUpInside)
 
@@ -137,9 +148,27 @@ public class ProfileView: UIView {
       editProfileButton.bottomAnchor.constraint(equalTo: logoutButton.topAnchor, constant: -8),
       editProfileButton.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
       editProfileButton.heightAnchor.constraint(equalToConstant: 44),
-      editProfileButton.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.9),
+      editProfileButton.widthAnchor.constraint(
+        equalTo: safeAreaLayoutGuide.widthAnchor,
+        multiplier: 0.9),
     ])
-    editProfileButton.addTarget(self, action: #selector(editProfileButtonDidTap(_:)), for: .touchUpInside)
+    editProfileButton.addTarget(
+      self,
+      action: #selector(editProfileButtonDidTap(_:)),
+      for: .touchUpInside
+    )
+
+    // Loading indicator view
+
+    addSubview(loadingIndicatorView)
+    loadingIndicatorView.hidesWhenStopped = true
+    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      loadingIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
+      loadingIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
+      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
+      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
+    ])
   }
 
   required init?(coder: NSCoder) {
@@ -159,7 +188,7 @@ public class ProfileView: UIView {
   }
 
   @objc func logoutButtonDidTap(_ sender: Any?) {
-    delegate?.logoutButttonDidTap()
+    delegate?.logoutButtonDidTap()
   }
 
   // MARK: - Helper

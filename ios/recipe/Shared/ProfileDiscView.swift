@@ -59,7 +59,7 @@ public class ProfileDiscView: UIView {
 
   @objc func profileDiscDidTap(_ sender: Any?) {
     UIApplication.shared.sendAction(
-      #selector(RootResponderChainAction.showProfileView(_:)),
+      #selector(RootResponderChainActions.showProfileView(_:)),
       to: nil,
       from: self,
       for: nil

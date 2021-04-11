@@ -21,35 +21,60 @@ class ExploreFilterCollectionView: UICollectionView {
   }
 }
 
-class ExploreViewController: UIViewController, UITextFieldDelegate {
+public class ExploreViewController: UIViewController, UITextFieldDelegate {
 
   var exploreCollectionViewManager: ExploreCollectionViewManager!
 
   var dismissTextEditingTapRecognizer: UIGestureRecognizer?
 
-  override func loadView() {
+  let loadingIndicatorView = UIActivityIndicatorView()
+
+  public override func loadView() {
     let exploreView = UICollectionView(
       frame: .zero,
       collectionViewLayout: UICollectionViewFlowLayout()
     )
-    exploreView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
-    exploreView.backgroundColor = .white
 
     exploreCollectionViewManager = ExploreCollectionViewManager(
       viewController: self,
       collectionView: exploreView
     )
-    exploreCollectionViewManager.textFieldDelegate = self
-    exploreView.delegate = exploreCollectionViewManager
-    exploreView.dataSource = exploreCollectionViewManager
 
-    self.view = exploreView
+    exploreView.contentInset = UIEdgeInsets(top: 8, left: 12, bottom: 0, right: 12)
+    exploreView.backgroundColor = .white
+
+    exploreView.addSubview(loadingIndicatorView)
+    loadingIndicatorView.hidesWhenStopped = true
+    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      loadingIndicatorView.centerXAnchor.constraint(equalTo: exploreView.centerXAnchor),
+      loadingIndicatorView.centerYAnchor.constraint(equalTo: exploreView.centerYAnchor),
+      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
+      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
+    ])
+
+    view = exploreView
   }
 
-  override func viewDidLoad() {
+  public override func viewDidLoad() {
     super.viewDidLoad()
 
     title = "Explore"
+  }
+
+  public override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+
+    let exploreView = view as! UICollectionView
+
+    loadingIndicatorView.startAnimating()
+    RecipeServices.sharedInstance.getExploreList(forUserID: 1) { (exploreModels) in
+      self.exploreCollectionViewManager.updateData(exploreModels: exploreModels!)
+      self.exploreCollectionViewManager.textFieldDelegate = self
+      exploreView.delegate = self.exploreCollectionViewManager
+      exploreView.dataSource = self.exploreCollectionViewManager
+      self.loadingIndicatorView.stopAnimating()
+    }
   }
 
   // MARK: - UITextFieldDelegate
@@ -58,20 +83,20 @@ class ExploreViewController: UIViewController, UITextFieldDelegate {
     view.endEditing(true)
   }
 
-  func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+  public func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
     dismissTextEditingTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissTextEditing(_:)))
     navigationController?.view.addGestureRecognizer(dismissTextEditingTapRecognizer!)
     return true
   }
 
-  func textFieldDidEndEditing(_ textField: UITextField) {
+  public func textFieldDidEndEditing(_ textField: UITextField) {
     if let _ = dismissTextEditingTapRecognizer {
       navigationController?.view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
     }
     dismissTextEditingTapRecognizer = nil
   }
 
-  func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+  public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
     textField.resignFirstResponder()
     return true
   }

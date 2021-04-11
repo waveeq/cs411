@@ -9,6 +9,24 @@ import UIKit
 
 public class DarkButton: UIButton {
 
+  public override var isEnabled: Bool {
+    didSet {
+      disabled = !isEnabled
+      updateColor()
+    }
+  }
+
+  var highlight: Bool = false {
+    didSet {
+      updateColor()
+    }
+  }
+  var disabled: Bool = false {
+    didSet {
+      updateColor()
+    }
+  }
+
   public override init(frame: CGRect) {
     super.init(frame: frame)
 
@@ -26,10 +44,17 @@ public class DarkButton: UIButton {
   }
 
   @objc func highlightButton(_ sender: Any?) {
-    self.backgroundColor = UIColor(white: 0.3, alpha: 1)
+    highlight = true
   }
 
   @objc func unhighlightButton(_ sender: Any?) {
-    self.backgroundColor = .black
+    highlight = false
+  }
+
+  func updateColor() {
+    let alpha: CGFloat = disabled ? 0.5 : 1
+    let white: CGFloat = highlight ? 0.3 : 0
+
+    backgroundColor = UIColor(white: white, alpha: alpha)
   }
 }

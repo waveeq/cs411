@@ -53,14 +53,17 @@ class FooterView: UIView {
     myrecipeButton.isSelected = true
     myrecipeButton.normalImageSystemName = "heart"
     myrecipeButton.highlightedImageSystemName = "heart.fill"
+    myrecipeButton.setTitle("MY RECIPES", for: .normal)
     myrecipeButton.addTarget(self, action: #selector(footerButtonTapped(sender:)), for: .touchUpInside)
 
-    exploreButton.normalImageSystemName = "magnifyingglass"
-    exploreButton.highlightedImageSystemName = "text.magnifyingglass"
+    exploreButton.normalImageSystemName = "magnifyingglass.circle"
+    exploreButton.highlightedImageSystemName = "magnifyingglass.circle.fill"
+    exploreButton.setTitle("EXPLORE", for: .normal)
     exploreButton.addTarget(self, action: #selector(footerButtonTapped(sender:)), for: .touchUpInside)
-
-    messageButton.normalImageSystemName = "bubble.left"
-    messageButton.highlightedImageSystemName = "bubble.left.fill"
+    
+    messageButton.normalImageSystemName = "message"
+    messageButton.highlightedImageSystemName = "message.fill"
+    messageButton.setTitle("MESSAGES", for: .normal)
     messageButton.addTarget(self, action: #selector(footerButtonTapped(sender:)), for: .touchUpInside)
 
     myrecipeButton.translatesAutoresizingMaskIntoConstraints = false

@@ -12,6 +12,8 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
   let cellIdentifier = "myRecipesCellIdentifer"
   let headerIdentifier = "myRecipesHeaderIdentifier"
 
+  let loadingIndicatorView = UIActivityIndicatorView()
+
   lazy var tempCellColors: [UIColor] = {
     var colors: [UIColor] = []
     for _ in 1...36 {
@@ -19,6 +21,9 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     }
     return colors
   }()
+
+  var myRecipeModels: [MyRecipeModel] = []
+  var imageCaches: [Int:UIImage] = [:]
 
   public override func loadView() {
     let myRecipesView = UICollectionView(
@@ -28,10 +33,20 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     myRecipesView.contentInset = UIEdgeInsets(top: 8, left: 12, bottom: 0, right: 12)
     myRecipesView.backgroundColor = .white
 
-    myRecipesView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
+    myRecipesView.register(MyRecipesCell.self, forCellWithReuseIdentifier: cellIdentifier)
+
+    myRecipesView.addSubview(loadingIndicatorView)
+    loadingIndicatorView.hidesWhenStopped = true
+    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      loadingIndicatorView.centerXAnchor.constraint(equalTo: myRecipesView.centerXAnchor),
+      loadingIndicatorView.centerYAnchor.constraint(equalTo: myRecipesView.centerYAnchor),
+      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
+      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
+    ])
+
     myRecipesView.delegate = self
     myRecipesView.dataSource = self
-
     self.view = myRecipesView
   }
 
@@ -39,6 +54,32 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     super.viewDidLoad()
 
     title = "My Recipes"
+
+  }
+
+  public override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+
+    let myRecipesView = view as! UICollectionView
+
+    loadingIndicatorView.startAnimating()
+    RecipeServices.sharedInstance.getMyRecipeList(
+      forUserID: AccountManager.sharedInstance.currentUserID
+    ) { (myRecipeModels ) in
+
+      self.myRecipeModels = myRecipeModels ?? []
+
+      for myRecipeModel in self.myRecipeModels {
+        if self.imageCaches.index(forKey: myRecipeModel.recipeID) == nil {
+          self.imageCaches[myRecipeModel.recipeID] =
+            try? UIImage(data: Data(contentsOf:  myRecipeModel.mainImage))
+        }
+      }
+
+      myRecipesView.reloadSections(IndexSet(integer: 0))
+      
+      self.loadingIndicatorView.stopAnimating()
+    }
   }
   
   // MARK: - UICollectionViewDataSource
@@ -51,7 +92,7 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return tempCellColors.count
+    return myRecipeModels.count
   }
 
   public func collectionView(
@@ -59,9 +100,12 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     cellForItemAt indexPath: IndexPath
   ) -> UICollectionViewCell {
 
-    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath)
-    cell.backgroundColor = tempCellColors[indexPath.row]
+    let cell = collectionView.dequeueReusableCell(
+      withReuseIdentifier: cellIdentifier,
+      for: indexPath
+    ) as! MyRecipesCell
 
+    cell.imageView.image = imageCaches[myRecipeModels[indexPath.row].recipeID]
     return cell
   }
 
@@ -72,7 +116,7 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     didSelectItemAt indexPath: IndexPath
   ) {
     navigationController?.pushViewController(
-      RecipeDetailViewController(recipeImageColor: tempCellColors[indexPath.row]),
+      RecipeDetailViewController(recipeID: myRecipeModels[indexPath.row].recipeID),
       animated: true
     )
   }

@@ -7,6 +7,7 @@
 
 import UIKit
 
+// TODO(Dikra): Re-enable search bar header
 class ExploreCollectionViewManager: NSObject,
                                     UICollectionViewDataSource,
                                     UICollectionViewDelegate,
@@ -15,28 +16,35 @@ class ExploreCollectionViewManager: NSObject,
   let cellIdentifier = "exploreCellIdentifer"
   let headerIdentifier = "exploreHeaderIdentifier"
 
-  lazy var tempCellColors: [UIColor] = {
-    var colors: [UIColor] = []
-    for _ in 1...60 {
-      colors.append(randomColor())
-    }
-    return colors
-  }()
+  var exploreModels: [ExploreModel] = []
+  var imageCaches: [Int:UIImage] = [:]
 
   weak var textFieldDelegate: UITextFieldDelegate?
   weak var viewController: UIViewController?
+  weak var collectionView: UICollectionView?
 
   public required init(viewController: UIViewController, collectionView: UICollectionView) {
     super.init()
 
     self.viewController = viewController
+    self.collectionView = collectionView
     
-    collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
+    collectionView.register(ExploreCell.self, forCellWithReuseIdentifier: cellIdentifier)
     collectionView.register(
       ExploreSectionHeader.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
       withReuseIdentifier: headerIdentifier
     )
+  }
+
+  public func updateData(exploreModels: [ExploreModel]) {
+    self.exploreModels = exploreModels
+    imageCaches.removeAll()
+    for exploreModel in exploreModels {
+      imageCaches[exploreModel.recipeID] = try? UIImage(data: Data(contentsOf:  exploreModel.mainImage))
+    }
+
+    collectionView?.reloadSections(IndexSet(integer: 0))
   }
 
   // MARK: - UICollectionViewDataSource
@@ -49,17 +57,20 @@ class ExploreCollectionViewManager: NSObject,
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return tempCellColors.count
+    return exploreModels.count
   }
 
   public func collectionView(
     _ collectionView: UICollectionView,
     cellForItemAt indexPath: IndexPath
   ) -> UICollectionViewCell {
-    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath)
-    cell.backgroundColor = tempCellColors[indexPath.row]
+    let exploreCell = collectionView.dequeueReusableCell(
+      withReuseIdentifier: cellIdentifier,
+      for: indexPath
+    ) as! ExploreCell
 
-    return cell
+    exploreCell.imageView.image = imageCaches[exploreModels[indexPath.row].recipeID]
+    return exploreCell
   }
 
   public func collectionView(
@@ -85,7 +96,7 @@ class ExploreCollectionViewManager: NSObject,
 
   public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     viewController?.navigationController?.pushViewController(
-      RecipeDetailViewController(recipeImageColor: tempCellColors[indexPath.row]),
+      RecipeDetailViewController(recipeID: exploreModels[indexPath.row].recipeID),
       animated: true
     )
   }
@@ -113,7 +124,7 @@ class ExploreCollectionViewManager: NSObject,
     layout collectionViewLayout: UICollectionViewLayout,
     insetForSectionAt section: Int
   ) -> UIEdgeInsets {
-    return UIEdgeInsets(top: 16, left: 12, bottom: 32, right: 12)
+    return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
   }
 
   public func collectionView(
@@ -123,23 +134,6 @@ class ExploreCollectionViewManager: NSObject,
   ) -> CGSize {
     let cellSize = (collectionView.frame.size.width / 3) - 16
     return CGSize(width: cellSize, height: cellSize)
-  }
-
-  public func collectionView(
-    _ collectionView: UICollectionView,
-    layout collectionViewLayout: UICollectionViewLayout,
-    referenceSizeForHeaderInSection section: Int
-  ) -> CGSize {
-    let collectionViewSafeArea = collectionView.frame.inset(by: collectionView.adjustedContentInset)
-    return CGSize(width: collectionViewSafeArea.width, height: ExploreSectionHeader.headerHeight)
-  }
-
-  // custom function to generate a random UIColor
-  public func randomColor() -> UIColor{
-      let red = CGFloat(drand48())
-      let green = CGFloat(drand48())
-      let blue = CGFloat(drand48())
-      return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
   }
 }
 

@@ -333,6 +333,10 @@ public class RecipeDetailView: UIScrollView {
     return notesTextView.text == nil || notesTextView.text == ""
   }
 
+  public var currentNotes: String {
+    return notesTextView.text ?? ""
+  }
+
   // MARK: - Helper
 
   func ratingToString(ratingAverage: Float, ratingCount: Int) -> String {

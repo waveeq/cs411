@@ -10,7 +10,6 @@ import Foundation
 public class RecipeServices {
 
   static let sharedInstance = RecipeServices()
-  static let debugMode = true
   static let endpoint = "http://44.192.111.170"
 
   public func getRecipeDetails(
@@ -144,26 +143,17 @@ public class RecipeServices {
   public func updateRecipeNotes(
     forUserID userID: Int,
     recipeID: Int,
+    notes: String,
     completion: @escaping (Bool) -> Void
   ) {
-    completion(true)
+    RESTAPIHelper.requestPut(
+      withUrl: URL(string: "\(Self.endpoint)/recipe/note")!,
+      params: ["user_id" : userID, "recipe_id": recipeID, "note": notes]) { (result) in
+      DispatchQueue.main.async {
+        let success: Bool = result?["success"] as? Bool ?? false
+
+        completion(success)
+      }
+    }
   }
 }
-
-//extension RecipeServices {
-//  static let mock1 = RecipeModel(
-//    recipeID: 0,
-//    title: "Chef John's Honey-Glazed Ham",
-//    mainImage: URL(
-//      string: "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimages.media-allrecipes.com%2Fuserphotos%2F4827433.jpg&w=595&h=595&c=sc&poi=face&q=85"
-//    )!
-//  )
-//
-//  static var mocks: [RecipeModel] {
-//    return [mock1, mock1, mock1, mock1, mock1, mock1]
-//  }
-//
-//  static var mock: RecipeModel {
-//    return mock1
-//  }
-//}

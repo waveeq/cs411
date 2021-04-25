@@ -146,9 +146,11 @@ public class RecipeDetailViewController: UIViewController, RecipeDetailViewDeleg
   // MARK: - Private
 
   func saveNotesChanges() {
+    let recipeDetailView = view as! RecipeDetailView
     RecipeServices.sharedInstance.updateRecipeNotes(
       forUserID: AccountManager.sharedInstance.currentUserID,
-      recipeID: recipeID) { (completion) in
+      recipeID: recipeID,
+      notes: recipeDetailView.currentNotes) { (completion) in
       // No-op.
     }
   }

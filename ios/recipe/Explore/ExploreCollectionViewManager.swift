@@ -94,8 +94,11 @@ class ExploreCollectionViewManager: NSObject,
 
   // MARK: - UICollectionViewDelegate
 
-  public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    viewController?.navigationController?.pushViewController(
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    didSelectItemAt indexPath: IndexPath
+  ) {
+    viewController?.present(
       RecipeDetailViewController(recipeID: exploreModels[indexPath.row].recipeID),
       animated: true
     )

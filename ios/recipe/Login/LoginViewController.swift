@@ -26,10 +26,10 @@ public class LoginViewController: UIViewController, LoginViewDelegate {
   public func loginButtonDidTap() {
     let loginView = view as! LoginView
 
-    loginView.loadingIndicatorView.startAnimating()
+    LoadingOverlayView.startOverlay()
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      loginView.loadingIndicatorView.stopAnimating()
       self.navigationController?.pushViewController(RootViewController(), animated: true)
+      LoadingOverlayView.stopOverlay()
     }
   }
 

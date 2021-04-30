@@ -27,8 +27,6 @@ public class ExploreViewController: UIViewController, UITextFieldDelegate {
 
   var dismissTextEditingTapRecognizer: UIGestureRecognizer?
 
-  let loadingIndicatorView = UIActivityIndicatorView()
-
   public override func loadView() {
     let exploreView = UICollectionView(
       frame: .zero,
@@ -43,16 +41,6 @@ public class ExploreViewController: UIViewController, UITextFieldDelegate {
     exploreView.contentInset = UIEdgeInsets(top: 8, left: 12, bottom: 0, right: 12)
     exploreView.backgroundColor = .white
 
-    exploreView.addSubview(loadingIndicatorView)
-    loadingIndicatorView.hidesWhenStopped = true
-    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      loadingIndicatorView.centerXAnchor.constraint(equalTo: exploreView.centerXAnchor),
-      loadingIndicatorView.centerYAnchor.constraint(equalTo: exploreView.centerYAnchor),
-      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
-      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
-    ])
-
     view = exploreView
   }
 
@@ -60,20 +48,22 @@ public class ExploreViewController: UIViewController, UITextFieldDelegate {
     super.viewDidLoad()
 
     title = "Explore"
+
+    fetchData()
   }
 
-  public override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
+  // MARK: - Private
 
+  func fetchData() {
     let exploreView = view as! UICollectionView
 
-    loadingIndicatorView.startAnimating()
+    LoadingOverlayView.startOverlay()
     RecipeServices.sharedInstance.getExploreList(forUserID: 1) { (exploreModels) in
       self.exploreCollectionViewManager.updateData(exploreModels: exploreModels!)
       self.exploreCollectionViewManager.textFieldDelegate = self
       exploreView.delegate = self.exploreCollectionViewManager
       exploreView.dataSource = self.exploreCollectionViewManager
-      self.loadingIndicatorView.stopAnimating()
+      LoadingOverlayView.stopOverlay()
     }
   }
 

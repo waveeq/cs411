@@ -33,13 +33,11 @@ public class ProfileViewController: UIViewController, ProfileViewDelegate {
       preferredStyle: .alert
     )
 
-    let profileView = view as! ProfileView
-
     alert.addAction(
       UIAlertAction(title: "Log out", style: .destructive, handler: { (action) in
-        profileView.loadingIndicatorView.startAnimating()
+        LoadingOverlayView.startOverlay()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          profileView.loadingIndicatorView.stopAnimating()
+          LoadingOverlayView.stopOverlay()
           self.navigationController?.popToRootViewController(animated: true)
         }
       })

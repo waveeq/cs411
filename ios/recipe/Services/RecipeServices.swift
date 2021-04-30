@@ -7,6 +7,10 @@
 
 import Foundation
 
+extension Notification.Name {
+    static let myRecipesDataModified = Notification.Name("myRecipesDataModified")
+}
+
 public class RecipeServices {
 
   static let sharedInstance = RecipeServices()
@@ -119,6 +123,9 @@ public class RecipeServices {
       let success: Bool = result?["success"] as? Bool ?? false
 
       DispatchQueue.main.async {
+        if success {
+          NotificationCenter.default.post(name: .myRecipesDataModified, object: nil)
+        }
         completion(success)
       }
     }
@@ -135,6 +142,9 @@ public class RecipeServices {
       let success: Bool = result?["success"] as? Bool ?? false
 
       DispatchQueue.main.async {
+        if success {
+          NotificationCenter.default.post(name: .myRecipesDataModified, object: nil)
+        }
         completion(success)
       }
     }

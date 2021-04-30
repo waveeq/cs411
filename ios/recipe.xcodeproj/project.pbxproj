@@ -35,6 +35,7 @@
 		49A003E62606BFF200A27038 /* ExploreFilterCollectionViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A003E52606BFF200A27038 /* ExploreFilterCollectionViewManager.swift */; };
 		49A003EA2606D74400A27038 /* MessagesSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A003E92606D74400A27038 /* MessagesSectionHeader.swift */; };
 		49A003EE2606D79A00A27038 /* MessagesCollectionViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A003ED2606D79A00A27038 /* MessagesCollectionViewManager.swift */; };
+		49A9ACE82639D16A004EE333 /* LoadingOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A9ACE72639D16A004EE333 /* LoadingOverlayView.swift */; };
 		49C6D6892608FFCC00FE327A /* RecipeDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C6D6882608FFCC00FE327A /* RecipeDetailViewController.swift */; };
 		49CE726D2619855A004201B6 /* FooterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CE726C2619855A004201B6 /* FooterButton.swift */; };
 		49CE727126198572004201B6 /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CE727026198572004201B6 /* FooterView.swift */; };
@@ -84,6 +85,7 @@
 		49A003E52606BFF200A27038 /* ExploreFilterCollectionViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreFilterCollectionViewManager.swift; sourceTree = "<group>"; };
 		49A003E92606D74400A27038 /* MessagesSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesSectionHeader.swift; sourceTree = "<group>"; };
 		49A003ED2606D79A00A27038 /* MessagesCollectionViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesCollectionViewManager.swift; sourceTree = "<group>"; };
+		49A9ACE72639D16A004EE333 /* LoadingOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingOverlayView.swift; sourceTree = "<group>"; };
 		49C6D6882608FFCC00FE327A /* RecipeDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailViewController.swift; sourceTree = "<group>"; };
 		49CE726C2619855A004201B6 /* FooterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterButton.swift; sourceTree = "<group>"; };
 		49CE727026198572004201B6 /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 				49964E7C2618B3B800548BCC /* DarkButton.swift */,
 				49964E792618B3AD00548BCC /* LightButton.swift */,
 				49A003DA260630BC00A27038 /* ProfileDiscView.swift */,
+				49A9ACE72639D16A004EE333 /* LoadingOverlayView.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -344,6 +347,7 @@
 				49A003DF2606BA5500A27038 /* ExploreCollectionViewManager.swift in Sources */,
 				49A003E32606BAAE00A27038 /* ExploreSectionHeader.swift in Sources */,
 				497D186326208BB200DB4A29 /* RESTAPIHelper.swift in Sources */,
+				49A9ACE82639D16A004EE333 /* LoadingOverlayView.swift in Sources */,
 				49964E732618871900548BCC /* ProfileViewController.swift in Sources */,
 				49CE727A26198614004201B6 /* LoginView.swift in Sources */,
 				49CE727126198572004201B6 /* FooterView.swift in Sources */,

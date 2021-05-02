@@ -21,6 +21,7 @@ public class DarkButton: UIButton {
       updateColor()
     }
   }
+  
   var disabled: Bool = false {
     didSet {
       updateColor()

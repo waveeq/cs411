@@ -11,8 +11,19 @@ public class ExploreFilterCell: UICollectionViewCell {
 
   let label = UILabel()
 
+  var activated: Bool = false {
+    didSet {
+      updateColor()
+    }
+  }
+  var highlight: Bool = false {
+    didSet {
+      updateColor()
+    }
+  }
+
   required init?(coder: NSCoder) {
-    fatalError("nope!")
+    fatalError("init(coder:) has not been implemented")
   }
 
   public override init(frame: CGRect) {
@@ -40,5 +51,10 @@ public class ExploreFilterCell: UICollectionViewCell {
 
   public override var intrinsicContentSize: CGSize {
     return CGSize(width: label.bounds.width + 16, height: 44)
+  }
+
+  func updateColor() {
+    let white: CGFloat = highlight ? 0.95 : activated ? 0.9 : 1
+    self.backgroundColor = UIColor(white: white, alpha: 1)
   }
 }

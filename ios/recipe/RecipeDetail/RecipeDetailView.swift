@@ -290,10 +290,12 @@ public class RecipeDetailView: UIScrollView {
 
   public func updateData(_ recipeDetailModel: RecipeDetailModel) {
     titleLabel.text = recipeDetailModel.title
-    if let image = try? UIImage(data: Data(contentsOf: recipeDetailModel.mainImage)) {
-      imageView.image = image
-    } else {
-      imageView.backgroundColor = .systemGray
+
+    imageView.backgroundColor = .systemGray
+    RecipeServices.sharedInstance.loadImageData(
+      forRecipeID: recipeDetailModel.recipeID,
+      url: recipeDetailModel.mainImage) { image in
+      self.imageView.image = image
     }
 
     if recipeDetailModel.isFavorited {
@@ -316,7 +318,6 @@ public class RecipeDetailView: UIScrollView {
     super.layoutSubviews()
 
     recipeDetailsContentLabel.sizeToFit()
-    notesTextView.sizeToFit()
     contentSize = containerView.frame.size
   }
 

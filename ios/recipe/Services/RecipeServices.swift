@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension Notification.Name {
     static let myRecipesDataModified = Notification.Name("myRecipesDataModified")
@@ -15,6 +16,8 @@ public class RecipeServices {
 
   static let sharedInstance = RecipeServices()
   static let endpoint = "http://44.192.111.170"
+
+  let imageCache: [Int:UIImage] = [:]
 
   public func getRecipeDetails(
     forUserID userID: Int,
@@ -163,6 +166,28 @@ public class RecipeServices {
         let success: Bool = result?["success"] as? Bool ?? false
 
         completion(success)
+      }
+    }
+  }
+
+  public func loadImageData(
+    forRecipeID recipeID: Int,
+    url: URL,
+    completion: @escaping (UIImage?) -> Void
+  ) {
+    var imageCache = Self.sharedInstance.imageCache
+
+    if let image = imageCache[recipeID] {
+      completion(image)
+      return
+    }
+
+    DispatchQueue.global().async {
+      let image = try? UIImage(data: Data(contentsOf: url))
+
+      DispatchQueue.main.async {
+        imageCache[recipeID] = image
+        completion(image)
       }
     }
   }

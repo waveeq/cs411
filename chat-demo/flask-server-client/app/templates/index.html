@@ -7,8 +7,8 @@
         <h3>Note: in this demo, the mobile app always uses room 1 and name "mobile_app".
         <form method="POST">
             {{ form.hidden_tag() }}
-            {{ form.name.label }}: {{ form.name() }} {% for error in form.name.errors %}{{ error }}{% endfor %}<br>
-            {{ form.room.label }}: {{ form.room() }} {% for error in form.room.errors %}{{ error }}{% endfor %}<br>
+            {{ form.sender.label }}: {{ form.sender() }} {% for error in form.sender.errors %}{{ error }}{% endfor %}<br>
+            {{ form.friend.label }}: {{ form.friend() }} {% for error in form.friend.errors %}{{ error }}{% endfor %}<br>
             {{ form.submit() }}
         </form>
     </body>

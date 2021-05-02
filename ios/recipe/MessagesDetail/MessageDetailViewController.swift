@@ -1,0 +1,249 @@
+//
+//  MessageDetailViewController.swift
+//  recipe
+//
+//  Created by Mochammad Dikra Prasetya on 2021/03/24.
+//
+
+import SocketIO
+import UIKit
+
+public class MessageDetailViewController: UIViewController,
+                                          MessageDetailViewDelegate,
+                                          UICollectionViewDataSource,
+                                          UICollectionViewDelegateFlowLayout {
+
+  let cellIdentifier = "messageBubbleCellIdentifer"
+
+  let friendModel: FriendModel
+
+  var socketManager : SocketManager!
+  var socket: SocketIOClient!
+
+  var dismissTextEditingTapRecognizer: UIGestureRecognizer?
+
+  var messageBubbles: [MessageBubbleModel] = []
+
+  public required init(friend: FriendModel) {
+    self.friendModel = friend
+
+    super.init(nibName: nil, bundle: nil)
+
+    navigationItem.largeTitleDisplayMode = .never
+    navigationItem.leftItemsSupplementBackButton = true
+    navigationItem.leftBarButtonItem = UIBarButtonItem(
+      customView: MessageNavBarFriendView(friend: friend)
+    )
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  public override func loadView() {
+    let messageDetailView = MessageDetailView()
+    messageDetailView.delegate = self
+
+    view = messageDetailView
+  }
+
+  public override func viewDidLoad() {
+    super.viewDidLoad()
+
+    let messageDetailView = view as! MessageDetailView
+
+    let collectionView = messageDetailView.collectionView
+    collectionView.register(MessageBubbleCell.self, forCellWithReuseIdentifier: cellIdentifier)
+    collectionView.delegate = self
+    collectionView.dataSource = self
+
+    // Navigation Bar cover
+    connectSocketIO()
+  }
+
+  func connectSocketIO() {
+    socketManager = SocketManager(
+      socketURL: URL(string: "http://127.0.0.1:5000")!,
+      config: [.log(true), .compress]
+    )
+    socket = socketManager.socket(forNamespace: "/chat")
+
+    socket.on("connect") { data, ack in
+      self.socket.emit(
+        "joined",
+        SocketJoinRoomModel(
+          sender: AccountManager.sharedInstance.currentUserID,
+          friend: self.friendModel.userID
+        )
+      )
+    }
+
+    socket.on("status") { data, ack in
+      self.logSocketData(data)
+    }
+
+    socket.on("message") { data, ack in
+      self.addNewMessageFromSocketData(data)
+      self.logSocketData(data)
+    }
+
+    socket.connect()
+  }
+
+  func logSocketData(_ data: [Any]) {
+    guard let dict = data.first as? [String:Any] else { return }
+
+    print("===== log socket data: \(String(describing: dict))")
+  }
+
+  func addNewMessageFromSocketData(_ data: [Any]) {
+
+    guard let dict = data.first as? [String:Any],
+          let sender = dict["sender"] as? Int,
+          let friend = dict["friend"] as? Int,
+          let isText = dict["isText"] as? Bool,
+          let dateTimeEpoch = dict["date"] as? TimeInterval
+    else {
+      print("===== invalid socket data format: \(data)")
+      return
+    }
+
+    let messageBubbleModel = MessageBubbleModel(
+      sender: sender,
+      friend: friend,
+      isText: isText,
+      date: Date(timeIntervalSince1970: dateTimeEpoch),
+      text: dict["text"] as? String,
+      recipeID: dict["recipeID"] as? Int
+    )
+
+    messageBubbles.append(messageBubbleModel)
+
+    let messageDetailView = view as! MessageDetailView
+    let collectionView = messageDetailView.collectionView
+
+    collectionView.reloadData()
+    collectionView.setNeedsLayout()
+  }
+
+  // MARK: - MessageDetailViewDelegate
+
+  public func sendButtonDidTap(_ sendButton: UIButton, textView: UITextView) {
+    let messageDetailView = view as! MessageDetailView
+    socket.emit(
+      "text",
+      MessageBubbleModel(
+        sender: AccountManager.sharedInstance.currentUserID,
+        friend: self.friendModel.userID,
+        isText: true,
+        date: Date(),
+        text: textView.text,
+        recipeID: nil
+      )
+    )
+
+    textView.text = nil
+    messageDetailView.updateOnTextViewChange()
+  }
+
+  // MARK: - UICollectionViewDataSource
+
+  public func numberOfSections(in collectionView: UICollectionView) -> Int {
+    return 1
+  }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    numberOfItemsInSection section: Int
+  ) -> Int {
+    return messageBubbles.count
+  }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    cellForItemAt indexPath: IndexPath
+  ) -> UICollectionViewCell {
+    let cell = collectionView.dequeueReusableCell(
+      withReuseIdentifier: cellIdentifier,
+      for: indexPath
+    ) as! MessageBubbleCell
+    cell.configure(with: messageBubbles[indexPath.row])
+
+    return cell
+  }
+
+  // MARK: - UICollectionViewDelegateFlowLayout
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    layout collectionViewLayout: UICollectionViewLayout,
+    minimumLineSpacingForSectionAt section: Int
+  ) -> CGFloat {
+    return 12
+  }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    layout collectionViewLayout: UICollectionViewLayout,
+    minimumInteritemSpacingForSectionAt section: Int
+  ) -> CGFloat {
+    return 12
+  }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    layout collectionViewLayout: UICollectionViewLayout,
+    insetForSectionAt section: Int
+  ) -> UIEdgeInsets {
+    return UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+  }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    layout collectionViewLayout: UICollectionViewLayout,
+    sizeForItemAt indexPath: IndexPath
+  ) -> CGSize {
+    let tempLabel = UILabel()
+
+    tempLabel.font = UIFont.systemFont(ofSize: 16)
+    tempLabel.adjustsFontSizeToFitWidth = false
+    tempLabel.numberOfLines = 0
+    tempLabel.lineBreakMode = .byWordWrapping
+    tempLabel.text = messageBubbles[indexPath.row].text
+
+    let estimatedHeight = tempLabel.sizeThatFits(
+      CGSize(width: view.frame.width * 0.8, height: .greatestFiniteMagnitude)
+    ).height
+
+    return CGSize(width: view.frame.width, height: estimatedHeight + 36)
+  }
+
+  // MARK: - UITextViewDelegate
+
+  @objc func dismissTextEditing(_ sender: Any?) {
+    view.endEditing(true)
+  }
+
+  public func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+    dismissTextEditingTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissTextEditing(_:)))
+    view.addGestureRecognizer(dismissTextEditingTapRecognizer!)
+    return true
+  }
+
+  public func textViewDidChange(_ textView: UITextView) {
+    let messageDetailView = view as! MessageDetailView
+    messageDetailView.updateOnTextViewChange()
+  }
+
+  public func textViewDidEndEditing(_ textView: UITextView) {
+    if let _ = dismissTextEditingTapRecognizer {
+      view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
+    }
+    dismissTextEditingTapRecognizer = nil
+  }
+
+  public func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+    textView.resignFirstResponder()
+    return true
+  }
+}

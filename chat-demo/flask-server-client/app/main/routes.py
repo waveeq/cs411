@@ -8,12 +8,12 @@ def index():
     """Login form to enter a room."""
     form = LoginForm()
     if form.validate_on_submit():
-        session['name'] = form.name.data
-        session['room'] = form.room.data
+        session['sender'] = form.sender.data
+        session['friend'] = form.friend.data
         return redirect(url_for('.chat'))
     elif request.method == 'GET':
-        form.name.data = session.get('name', '')
-        form.room.data = session.get('room', '')
+        form.sender.data = session.get('sender', '')
+        form.friend.data = session.get('friend', '')
     return render_template('index.html', form=form)
 
 
@@ -21,8 +21,8 @@ def index():
 def chat():
     """Chat room. The user's name and room must be stored in
     the session."""
-    name = session.get('name', '')
-    room = session.get('room', '')
-    if name == '' or room == '':
+    sender = session.get('sender', '')
+    friend = session.get('friend', '')
+    if sender == '' or friend == '':
         return redirect(url_for('.index'))
-    return render_template('chat.html', name=name, room=room)
+    return render_template('chat.html', sender=sender, friend=friend)

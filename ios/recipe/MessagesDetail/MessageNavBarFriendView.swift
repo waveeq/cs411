@@ -12,15 +12,15 @@ public class MessageNavBarFriendView: UIView {
   var friendImageView: UIImageView!
   var friendNameLabel: UILabel!
 
-  required init(messageData: MessageData) {
+  required init(friend: FriendModel) {
     super.init(frame: .zero)
 
-    friendImageView = UIImageView(image: messageData.image)
+    friendImageView = UIImageView(image: UIImage(named: "avatar_placeholder")!)
     friendImageView.clipsToBounds = true
     addSubview(friendImageView)
 
     friendNameLabel = UILabel()
-    friendNameLabel.text = messageData.name
+    friendNameLabel.text = friend.name
     friendNameLabel.adjustsFontSizeToFitWidth = false
     friendNameLabel.numberOfLines = 1
     friendNameLabel.sizeToFit()
@@ -31,7 +31,7 @@ public class MessageNavBarFriendView: UIView {
     NSLayoutConstraint.activate([
       friendImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
       friendImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-      friendImageView.heightAnchor.constraint(equalTo: heightAnchor),
+      friendImageView.heightAnchor.constraint(equalTo: heightAnchor, constant: -8),
       friendImageView.widthAnchor.constraint(equalTo: friendImageView.heightAnchor),
       friendNameLabel.leadingAnchor.constraint(equalTo: friendImageView.trailingAnchor, constant: 8),
       friendNameLabel.centerYAnchor.constraint(equalTo: centerYAnchor),

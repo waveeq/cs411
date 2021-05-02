@@ -17,7 +17,6 @@ class ExploreCollectionViewManager: NSObject,
   let headerIdentifier = "exploreHeaderIdentifier"
 
   var exploreModels: [ExploreModel] = []
-  var imageCaches: [Int:UIImage] = [:]
 
   weak var textFieldDelegate: UITextFieldDelegate?
   weak var viewController: UIViewController?
@@ -28,8 +27,10 @@ class ExploreCollectionViewManager: NSObject,
 
     self.viewController = viewController
     self.collectionView = collectionView
+
+    collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
     
-    collectionView.register(ExploreCell.self, forCellWithReuseIdentifier: cellIdentifier)
+    collectionView.register(RecipeThumbnailCell.self, forCellWithReuseIdentifier: cellIdentifier)
     collectionView.register(
       ExploreSectionHeader.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -39,12 +40,7 @@ class ExploreCollectionViewManager: NSObject,
 
   public func updateData(exploreModels: [ExploreModel]) {
     self.exploreModels = exploreModels
-    imageCaches.removeAll()
-    for exploreModel in exploreModels {
-      imageCaches[exploreModel.recipeID] = try? UIImage(data: Data(contentsOf:  exploreModel.mainImage))
-    }
-
-    collectionView?.reloadSections(IndexSet(integer: 0))
+    collectionView?.reloadData()
   }
 
   // MARK: - UICollectionViewDataSource
@@ -57,38 +53,39 @@ class ExploreCollectionViewManager: NSObject,
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return exploreModels.count
+    return exploreModels.count * 2
   }
 
   public func collectionView(
     _ collectionView: UICollectionView,
     cellForItemAt indexPath: IndexPath
   ) -> UICollectionViewCell {
-    let exploreCell = collectionView.dequeueReusableCell(
+    let cell = collectionView.dequeueReusableCell(
       withReuseIdentifier: cellIdentifier,
       for: indexPath
-    ) as! ExploreCell
-
-    exploreCell.imageView.image = imageCaches[exploreModels[indexPath.row].recipeID]
-    return exploreCell
+    ) as! RecipeThumbnailCell
+    cell.loadImageAsync(
+      forRecipeID: exploreModels[indexPath.row % exploreModels.count].recipeID,
+      url: exploreModels[indexPath.row % exploreModels.count].mainImage
+    )
+    return cell
   }
 
-  public func collectionView(
+  func collectionView(
     _ collectionView: UICollectionView,
     viewForSupplementaryElementOfKind kind: String,
     at indexPath: IndexPath
   ) -> UICollectionReusableView {
     if kind == UICollectionView.elementKindSectionHeader {
-      let header = collectionView.dequeueReusableSupplementaryView(
+      let sectionHeader = collectionView.dequeueReusableSupplementaryView(
         ofKind: kind,
         withReuseIdentifier: headerIdentifier,
         for: indexPath
       ) as! ExploreSectionHeader
-
-      header.textFieldDelegate = textFieldDelegate
-      return header
-    } else { //No footer in this case but can add option for that
-         return UICollectionReusableView()
+      sectionHeader.textFieldDelegate = textFieldDelegate
+      return sectionHeader
+    } else {
+      return UICollectionReusableView()
     }
   }
 
@@ -99,7 +96,7 @@ class ExploreCollectionViewManager: NSObject,
     didSelectItemAt indexPath: IndexPath
   ) {
     viewController?.present(
-      RecipeDetailViewController(recipeID: exploreModels[indexPath.row].recipeID),
+      RecipeDetailViewController(recipeID: exploreModels[indexPath.row % exploreModels.count].recipeID),
       animated: true
     )
   }
@@ -127,7 +124,12 @@ class ExploreCollectionViewManager: NSObject,
     layout collectionViewLayout: UICollectionViewLayout,
     insetForSectionAt section: Int
   ) -> UIEdgeInsets {
-    return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    return UIEdgeInsets(
+      top: 8,
+      left: 12,
+      bottom: 8,
+      right: 12
+    )
   }
 
   public func collectionView(
@@ -137,6 +139,14 @@ class ExploreCollectionViewManager: NSObject,
   ) -> CGSize {
     let cellSize = (collectionView.frame.size.width / 3) - 16
     return CGSize(width: cellSize, height: cellSize)
+  }
+
+  func collectionView(
+    _ collectionView: UICollectionView,
+    layout collectionViewLayout: UICollectionViewLayout,
+    referenceSizeForHeaderInSection section: Int
+  ) -> CGSize {
+    return CGSize(width: collectionView.frame.width, height: ExploreSectionHeader.headerHeight)
   }
 }
 

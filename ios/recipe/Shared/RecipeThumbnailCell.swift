@@ -1,13 +1,13 @@
 //
-//  MyRecipesCell.swift
+//  RecipeThumbnailCell.swift
 //  recipe
 //
-//  Created by Mochammad Dikra Prasetya on 2021/04/10.
+//  Created by Mochammad Dikra Prasetya on 2021/05/01.
 //
 
 import UIKit
 
-public class MyRecipesCell: UICollectionViewCell {
+public class RecipeThumbnailCell: UICollectionViewCell {
 
   let imageView = UIImageView()
 
@@ -22,7 +22,7 @@ public class MyRecipesCell: UICollectionViewCell {
     imageView.contentMode = .scaleAspectFill
     imageView.clipsToBounds = true
     contentView.addSubview(imageView)
-    
+
     imageView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       imageView.topAnchor.constraint(equalTo: contentView.topAnchor),

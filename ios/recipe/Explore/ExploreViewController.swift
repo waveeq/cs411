@@ -38,8 +38,10 @@ public class ExploreViewController: UIViewController, UITextFieldDelegate {
       collectionView: exploreView
     )
 
-    exploreView.contentInset = UIEdgeInsets(top: 8, left: 12, bottom: 0, right: 12)
     exploreView.backgroundColor = .white
+
+    exploreView.delegate = exploreCollectionViewManager
+    exploreView.dataSource = exploreCollectionViewManager
 
     view = exploreView
   }
@@ -55,14 +57,10 @@ public class ExploreViewController: UIViewController, UITextFieldDelegate {
   // MARK: - Private
 
   func fetchData() {
-    let exploreView = view as! UICollectionView
-
     LoadingOverlayView.startOverlay()
-    RecipeServices.sharedInstance.getExploreList(forUserID: 1) { (exploreModels) in
-      self.exploreCollectionViewManager.updateData(exploreModels: exploreModels!)
+    RecipeServices.sharedInstance.getExploreList(forUserID: 1) { exploreModels in
       self.exploreCollectionViewManager.textFieldDelegate = self
-      exploreView.delegate = self.exploreCollectionViewManager
-      exploreView.dataSource = self.exploreCollectionViewManager
+      self.exploreCollectionViewManager.updateData(exploreModels: exploreModels!)
       LoadingOverlayView.stopOverlay()
     }
   }

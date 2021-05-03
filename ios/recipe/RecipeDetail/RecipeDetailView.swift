@@ -9,6 +9,7 @@ import UIKit
 
 public protocol RecipeDetailViewDelegate: class, UITextViewDelegate {
   func favoriteButtonDidTap(_ favoriteButton: UIButton)
+  func chatButtonDidTap(_ chatButton: UIButton)
 }
 
 public class RecipeDetailView: UIScrollView {
@@ -114,7 +115,11 @@ public class RecipeDetailView: UIScrollView {
     favoriteButton.contentVerticalAlignment = .fill
     favoriteButton.contentHorizontalAlignment = .fill
     favoriteButton.tintColor = .black
-    favoriteButton.addTarget(self, action: #selector(favoriteButtonDidTap(_:)), for: .touchUpInside)
+    favoriteButton.addTarget(
+      self,
+      action: #selector(favoriteButtonDidTap(_:)),
+      for: .touchUpInside
+    )
     containerView.addSubview(favoriteButton)
 
     favoriteButton.translatesAutoresizingMaskIntoConstraints = false
@@ -129,12 +134,16 @@ public class RecipeDetailView: UIScrollView {
       UIImage(systemName: "message")?.withHorizontallyFlippedOrientation(),
       for: .normal
     )
-
     chatButton.imageView?.contentMode = .scaleAspectFit
     chatButton.imageEdgeInsets = .zero
     chatButton.contentVerticalAlignment = .fill
     chatButton.contentHorizontalAlignment = .fill
     chatButton.tintColor = .black
+    chatButton.addTarget(
+      self,
+      action: #selector(chatButtonDidTap(_:)),
+      for: .touchUpInside
+    )
     containerView.addSubview(chatButton)
 
     chatButton.translatesAutoresizingMaskIntoConstraints = false
@@ -325,6 +334,10 @@ public class RecipeDetailView: UIScrollView {
 
   @objc func favoriteButtonDidTap(_ sender: Any?) {
     recipeDetailViewDelegate?.favoriteButtonDidTap(favoriteButton)
+  }
+
+  @objc func chatButtonDidTap(_ sender: Any?) {
+    recipeDetailViewDelegate?.chatButtonDidTap(chatButton)
   }
 
   // MARK: - Public Methods

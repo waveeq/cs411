@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49094F01263F5EFD0059D93A /* ShareSelectFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49094F00263F5EFD0059D93A /* ShareSelectFriendViewController.swift */; };
+		49094F04263F60410059D93A /* ShareSelectFriendCollectionViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49094F03263F60410059D93A /* ShareSelectFriendCollectionViewManager.swift */; };
+		49094F07263F60EC0059D93A /* ShareSelectFriendHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49094F06263F60EC0059D93A /* ShareSelectFriendHeader.swift */; };
+		49094F0A263F61110059D93A /* ShareSelectFriendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49094F09263F61110059D93A /* ShareSelectFriendCell.swift */; };
 		490F3B52260E0101007F2921 /* RecentMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490F3B51260E0101007F2921 /* RecentMessageCell.swift */; };
 		490F3B61260E0245007F2921 /* MessageNavBarFriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490F3B60260E0245007F2921 /* MessageNavBarFriendView.swift */; };
 		490F3B6E260E0E73007F2921 /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490F3B6D260E0E73007F2921 /* RecipeDetailView.swift */; };
@@ -60,6 +64,10 @@
 
 /* Begin PBXFileReference section */
 		47CCD0C6EA779F8426013923 /* Pods-recipe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-recipe.release.xcconfig"; path = "Target Support Files/Pods-recipe/Pods-recipe.release.xcconfig"; sourceTree = "<group>"; };
+		49094F00263F5EFD0059D93A /* ShareSelectFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSelectFriendViewController.swift; sourceTree = "<group>"; };
+		49094F03263F60410059D93A /* ShareSelectFriendCollectionViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSelectFriendCollectionViewManager.swift; sourceTree = "<group>"; };
+		49094F06263F60EC0059D93A /* ShareSelectFriendHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSelectFriendHeader.swift; sourceTree = "<group>"; };
+		49094F09263F61110059D93A /* ShareSelectFriendCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSelectFriendCell.swift; sourceTree = "<group>"; };
 		490F3B51260E0101007F2921 /* RecentMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentMessageCell.swift; sourceTree = "<group>"; };
 		490F3B60260E0245007F2921 /* MessageNavBarFriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageNavBarFriendView.swift; sourceTree = "<group>"; };
 		490F3B6D260E0E73007F2921 /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
@@ -154,6 +162,10 @@
 				49925FF52619DC38005001A8 /* RatingStarsView.swift */,
 				490F3B6D260E0E73007F2921 /* RecipeDetailView.swift */,
 				49C6D6882608FFCC00FE327A /* RecipeDetailViewController.swift */,
+				49094F00263F5EFD0059D93A /* ShareSelectFriendViewController.swift */,
+				49094F03263F60410059D93A /* ShareSelectFriendCollectionViewManager.swift */,
+				49094F06263F60EC0059D93A /* ShareSelectFriendHeader.swift */,
+				49094F09263F61110059D93A /* ShareSelectFriendCell.swift */,
 			);
 			path = RecipeDetail;
 			sourceTree = "<group>";
@@ -432,6 +444,7 @@
 				49E26CA2260603070041FD0C /* MessagesViewController.swift in Sources */,
 				49F09F572601A8E8005B1398 /* RootViewController.swift in Sources */,
 				49CE726D2619855A004201B6 /* FooterButton.swift in Sources */,
+				49094F07263F60EC0059D93A /* ShareSelectFriendHeader.swift in Sources */,
 				490F3B6E260E0E73007F2921 /* RecipeDetailView.swift in Sources */,
 				49925FEC2619C71C005001A8 /* RecipeServices.swift in Sources */,
 				49E26C97260602D30041FD0C /* ExploreViewController.swift in Sources */,
@@ -448,6 +461,7 @@
 				490F3B52260E0101007F2921 /* RecentMessageCell.swift in Sources */,
 				49EE0459263C72CC00431BCF /* RecipeThumbnailCell.swift in Sources */,
 				49925FE82619AB53005001A8 /* SignUpView.swift in Sources */,
+				49094F01263F5EFD0059D93A /* ShareSelectFriendViewController.swift in Sources */,
 				49E26CAA26060CC60041FD0C /* TabContainerViewController.swift in Sources */,
 				49925FF62619DC38005001A8 /* RatingStarsView.swift in Sources */,
 				496227E5260AFE3A0001B29F /* MessageDetailViewController.swift in Sources */,
@@ -459,10 +473,12 @@
 				49964E7D2618B3B800548BCC /* DarkButton.swift in Sources */,
 				49C6D6892608FFCC00FE327A /* RecipeDetailViewController.swift in Sources */,
 				49CE727626198605004201B6 /* LoginViewController.swift in Sources */,
+				49094F0A263F61110059D93A /* ShareSelectFriendCell.swift in Sources */,
 				49F09F692601ABCF005B1398 /* FooterViewController.swift in Sources */,
 				49A003EA2606D74400A27038 /* MessagesSectionHeader.swift in Sources */,
 				49925FF12619C853005001A8 /* Models.swift in Sources */,
 				490F3B73260E14C8007F2921 /* ExploreFilterCell.swift in Sources */,
+				49094F04263F60410059D93A /* ShareSelectFriendCollectionViewManager.swift in Sources */,
 				49925FE52619AB45005001A8 /* SignUpViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

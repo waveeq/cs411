@@ -1,77 +1,36 @@
 //
-//  MessagesCollectionViewManager.swift
+//  ShareSelectFriendCollectioinViewManager.swift
 //  recipe
 //
-//  Created by Mochammad Dikra Prasetya on 2021/03/21.
+//  Created by Mochammad Dikra Prasetya on 2021/05/03.
 //
 
 import UIKit
 
-public class MessagesCollectionViewManager: NSObject,
-                                            UICollectionViewDataSource,
-                                            UICollectionViewDelegate,
-                                            UICollectionViewDelegateFlowLayout {
+public class ShareSelectFriendCollectionViewManager: NSObject,
+                                                     UICollectionViewDataSource,
+                                                     UICollectionViewDelegate,
+                                                     UICollectionViewDelegateFlowLayout {
 
-  let cellIdentifier = "messagesCellIdentifer"
-  let headerIdentifier = "messagesHeaderIdentifier"
+  let cellIdentifier = "shareSelectFriendCellIdentifer"
+  let headerIdentifier = "shareSelectFriendHeaderIdentifier"
 
-  lazy var recentMessages: [RecentMessageModel] = {
+  lazy var friends: [FriendModel] = {
     let data = [
-      RecentMessageModel(
-        friend: FriendModel(
+      FriendModel(
           userID: 2,
           name: "Eva",
           profilePicture: nil
-        ), message: MessageModel(
-          date: Date(timeIntervalSinceNow: -5.0 * 60.0),
-          isText: true,
-          text: "I've been looking for this recipe my whole life. Thank you!",
-          recipeID: nil,
-          mainImage: nil,
-          summary: nil
-        )
-//        name: "Eva",
-//        image: UIImage(named: "avatar_placeholder")!,
-//        recentChat: "I've been looking for this recipe my whole life. Thank you!",
-//        recentChatTime: "・5m"
       ),
-      RecentMessageModel(
-        friend: FriendModel(
-          userID: 3,
-          name: "Maggie",
-          profilePicture: nil
-        ), message: MessageModel(
-          date: Date(timeIntervalSinceNow: -30.0 * 60.0),
-          isText: true,
-          text: "Thanks :)",
-          recipeID: nil,
-          mainImage: nil,
-          summary: nil
-        )
-//      MessageData(
-//        name: "Maggie",
-//        image: UIImage(named: "avatar_placeholder")!,
-//        recentChat: "Thanks :)",
-//        recentChatTime: "・30m"
+      FriendModel(
+        userID: 3,
+        name: "Maggie",
+        profilePicture: nil
       ),
-      RecentMessageModel(
-        friend: FriendModel(
-          userID: 4,
-          name: "Jessica",
-          profilePicture: nil
-        ), message: MessageModel(
-          date: Date(timeIntervalSinceNow: -2 * 3600.0),
-          isText: true,
-          text: "Loved this app!!",
-          recipeID: nil,
-          mainImage: nil,
-          summary: nil
-        )
-//      MessageData(
-//        name: "Jessica",
-//        image: UIImage(named: "avatar_placeholder")!,
-//        recentChat: "Loved this app!!",
-//        recentChatTime: "・2h"
+      FriendModel(
+        userID: 4,
+        name: "Jessica",
+        profilePicture: nil
       ),
     ]
     return data
@@ -84,10 +43,10 @@ public class MessagesCollectionViewManager: NSObject,
     super.init()
 
     self.viewController = viewController
-    
-    collectionView.register(RecentMessageCell.self, forCellWithReuseIdentifier: cellIdentifier)
+
+    collectionView.register(ShareSelectFriendCell.self, forCellWithReuseIdentifier: cellIdentifier)
     collectionView.register(
-      MessagesSectionHeader.self,
+      ShareSelectFriendHeader.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
       withReuseIdentifier: headerIdentifier
     )
@@ -103,7 +62,7 @@ public class MessagesCollectionViewManager: NSObject,
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return recentMessages.count
+    return friends.count
   }
 
   public func collectionView(
@@ -113,10 +72,10 @@ public class MessagesCollectionViewManager: NSObject,
     let cell = collectionView.dequeueReusableCell(
       withReuseIdentifier: cellIdentifier,
       for: indexPath
-    ) as! RecentMessageCell
+    ) as! ShareSelectFriendCell
 
-    cell.configure(with: recentMessages[indexPath.row])
-    
+    cell.configure(with: friends[indexPath.row])
+
     return cell
   }
 
@@ -130,7 +89,7 @@ public class MessagesCollectionViewManager: NSObject,
         ofKind: kind,
         withReuseIdentifier: headerIdentifier,
         for: indexPath
-      ) as! MessagesSectionHeader
+      ) as! ShareSelectFriendHeader
       header.textFieldDelegate = textFieldDelegate
       return header
     } else { //No footer in this case but can add option for that
@@ -141,10 +100,10 @@ public class MessagesCollectionViewManager: NSObject,
   // MARK: - UICollectionViewDelegate
 
   public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    viewController?.navigationController?.pushViewController(
-      MessageDetailViewController(friend: recentMessages[indexPath.row].friend),
-      animated: true
-    )
+//    viewController?.navigationController?.pushViewController(
+//      MessageDetailViewController(friend: recentMessages[indexPath.row].friend),
+//      animated: true
+//    )
   }
 
   // MARK: - UICollectionViewDelegateFlowLayout
@@ -178,7 +137,7 @@ public class MessagesCollectionViewManager: NSObject,
     layout collectionViewLayout: UICollectionViewLayout,
     sizeForItemAt indexPath: IndexPath
   ) -> CGSize {
-    return CGSize(width: collectionView.frame.size.width, height: RecentMessageCell.height)
+    return CGSize(width: collectionView.frame.size.width, height: ShareSelectFriendCell.height)
   }
 
   public func collectionView(
@@ -186,7 +145,7 @@ public class MessagesCollectionViewManager: NSObject,
     layout collectionViewLayout: UICollectionViewLayout,
     referenceSizeForHeaderInSection section: Int
   ) -> CGSize {
-    return CGSize(width: collectionView.frame.width, height: MessagesSectionHeader.searchBarHeight)
+    return CGSize(width: collectionView.frame.width, height: ShareSelectFriendHeader.searchBarHeight)
   }
 }
 

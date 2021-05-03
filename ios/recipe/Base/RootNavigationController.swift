@@ -24,13 +24,32 @@ public class RootNavigationController: UINavigationController {
   }
 }
 
+public extension UIViewController {
+
+  @objc var rootViewController: RootViewController? {
+    if let self = self as? RootViewController {
+      return self
+    }
+
+    if let presentingViewController = presentingViewController {
+      return presentingViewController.rootViewController
+    }
+
+    return navigationController?.rootViewController
+  }
+}
+
 public extension UINavigationController {
 
-  var rootViewController: RootViewController? {
+  @objc override var rootViewController: RootViewController? {
     if let rootViewController = viewControllers.first as? RootViewController {
       return rootViewController
-    } else {
-      return parent?.navigationController?.rootViewController
     }
+
+    if let rootViewController = topViewController as? RootViewController {
+      return rootViewController
+    }
+
+    return parent?.rootViewController
   }
 }

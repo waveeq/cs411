@@ -68,7 +68,8 @@ public class ShareSelectFriendViewController: UIViewController, UITextFieldDeleg
 
     shareSelectFriendCollectionViewManager = ShareSelectFriendCollectionViewManager(
       viewController: self,
-      collectionView: collectionView
+      collectionView: collectionView,
+      recipeDetailModel: recipeDetailModel
     )
     shareSelectFriendCollectionViewManager.textFieldDelegate = self
     collectionView.delegate = shareSelectFriendCollectionViewManager

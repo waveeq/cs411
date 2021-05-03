@@ -1,13 +1,13 @@
 //
-//  MessagesSectionHeader.swift
+//  ShareSelectFriendHeader.swift
 //  recipe
 //
-//  Created by Mochammad Dikra Prasetya on 2021/03/21.
+//  Created by Mochammad Dikra Prasetya on 2021/05/03.
 //
 
 import UIKit
 
-public class MessagesSectionHeader: UICollectionReusableView {
+public class ShareSelectFriendHeader: UICollectionReusableView {
 
   static let searchBarHeight: CGFloat = 52
 
@@ -28,7 +28,7 @@ public class MessagesSectionHeader: UICollectionReusableView {
       textField.delegate = textFieldDelegate
     }
   }
-  
+
   override init(frame: CGRect) {
     super.init(frame: frame)
 
@@ -49,3 +49,4 @@ public class MessagesSectionHeader: UICollectionReusableView {
     fatalError("init(coder:) has not been implemented")
   }
 }
+

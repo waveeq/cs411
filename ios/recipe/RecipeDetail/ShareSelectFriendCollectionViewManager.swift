@@ -1,46 +1,55 @@
 //
-//  ExploreCollectionViewManager.swift
+//  ShareSelectFriendCollectioinViewManager.swift
 //  recipe
 //
-//  Created by Mochammad Dikra Prasetya on 2021/03/21.
+//  Created by Mochammad Dikra Prasetya on 2021/05/03.
 //
 
 import UIKit
 
-// TODO(Dikra): Re-enable search bar header
-class ExploreCollectionViewManager: NSObject,
-                                    UICollectionViewDataSource,
-                                    UICollectionViewDelegate,
-                                    UICollectionViewDelegateFlowLayout {
+public class ShareSelectFriendCollectionViewManager: NSObject,
+                                                     UICollectionViewDataSource,
+                                                     UICollectionViewDelegate,
+                                                     UICollectionViewDelegateFlowLayout {
 
-  let cellIdentifier = "exploreCellIdentifer"
-  let headerIdentifier = "exploreHeaderIdentifier"
+  let cellIdentifier = "shareSelectFriendCellIdentifer"
+  let headerIdentifier = "shareSelectFriendHeaderIdentifier"
 
-  var exploreModels: [ExploreModel] = []
+  lazy var friends: [FriendModel] = {
+    let data = [
+      FriendModel(
+          userID: 2,
+          name: "Eva",
+          profilePicture: nil
+      ),
+      FriendModel(
+        userID: 3,
+        name: "Maggie",
+        profilePicture: nil
+      ),
+      FriendModel(
+        userID: 4,
+        name: "Jessica",
+        profilePicture: nil
+      ),
+    ]
+    return data
+  }()
 
   weak var textFieldDelegate: UITextFieldDelegate?
   weak var viewController: UIViewController?
-  weak var collectionView: UICollectionView?
 
-  public required init(viewController: UIViewController, collectionView: UICollectionView) {
+  required init(viewController: UIViewController, collectionView: UICollectionView) {
     super.init()
 
     self.viewController = viewController
-    self.collectionView = collectionView
 
-    collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
-    
-    collectionView.register(RecipeThumbnailCell.self, forCellWithReuseIdentifier: cellIdentifier)
+    collectionView.register(ShareSelectFriendCell.self, forCellWithReuseIdentifier: cellIdentifier)
     collectionView.register(
-      ExploreSectionHeader.self,
+      ShareSelectFriendHeader.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
       withReuseIdentifier: headerIdentifier
     )
-  }
-
-  public func updateData(exploreModels: [ExploreModel]) {
-    self.exploreModels = exploreModels
-    collectionView?.reloadData()
   }
 
   // MARK: - UICollectionViewDataSource
@@ -53,7 +62,7 @@ class ExploreCollectionViewManager: NSObject,
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return exploreModels.count * 2
+    return friends.count
   }
 
   public func collectionView(
@@ -63,42 +72,38 @@ class ExploreCollectionViewManager: NSObject,
     let cell = collectionView.dequeueReusableCell(
       withReuseIdentifier: cellIdentifier,
       for: indexPath
-    ) as! RecipeThumbnailCell
-    cell.loadImageAsync(
-      forRecipeID: exploreModels[indexPath.row % exploreModels.count].recipeID,
-      url: exploreModels[indexPath.row % exploreModels.count].mainImage
-    )
+    ) as! ShareSelectFriendCell
+
+    cell.configure(with: friends[indexPath.row])
+
     return cell
   }
 
-  func collectionView(
+  public func collectionView(
     _ collectionView: UICollectionView,
     viewForSupplementaryElementOfKind kind: String,
     at indexPath: IndexPath
   ) -> UICollectionReusableView {
     if kind == UICollectionView.elementKindSectionHeader {
-      let sectionHeader = collectionView.dequeueReusableSupplementaryView(
+      let header =  collectionView.dequeueReusableSupplementaryView(
         ofKind: kind,
         withReuseIdentifier: headerIdentifier,
         for: indexPath
-      ) as! ExploreSectionHeader
-      sectionHeader.textFieldDelegate = textFieldDelegate
-      return sectionHeader
-    } else {
-      return UICollectionReusableView()
+      ) as! ShareSelectFriendHeader
+      header.textFieldDelegate = textFieldDelegate
+      return header
+    } else { //No footer in this case but can add option for that
+         return UICollectionReusableView()
     }
   }
 
   // MARK: - UICollectionViewDelegate
 
-  public func collectionView(
-    _ collectionView: UICollectionView,
-    didSelectItemAt indexPath: IndexPath
-  ) {
-    viewController?.present(
-      RecipeDetailViewController(recipeID: exploreModels[indexPath.row % exploreModels.count].recipeID),
-      animated: true
-    )
+  public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//    viewController?.navigationController?.pushViewController(
+//      MessageDetailViewController(friend: recentMessages[indexPath.row].friend),
+//      animated: true
+//    )
   }
 
   // MARK: - UICollectionViewDelegateFlowLayout
@@ -124,12 +129,7 @@ class ExploreCollectionViewManager: NSObject,
     layout collectionViewLayout: UICollectionViewLayout,
     insetForSectionAt section: Int
   ) -> UIEdgeInsets {
-    return UIEdgeInsets(
-      top: 8,
-      left: 12,
-      bottom: 8,
-      right: 12
-    )
+    return UIEdgeInsets(top: 8, left: 12, bottom: 32, right: 12)
   }
 
   public func collectionView(
@@ -137,16 +137,15 @@ class ExploreCollectionViewManager: NSObject,
     layout collectionViewLayout: UICollectionViewLayout,
     sizeForItemAt indexPath: IndexPath
   ) -> CGSize {
-    let cellSize = (collectionView.frame.size.width / 3) - 16
-    return CGSize(width: cellSize, height: cellSize)
+    return CGSize(width: collectionView.frame.size.width, height: ShareSelectFriendCell.height)
   }
 
-  func collectionView(
+  public func collectionView(
     _ collectionView: UICollectionView,
     layout collectionViewLayout: UICollectionViewLayout,
     referenceSizeForHeaderInSection section: Int
   ) -> CGSize {
-    return CGSize(width: collectionView.frame.width, height: ExploreSectionHeader.headerHeight)
+    return CGSize(width: collectionView.frame.width, height: ShareSelectFriendHeader.searchBarHeight)
   }
 }
 

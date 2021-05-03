@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <title>Flask-SocketIO-Chat</title>
+    </head>
+    <body>
+        <h1>Flask-SocketIO-Chat</h1>
+        <h3>Note: in this demo, the mobile app always uses room 1 and name "mobile_app".
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.sender.label }}: {{ form.sender() }} {% for error in form.sender.errors %}{{ error }}{% endfor %}<br>
+            {{ form.friend.label }}: {{ form.friend() }} {% for error in form.friend.errors %}{{ error }}{% endfor %}<br>
+            {{ form.submit() }}
+        </form>
+    </body>
+</html>

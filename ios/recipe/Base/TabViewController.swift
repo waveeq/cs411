@@ -16,8 +16,8 @@ public enum TabType {
 public class TabViewController: UINavigationController, UINavigationControllerDelegate {
 
   var profileDiscView: ProfileDiscView!
-  var bottomConstraint: NSLayoutConstraint!
-  var topConstraint: NSLayoutConstraint!
+  var alignBottomConstraints: [NSLayoutConstraint]!
+  var alignTopConstraints: [NSLayoutConstraint]!
 
   public var displayProfileDiscAtBottomRight: Bool = true {
     didSet {
@@ -48,20 +48,31 @@ public class TabViewController: UINavigationController, UINavigationControllerDe
 
     profileDiscView.translatesAutoresizingMaskIntoConstraints = false
 
-    bottomConstraint = profileDiscView.bottomAnchor.constraint(
-      equalTo: navigationBar.bottomAnchor,
-      constant: -8
-    )
-    topConstraint = profileDiscView.topAnchor.constraint(
-      equalTo: navigationBar.topAnchor,
-      constant: 2
-    )
+    alignBottomConstraints = [
+      profileDiscView.bottomAnchor.constraint(
+        equalTo: navigationBar.bottomAnchor,
+        constant: -8
+      ),
+      profileDiscView.heightAnchor.constraint(equalToConstant: 44),
+    ]
+
+    alignTopConstraints = [
+      profileDiscView.topAnchor.constraint(
+        equalTo: navigationBar.topAnchor,
+        constant: 2
+      ),
+      profileDiscView.heightAnchor.constraint(equalToConstant: 36),
+    ]
+
     NSLayoutConstraint.activate([
-      profileDiscView.heightAnchor.constraint(equalToConstant: profileDiscView.imageSize),
       profileDiscView.widthAnchor.constraint(equalTo: profileDiscView.heightAnchor),
-      profileDiscView.trailingAnchor.constraint(equalTo: navigationBar.trailingAnchor, constant: -20),
-      bottomConstraint
+      profileDiscView.trailingAnchor.constraint(
+        equalTo: navigationBar.trailingAnchor,
+        constant: -20
+      ),
     ])
+
+    NSLayoutConstraint.activate(alignBottomConstraints)
   }
 
   required init?(coder aDecoder: NSCoder) {
@@ -72,8 +83,14 @@ public class TabViewController: UINavigationController, UINavigationControllerDe
 
     // TODO(Dikra): Consider custom pane transition.
     UIView.animate(withDuration: 0.3) {
-      self.bottomConstraint.isActive = self.displayProfileDiscAtBottomRight
-      self.topConstraint.isActive = !self.displayProfileDiscAtBottomRight
+
+      if self.displayProfileDiscAtBottomRight {
+        NSLayoutConstraint.deactivate(self.alignTopConstraints)
+        NSLayoutConstraint.activate(self.alignBottomConstraints)
+      } else {
+        NSLayoutConstraint.deactivate(self.alignBottomConstraints)
+        NSLayoutConstraint.activate(self.alignTopConstraints)
+      }
       self.navigationBar.setNeedsLayout()
       self.profileDiscView.setNeedsLayout()
       self.navigationBar.layoutIfNeeded()

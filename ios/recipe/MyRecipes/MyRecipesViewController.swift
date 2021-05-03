@@ -7,21 +7,14 @@
 
 import UIKit
 
-public class MyRecipesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+public class MyRecipesViewController: UIViewController,
+                                      UICollectionViewDataSource,
+                                      UICollectionViewDelegate,
+                                      UICollectionViewDelegateFlowLayout {
 
   let cellIdentifier = "myRecipesCellIdentifer"
-  let headerIdentifier = "myRecipesHeaderIdentifier"
-
-  lazy var tempCellColors: [UIColor] = {
-    var colors: [UIColor] = []
-    for _ in 1...36 {
-      colors.append(randomColor())
-    }
-    return colors
-  }()
 
   var myRecipeModels: [MyRecipeModel] = []
-  var imageCaches: [Int:UIImage] = [:]
 
   var shouldFetchData = false
 
@@ -33,7 +26,7 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     myRecipesView.contentInset = UIEdgeInsets(top: 8, left: 12, bottom: 0, right: 12)
     myRecipesView.backgroundColor = .white
 
-    myRecipesView.register(MyRecipesCell.self, forCellWithReuseIdentifier: cellIdentifier)
+    myRecipesView.register(RecipeThumbnailCell.self, forCellWithReuseIdentifier: cellIdentifier)
 
     myRecipesView.delegate = self
     myRecipesView.dataSource = self
@@ -80,14 +73,6 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     ) { (myRecipeModels ) in
 
       self.myRecipeModels = myRecipeModels ?? []
-
-      for myRecipeModel in self.myRecipeModels {
-        if self.imageCaches.index(forKey: myRecipeModel.recipeID) == nil {
-          self.imageCaches[myRecipeModel.recipeID] =
-            try? UIImage(data: Data(contentsOf:  myRecipeModel.mainImage))
-        }
-      }
-
       LoadingOverlayView.stopOverlay()
 
       myRecipesView.reloadData()
@@ -115,9 +100,11 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     let cell = collectionView.dequeueReusableCell(
       withReuseIdentifier: cellIdentifier,
       for: indexPath
-    ) as! MyRecipesCell
-
-    cell.imageView.image = imageCaches[myRecipeModels[indexPath.row].recipeID]
+    ) as! RecipeThumbnailCell
+    cell.loadImageAsync(
+      forRecipeID: myRecipeModels[indexPath.row].recipeID,
+      url: myRecipeModels[indexPath.row].mainImage
+    )
     return cell
   }
 
@@ -166,14 +153,6 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
   ) -> CGSize {
     let cellSize = (collectionView.frame.size.width / 3) - 16
     return CGSize(width: cellSize, height: cellSize)
-  }
-
-  // Custom function to generate a random UIColor
-  func randomColor() -> UIColor{
-      let red = CGFloat(drand48())
-      let green = CGFloat(drand48())
-      let blue = CGFloat(drand48())
-      return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
   }
 
   // MARK: - Notifications

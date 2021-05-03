@@ -10,6 +10,7 @@ import UIKit
 public class RecipeDetailViewController: UIViewController, RecipeDetailViewDelegate {
 
   var recipeID: Int!
+  var recipeDetailModel: RecipeDetailModel?
 
   var dismissTextEditingTapRecognizer: UIGestureRecognizer?
 
@@ -41,9 +42,10 @@ public class RecipeDetailViewController: UIViewController, RecipeDetailViewDeleg
     RecipeServices.sharedInstance.getRecipeDetails(
       forUserID: 1,
       recipeID: recipeID
-    ) { (recipeDetailModel) in
+    ) { recipeDetailModel in
 
       if let recipeDetailModel = recipeDetailModel {
+        self.recipeDetailModel = recipeDetailModel
         recipeDetailView.updateData(recipeDetailModel)
       }
       LoadingOverlayView.stopOverlay()
@@ -100,6 +102,11 @@ public class RecipeDetailViewController: UIViewController, RecipeDetailViewDeleg
         recipeDetailView.setRecipeAsFavorite()
       }
     }
+  }
+
+  public func chatButtonDidTap(_ chatButton: UIButton) {
+    guard let recipeDetailModel = recipeDetailModel else { return }
+    present(ShareSelectFriendViewController(recipeDetailModel: recipeDetailModel), animated: true)
   }
 
   // MARK: - UITextViewDelegate

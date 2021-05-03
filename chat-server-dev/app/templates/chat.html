@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <title>Flask-SocketIO-Chat for sender: {{ sender }}, friend: {{ friend }}</title>
+
+        <!-- Pass flask data -->
+        <label id="data_sender" name="{{sender}}" style="display: none;"></label> 
+        <label id="data_friend" name="{{friend}}" style="display: none;"></label> 
+
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            var socket;
+            $(document).ready(function(){
+                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+
+                console.log('joined http://' + document.domain + ':' + location.port + '/chat');
+
+                var sender = parseInt(document.getElementById("data_sender").getAttribute("name"));
+                var friend = parseInt(document.getElementById("data_friend").getAttribute("name"));
+
+                console.log('sender = ' + sender + ', friend = ' + friend);
+
+                socket.on('connect', function() {
+                    socket.emit('joined', {sender:sender, friend:friend});
+                });
+                socket.on('status', function(data) {
+                    $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+
+                    // console.log('===== status >> ' + str(data))
+                });
+                socket.on('message', function(data) {
+                    $('#chat').val($('#chat').val() + data.sender + ': ' + data.text + '\n');
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+
+                    // console.log('===== message >> ' + str(data))
+                });
+                $('#text').keypress(function(e) {
+                    var code = e.keyCode || e.which;
+                    if (code == 13) {
+                        text = $('#text').val();
+                        $('#text').val('');
+                        socket.emit('text', {sender:sender, friend:friend, isText: true, text: text, date: Date.now() * 1e-3});
+                    }
+                });
+            });
+            function leave_room() {
+                socket.emit('left', {sender:sender, friend:friend}, function() {
+                    socket.disconnect();
+
+                    // go back to the login page
+                    window.location.href = "{{ url_for('main.index') }}";
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Flask-SocketIO-Chat: {{ room }}</h1>
+        <textarea id="chat" cols="80" rows="20"></textarea><br><br>
+        <input id="text" size="80" placeholder="Enter your message here"><br><br>
+        <a href="#" onclick="leave_room();">Leave this room</a>
+    </body>
+</html>

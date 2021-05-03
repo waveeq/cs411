@@ -9,6 +9,7 @@ import SocketIO
 import UIKit
 
 public class MessageDetailViewController: UIViewController,
+                                          MessageBubbleCellDelegate,
                                           MessageDetailViewDelegate,
                                           UICollectionViewDataSource,
                                           UICollectionViewDelegateFlowLayout {
@@ -16,6 +17,7 @@ public class MessageDetailViewController: UIViewController,
   let cellIdentifier = "messageBubbleCellIdentifer"
 
   let friendModel: FriendModel
+  var recipeDetailModelToShare: RecipeDetailModel?
 
   var socketManager : SocketManager!
   var socket: SocketIOClient!
@@ -34,6 +36,12 @@ public class MessageDetailViewController: UIViewController,
     navigationItem.leftBarButtonItem = UIBarButtonItem(
       customView: MessageNavBarFriendView(friend: friend)
     )
+  }
+
+  public convenience init(friend: FriendModel, shareRecipe recipeDetailModel: RecipeDetailModel) {
+    self.init(friend: friend)
+
+    recipeDetailModelToShare = recipeDetailModel
   }
 
   required init?(coder: NSCoder) {
@@ -64,7 +72,7 @@ public class MessageDetailViewController: UIViewController,
   func connectSocketIO() {
     socketManager = SocketManager(
       socketURL: URL(string: "http://127.0.0.1:5000")!,
-      config: [.log(true), .compress]
+      config: [.log(false), .compress]
     )
     socket = socketManager.socket(forNamespace: "/chat")
 
@@ -76,6 +84,24 @@ public class MessageDetailViewController: UIViewController,
           friend: self.friendModel.userID
         )
       )
+      self.logSocketData(data)
+
+      if let recipeDetailModel = self.recipeDetailModelToShare {
+        print("===== share model: \(recipeDetailModel)")
+        self.socket.emit(
+          "text",
+          MessageBubbleModel(
+            sender: AccountManager.sharedInstance.currentUserID,
+            friend: self.friendModel.userID,
+            isText: false,
+            date: Date(),
+            text: nil,
+            recipeID: recipeDetailModel.recipeID,
+            recipeName: recipeDetailModel.title,
+            recipeImageURL: recipeDetailModel.mainImage.absoluteString
+          )
+        )
+      }
     }
 
     socket.on("status") { data, ack in
@@ -84,7 +110,6 @@ public class MessageDetailViewController: UIViewController,
 
     socket.on("message") { data, ack in
       self.addNewMessageFromSocketData(data)
-      self.logSocketData(data)
     }
 
     socket.connect()
@@ -114,7 +139,9 @@ public class MessageDetailViewController: UIViewController,
       isText: isText,
       date: Date(timeIntervalSince1970: dateTimeEpoch),
       text: dict["text"] as? String,
-      recipeID: dict["recipeID"] as? Int
+      recipeID: dict["recipeID"] as? Int,
+      recipeName: dict["recipeName"] as? String,
+      recipeImageURL: dict["recipeImageURL"] as? String
     )
 
     messageBubbles.append(messageBubbleModel)
@@ -124,6 +151,12 @@ public class MessageDetailViewController: UIViewController,
 
     collectionView.reloadData()
     collectionView.setNeedsLayout()
+  }
+
+  // MARK: - MessageBubbleCellDelegate
+
+  public func openSharedRecipePage(forRecipeID recipeID: Int) {
+    present(RecipeDetailViewController(recipeID: recipeID), animated: true)
   }
 
   // MARK: - MessageDetailViewDelegate
@@ -167,6 +200,7 @@ public class MessageDetailViewController: UIViewController,
       withReuseIdentifier: cellIdentifier,
       for: indexPath
     ) as! MessageBubbleCell
+    cell.delegate = self
     cell.configure(with: messageBubbles[indexPath.row])
 
     return cell
@@ -203,19 +237,10 @@ public class MessageDetailViewController: UIViewController,
     layout collectionViewLayout: UICollectionViewLayout,
     sizeForItemAt indexPath: IndexPath
   ) -> CGSize {
-    let tempLabel = UILabel()
-
-    tempLabel.font = UIFont.systemFont(ofSize: 16)
-    tempLabel.adjustsFontSizeToFitWidth = false
-    tempLabel.numberOfLines = 0
-    tempLabel.lineBreakMode = .byWordWrapping
-    tempLabel.text = messageBubbles[indexPath.row].text
-
-    let estimatedHeight = tempLabel.sizeThatFits(
-      CGSize(width: view.frame.width * 0.8, height: .greatestFiniteMagnitude)
-    ).height
-
-    return CGSize(width: view.frame.width, height: estimatedHeight + 36)
+    return MessageBubbleCell.preferredSize(
+      forModel: messageBubbles[indexPath.row],
+      parentView: view
+    )
   }
 
   // MARK: - UITextViewDelegate

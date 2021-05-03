@@ -96,17 +96,13 @@ public class RootViewController: UIViewController,
       footerView.intrinsicContentSize.height + view.safeAreaInsets.bottom
   }
 
-  // MARK: - FooterDelegate
-
-  public func footerButtonTapped(sender: Any?) {
-    guard let footerButton = sender as? FooterButton else { return }
-
+  public func showTab(_ targetTabType: TabType) {
     if let _ = pageViewController.viewControllers?.first as? TabContainerViewController {
-      tabContainerViewController.showTab(footerButton.targetTabType)
+      tabContainerViewController.showTab(targetTabType)
     } else {
 
       UIView.performWithoutAnimation {
-        self.tabContainerViewController.showTab(footerButton.targetTabType)
+        self.tabContainerViewController.showTab(targetTabType)
       }
 
       pageViewController.setViewControllers(
@@ -116,6 +112,16 @@ public class RootViewController: UIViewController,
         completion: nil
       )
     }
+
+    footerViewController.tabDidChange(to: targetTabType)
+  }
+
+  // MARK: - FooterDelegate
+
+  public func footerButtonTapped(sender: Any?) {
+    guard let footerButton = sender as? FooterButton else { return }
+
+    showTab(footerButton.targetTabType)
   }
 
   // MARK: - UIPageViewControllerDataSource
@@ -143,5 +149,13 @@ public class RootViewController: UIViewController,
       animated: true,
       completion: nil
     )
+  }
+
+  public func shareRecipe(
+    _ recipeDetailModel: RecipeDetailModel,
+    toFriend friend: FriendModel
+  ) {
+    tabContainerViewController.shareRecipe(recipeDetailModel, toFriend: friend)
+    footerViewController.tabDidChange(to: .messages)
   }
 }

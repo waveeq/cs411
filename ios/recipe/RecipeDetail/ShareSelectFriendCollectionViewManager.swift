@@ -36,10 +36,14 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
     return data
   }()
 
+  let recipeDetailModel: RecipeDetailModel
+
   weak var textFieldDelegate: UITextFieldDelegate?
   weak var viewController: UIViewController?
 
-  required init(viewController: UIViewController, collectionView: UICollectionView) {
+  required init(viewController: UIViewController, collectionView: UICollectionView, recipeDetailModel: RecipeDetailModel) {
+    self.recipeDetailModel = recipeDetailModel
+
     super.init()
 
     self.viewController = viewController
@@ -100,10 +104,10 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
   // MARK: - UICollectionViewDelegate
 
   public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//    viewController?.navigationController?.pushViewController(
-//      MessageDetailViewController(friend: recentMessages[indexPath.row].friend),
-//      animated: true
-//    )
+    viewController?.rootViewController?.shareRecipe(
+      recipeDetailModel,
+      toFriend: friends[indexPath.row]
+    )
   }
 
   // MARK: - UICollectionViewDelegateFlowLayout

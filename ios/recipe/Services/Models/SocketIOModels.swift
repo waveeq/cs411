@@ -14,6 +14,8 @@ public struct MessageBubbleModel: SocketData {
   var date: Date
   var text: String?
   var recipeID: Int?
+  var recipeName: String?
+  var recipeImageURL: String?
 
   public func socketRepresentation() -> SocketData {
     var dict: [String : Any] = [
@@ -23,12 +25,13 @@ public struct MessageBubbleModel: SocketData {
       "date": date.timeIntervalSince1970
     ]
 
-    if let text = text {
-      dict["text"] = text
-    }
 
-    if let recipeID = recipeID {
+    if isText {
+      dict["text"] = text
+    } else {
       dict["recipeID"] = recipeID
+      dict["recipeName"] = recipeName
+      dict["recipeImageURL"] = recipeImageURL
     }
 
     return dict

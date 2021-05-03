@@ -52,7 +52,6 @@
 		49E26C97260602D30041FD0C /* ExploreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E26C96260602D30041FD0C /* ExploreViewController.swift */; };
 		49E26CA2260603070041FD0C /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E26CA1260603070041FD0C /* MessagesViewController.swift */; };
 		49E26CAA26060CC60041FD0C /* TabContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E26CA926060CC60041FD0C /* TabContainerViewController.swift */; };
-		49EE0456263C6EB900431BCF /* LazyImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EE0455263C6EB900431BCF /* LazyImageView.swift */; };
 		49EE0459263C72CC00431BCF /* RecipeThumbnailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EE0458263C72CC00431BCF /* RecipeThumbnailCell.swift */; };
 		49F09F532601A8E8005B1398 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F09F522601A8E8005B1398 /* AppDelegate.swift */; };
 		49F09F552601A8E8005B1398 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F09F542601A8E8005B1398 /* SceneDelegate.swift */; };
@@ -109,7 +108,6 @@
 		49E26C96260602D30041FD0C /* ExploreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewController.swift; sourceTree = "<group>"; };
 		49E26CA1260603070041FD0C /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
 		49E26CA926060CC60041FD0C /* TabContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabContainerViewController.swift; sourceTree = "<group>"; };
-		49EE0455263C6EB900431BCF /* LazyImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyImageView.swift; sourceTree = "<group>"; };
 		49EE0458263C72CC00431BCF /* RecipeThumbnailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeThumbnailCell.swift; sourceTree = "<group>"; };
 		49F09F4F2601A8E8005B1398 /* recipe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = recipe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49F09F522601A8E8005B1398 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -251,7 +249,6 @@
 			children = (
 				49964E7C2618B3B800548BCC /* DarkButton.swift */,
 				49CE727D26199503004201B6 /* InsettedTextField.swift */,
-				49EE0455263C6EB900431BCF /* LazyImageView.swift */,
 				49964E792618B3AD00548BCC /* LightButton.swift */,
 				49A9ACE72639D16A004EE333 /* LoadingOverlayView.swift */,
 				49A003DA260630BC00A27038 /* ProfileDiscView.swift */,
@@ -456,7 +453,6 @@
 				49964E802618C3AA00548BCC /* ProfileEditViewController.swift in Sources */,
 				49CE727E26199503004201B6 /* InsettedTextField.swift in Sources */,
 				49A003E62606BFF200A27038 /* ExploreFilterCollectionViewManager.swift in Sources */,
-				49EE0456263C6EB900431BCF /* LazyImageView.swift in Sources */,
 				49964E7A2618B3AD00548BCC /* LightButton.swift in Sources */,
 				490F3B52260E0101007F2921 /* RecentMessageCell.swift in Sources */,
 				49EE0459263C72CC00431BCF /* RecipeThumbnailCell.swift in Sources */,

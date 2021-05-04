@@ -10,9 +10,10 @@ import UIKit
 public class ExploreFilterCollectionViewManager: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
   let cellIdentifier = "exploreFilterCellIdentifer"
+  var activatedFilterIndexPath: IndexPath?
 
   let tempFilterNames: [String] = [
-    "All",
+    "All Results",
     "Breakfast",
     "Lunch",
     "Dinner",
@@ -49,7 +50,44 @@ public class ExploreFilterCollectionViewManager: NSObject, UICollectionViewDataS
     ) as! ExploreFilterCell
     cell.label.text = tempFilterNames[indexPath.row]
 
+    // At zero-state, the "All Results" filter should be marked as activated.
+    if indexPath.row == 0 && activatedFilterIndexPath == nil {
+      cell.activated = true
+      activatedFilterIndexPath = indexPath
+    }
+
     return cell
+  }
+
+  // MARK: - UICollectionViewDelegate
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    didHighlightItemAt indexPath: IndexPath
+  ) {
+    guard let cell = collectionView.cellForItem(at: indexPath) as? ExploreFilterCell else { return }
+    cell.highlight = true
+  }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    didUnhighlightItemAt indexPath: IndexPath
+  ) {
+    guard let cell = collectionView.cellForItem(at: indexPath) as? ExploreFilterCell else { return }
+    cell.highlight = false
+  }
+
+  public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    guard let cell = collectionView.cellForItem(at: indexPath) as? ExploreFilterCell else { return }
+
+    if let previouslyActivatedFilterIndexPath = activatedFilterIndexPath,
+       let previouslyActivatedCell =
+         collectionView.cellForItem(at: previouslyActivatedFilterIndexPath) as? ExploreFilterCell {
+      previouslyActivatedCell.activated = false
+    }
+
+    cell.activated = true
+    activatedFilterIndexPath = indexPath
   }
 
   // MARK: - UICollectionViewDelegateFlowLayout

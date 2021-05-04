@@ -25,8 +25,6 @@ public class LoginView: UIView {
   let loginButton = DarkButton()
   let signUpButton = DarkButton()
 
-  public let loadingIndicatorView = UIActivityIndicatorView()
-
   public override init(frame: CGRect) {
     super.init(frame: frame)
 
@@ -122,18 +120,6 @@ public class LoginView: UIView {
       signUpButton.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.9),
     ])
     signUpButton.addTarget(self, action: #selector(signUpButtonDidTap(_:)), for: .touchUpInside)
-
-    // Loading indicator view
-
-    addSubview(loadingIndicatorView)
-    loadingIndicatorView.hidesWhenStopped = true
-    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      loadingIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
-      loadingIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
-      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
-      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
-    ])
   }
 
   required init?(coder: NSCoder) {

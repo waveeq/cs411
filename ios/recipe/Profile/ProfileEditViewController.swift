@@ -67,14 +67,12 @@ public class ProfileEditViewController: UIViewController,
       preferredStyle: .alert
     )
 
-    let profileEditView = view as! ProfileEditView
-
     alert.addAction(
       UIAlertAction(title: "Save Changes", style: .default, handler: { (action) in
-        profileEditView.loadingIndicatorView.startAnimating()
+        LoadingOverlayView.startOverlay()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          profileEditView.loadingIndicatorView.stopAnimating()
           self.dismiss(animated: true, completion: nil)
+          LoadingOverlayView.stopOverlay()
         }
       })
     )

@@ -67,14 +67,12 @@ public class SignUpViewController: UIViewController, SignUpViewDelegate, UITextF
       preferredStyle: .alert
     )
 
-    let signUpView = view as! SignUpView
-
     alert.addAction(
       UIAlertAction(title: "Sign Up", style: .default, handler: { (action) in
-        signUpView.loadingIndicatorView.startAnimating()
+        LoadingOverlayView.startOverlay()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          signUpView.loadingIndicatorView.stopAnimating()
           self.dismiss(animated: true, completion: nil)
+          LoadingOverlayView.stopOverlay()
         }
       })
     )

@@ -7,13 +7,13 @@
 
 import UIKit
 
-class MessagesViewController: UIViewController, UITextFieldDelegate {
+public class MessagesViewController: UIViewController, UITextFieldDelegate {
 
   var messagesCollectionViewManager: MessagesCollectionViewManager!
 
   var dismissTextEditingTapRecognizer: UIGestureRecognizer?
 
-  override func loadView() {
+  public override func loadView() {
     let messagesView = UICollectionView(
       frame: .zero,
       collectionViewLayout: UICollectionViewFlowLayout()
@@ -32,7 +32,7 @@ class MessagesViewController: UIViewController, UITextFieldDelegate {
     self.view = messagesView
   }
 
-  override func viewDidLoad() {
+  public override func viewDidLoad() {
     super.viewDidLoad()
 
     title = "Messages"
@@ -44,20 +44,20 @@ class MessagesViewController: UIViewController, UITextFieldDelegate {
     view.endEditing(true)
   }
 
-  func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+  public func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
     dismissTextEditingTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissTextEditing(_:)))
     navigationController?.view.addGestureRecognizer(dismissTextEditingTapRecognizer!)
     return true
   }
 
-  func textFieldDidEndEditing(_ textField: UITextField) {
+  public func textFieldDidEndEditing(_ textField: UITextField) {
     if let _ = dismissTextEditingTapRecognizer {
       navigationController?.view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
     }
     dismissTextEditingTapRecognizer = nil
   }
 
-  func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+  public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
     textField.resignFirstResponder()
     return true
   }

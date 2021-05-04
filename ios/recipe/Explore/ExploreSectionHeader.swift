@@ -18,11 +18,13 @@ public class ExploreSectionHeader: UICollectionReusableView {
 
   var filterCollectionViewManager: ExploreFilterCollectionViewManager!
 
-  lazy var textField: ExploreSearchBar = {
-    let textField = ExploreSearchBar()
+  lazy var textField: InsettedTextField = {
+    let textField = InsettedTextField()
     textField.backgroundColor = UIColor.white
     textField.layer.borderWidth = 2
     textField.layer.borderColor = UIColor.black.cgColor
+    textField.placeholder = "Search recipe by keywords..."
+    textField.returnKeyType = .search
     return textField
   }()
 
@@ -60,8 +62,6 @@ public class ExploreSectionHeader: UICollectionReusableView {
 
     addSubview(textField)
 
-    textField.placeholder = "Enter recipe keywords..."
-    textField.leftView = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 8, height: 8)))
     textField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       textField.topAnchor.constraint(equalTo: topAnchor),

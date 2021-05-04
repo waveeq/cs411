@@ -7,23 +7,16 @@
 
 import UIKit
 
-public class MyRecipesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+public class MyRecipesViewController: UIViewController,
+                                      UICollectionViewDataSource,
+                                      UICollectionViewDelegate,
+                                      UICollectionViewDelegateFlowLayout {
 
   let cellIdentifier = "myRecipesCellIdentifer"
-  let headerIdentifier = "myRecipesHeaderIdentifier"
-
-  let loadingIndicatorView = UIActivityIndicatorView()
-
-  lazy var tempCellColors: [UIColor] = {
-    var colors: [UIColor] = []
-    for _ in 1...36 {
-      colors.append(randomColor())
-    }
-    return colors
-  }()
 
   var myRecipeModels: [MyRecipeModel] = []
-  var imageCaches: [Int:UIImage] = [:]
+
+  var shouldFetchData = false
 
   public override func loadView() {
     let myRecipesView = UICollectionView(
@@ -33,17 +26,7 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     myRecipesView.contentInset = UIEdgeInsets(top: 8, left: 12, bottom: 0, right: 12)
     myRecipesView.backgroundColor = .white
 
-    myRecipesView.register(MyRecipesCell.self, forCellWithReuseIdentifier: cellIdentifier)
-
-    myRecipesView.addSubview(loadingIndicatorView)
-    loadingIndicatorView.hidesWhenStopped = true
-    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      loadingIndicatorView.centerXAnchor.constraint(equalTo: myRecipesView.centerXAnchor),
-      loadingIndicatorView.centerYAnchor.constraint(equalTo: myRecipesView.centerYAnchor),
-      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
-      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
-    ])
+    myRecipesView.register(RecipeThumbnailCell.self, forCellWithReuseIdentifier: cellIdentifier)
 
     myRecipesView.delegate = self
     myRecipesView.dataSource = self
@@ -55,33 +38,47 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
 
     title = "My Recipes"
 
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(onMyRecipiesDataModified(_:)),
+      name: .myRecipesDataModified,
+      object: nil
+    )
+
+    fetchData()
   }
 
   public override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
 
+    if shouldFetchData {
+      fetchData()
+    }
+  }
+
+  deinit {
+    NotificationCenter.default.removeObserver(self)
+  }
+
+  // MARK: - Private
+
+  func fetchData() {
+    shouldFetchData = false
+    
     let myRecipesView = view as! UICollectionView
 
-    loadingIndicatorView.startAnimating()
+    LoadingOverlayView.startOverlay()
     RecipeServices.sharedInstance.getMyRecipeList(
       forUserID: AccountManager.sharedInstance.currentUserID
     ) { (myRecipeModels ) in
 
       self.myRecipeModels = myRecipeModels ?? []
+      LoadingOverlayView.stopOverlay()
 
-      for myRecipeModel in self.myRecipeModels {
-        if self.imageCaches.index(forKey: myRecipeModel.recipeID) == nil {
-          self.imageCaches[myRecipeModel.recipeID] =
-            try? UIImage(data: Data(contentsOf:  myRecipeModel.mainImage))
-        }
-      }
-
-      myRecipesView.reloadSections(IndexSet(integer: 0))
-      
-      self.loadingIndicatorView.stopAnimating()
+      myRecipesView.reloadData()
     }
   }
-  
+
   // MARK: - UICollectionViewDataSource
 
   public func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -103,9 +100,11 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     let cell = collectionView.dequeueReusableCell(
       withReuseIdentifier: cellIdentifier,
       for: indexPath
-    ) as! MyRecipesCell
-
-    cell.imageView.image = imageCaches[myRecipeModels[indexPath.row].recipeID]
+    ) as! RecipeThumbnailCell
+    cell.loadImageAsync(
+      forRecipeID: myRecipeModels[indexPath.row].recipeID,
+      url: myRecipeModels[indexPath.row].mainImage
+    )
     return cell
   }
 
@@ -115,7 +114,7 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     _ collectionView: UICollectionView,
     didSelectItemAt indexPath: IndexPath
   ) {
-    navigationController?.pushViewController(
+    present(
       RecipeDetailViewController(recipeID: myRecipeModels[indexPath.row].recipeID),
       animated: true
     )
@@ -156,12 +155,10 @@ public class MyRecipesViewController: UIViewController, UICollectionViewDataSour
     return CGSize(width: cellSize, height: cellSize)
   }
 
-  // Custom function to generate a random UIColor
-  func randomColor() -> UIColor{
-      let red = CGFloat(drand48())
-      let green = CGFloat(drand48())
-      let blue = CGFloat(drand48())
-      return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
+  // MARK: - Notifications
+
+  @objc func onMyRecipiesDataModified(_ notification: Notification) {
+    shouldFetchData = true
   }
 }
 

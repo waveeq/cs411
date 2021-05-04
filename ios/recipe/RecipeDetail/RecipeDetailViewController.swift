@@ -10,8 +10,7 @@ import UIKit
 public class RecipeDetailViewController: UIViewController, RecipeDetailViewDelegate {
 
   var recipeID: Int!
-
-  let loadingIndicatorView = UIActivityIndicatorView()
+  var recipeDetailModel: RecipeDetailModel?
 
   var dismissTextEditingTapRecognizer: UIGestureRecognizer?
 
@@ -31,39 +30,30 @@ public class RecipeDetailViewController: UIViewController, RecipeDetailViewDeleg
     let recipeDetailView = RecipeDetailView()
     recipeDetailView.recipeDetailViewDelegate = self
 
-    recipeDetailView.addSubview(loadingIndicatorView)
-    loadingIndicatorView.hidesWhenStopped = true
-    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      loadingIndicatorView.centerXAnchor.constraint(equalTo: recipeDetailView.centerXAnchor),
-      loadingIndicatorView.centerYAnchor.constraint(equalTo: recipeDetailView.centerYAnchor),
-      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
-      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
-    ])
-
     view = recipeDetailView
   }
 
-  public override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
+  public override func viewDidLoad() {
+    super.viewDidLoad()
 
     let recipeDetailView = view as! RecipeDetailView
 
-    loadingIndicatorView.startAnimating()
+    LoadingOverlayView.startOverlay()
     RecipeServices.sharedInstance.getRecipeDetails(
       forUserID: 1,
       recipeID: recipeID
-    ) { (recipeDetailModel) in
+    ) { recipeDetailModel in
 
       if let recipeDetailModel = recipeDetailModel {
+        self.recipeDetailModel = recipeDetailModel
         recipeDetailView.updateData(recipeDetailModel)
       }
-      self.loadingIndicatorView.stopAnimating()
+      LoadingOverlayView.stopOverlay()
     }
   }
 
-  public override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
+  public override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
 
     saveNotesChanges()
   }
@@ -114,6 +104,11 @@ public class RecipeDetailViewController: UIViewController, RecipeDetailViewDeleg
     }
   }
 
+  public func chatButtonDidTap(_ chatButton: UIButton) {
+    guard let recipeDetailModel = recipeDetailModel else { return }
+    present(ShareSelectFriendViewController(recipeDetailModel: recipeDetailModel), animated: true)
+  }
+
   // MARK: - UITextViewDelegate
 
   @objc func dismissTextEditing(_ sender: Any?) {
@@ -122,13 +117,13 @@ public class RecipeDetailViewController: UIViewController, RecipeDetailViewDeleg
 
   public func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
     dismissTextEditingTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissTextEditing(_:)))
-    navigationController?.view.addGestureRecognizer(dismissTextEditingTapRecognizer!)
+    view.addGestureRecognizer(dismissTextEditingTapRecognizer!)
     return true
   }
 
   public func textViewDidEndEditing(_ textView: UITextView) {
     if let _ = dismissTextEditingTapRecognizer {
-      navigationController?.view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
+      view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
     }
     dismissTextEditingTapRecognizer = nil
 

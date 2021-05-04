@@ -13,11 +13,13 @@ public class MessagesSectionHeader: UICollectionReusableView {
 
   var filterCollectionViewManager: ExploreFilterCollectionViewManager!
 
-  lazy var textField: MessagesSearchBar = {
-    let textField = MessagesSearchBar()
+  lazy var textField: InsettedTextField = {
+    let textField = InsettedTextField()
     textField.backgroundColor = UIColor.white
     textField.layer.borderWidth = 2
     textField.layer.borderColor = UIColor.black.cgColor
+    textField.placeholder = "Search username..."
+    textField.returnKeyType = .search
     return textField
   }()
 
@@ -34,8 +36,6 @@ public class MessagesSectionHeader: UICollectionReusableView {
 
     addSubview(textField)
 
-    textField.placeholder = "Enter friend username..."
-    textField.leftView = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 8, height: 8)))
     textField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       textField.topAnchor.constraint(equalTo: topAnchor),

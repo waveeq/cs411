@@ -38,8 +38,6 @@ public class ProfileEditView: UIView {
   let reenterNewPasswordLabel = UILabel()
   let reenterNewPasswordTextField = UITextField()
 
-  public let loadingIndicatorView = UIActivityIndicatorView()
-
   public weak var delegate: ProfileEditViewDelegate?
   public weak var textFieldDelegate: UITextFieldDelegate? {
     didSet {
@@ -402,18 +400,6 @@ public class ProfileEditView: UIView {
       ),
     ])
     addUnderlineForView(reenterNewPasswordTextField)
-
-    // Loading indicator view
-
-    addSubview(loadingIndicatorView)
-    loadingIndicatorView.hidesWhenStopped = true
-    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      loadingIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
-      loadingIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
-      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
-      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
-    ])
     
     // Register KVO
 

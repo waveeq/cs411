@@ -15,6 +15,7 @@ from favoritesDelete import FavoritesDelete
 from searchAPI import SearchAPI
 from favoritesInsert import FavoritesInsert
 from login import Login
+from user import User
 
 app = flask.Flask(__name__)
 

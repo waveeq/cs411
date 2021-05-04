@@ -49,7 +49,7 @@ app.add_url_rule('/recipe',view_func=FavoritesDelete.as_view('FavoritesDelete'),
 app.add_url_rule('/recipe',view_func=FavoritesInsert.as_view('FavoritesInsert'), methods=["POST"])
 app.add_url_rule('/explore',view_func=SearchAPI.as_view('searchAPI'), methods=["GET"])
 app.add_url_rule('/login',view_func=Login.as_view('login'), methods=["GET"])
-
+app.add_url_rule('/register',view_func=User.as_view('user'), methods=["PUT"])
 
 if __name__ == '__main__':
     formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")

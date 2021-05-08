@@ -1,7 +1,16 @@
 from flask import session
 from flask_socketio import emit, join_room, leave_room
 from .. import socketio
+from datetime import datetime
+from pymongo import MongoClient
 
+def construct_db_message(sender,friend,text):
+    db_message = {}
+    db_message["creation_time"] = datetime.now()
+    db_message["content"] = text
+    db_message["user_id_from"] = sender
+    db_message["user_id_to"] = friend
+    return db_message
 
 @socketio.on('joined', namespace='/chat')
 def joined(message):
@@ -28,6 +37,7 @@ def text(message):
     The message is sent to all people in the room."""
     sender = int(message['sender'])
     friend = int(message['friend'])
+    text = message["text"]
 
     if sender < friend:
         room = str(sender) + 'x' + str(friend)
@@ -35,6 +45,12 @@ def text(message):
         room = str(friend) + 'x' + str(sender)
 
     emit('message', message, room=room)
+
+    db_message = construct_db_message(sender, friend, text)
+    client = MongoClient()
+    db = client.cs411
+    db.Messages.insert_one(db_message)
+    
 
 
 @socketio.on('left', namespace='/chat')

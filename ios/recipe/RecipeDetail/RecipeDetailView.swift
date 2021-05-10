@@ -9,6 +9,7 @@ import UIKit
 
 public protocol RecipeDetailViewDelegate: class, UITextViewDelegate {
   func favoriteButtonDidTap(_ favoriteButton: UIButton)
+  func chatButtonDidTap(_ chatButton: UIButton)
 }
 
 public class RecipeDetailView: UIScrollView {
@@ -44,6 +45,22 @@ public class RecipeDetailView: UIScrollView {
 
     backgroundColor = .white
     contentInsetAdjustmentBehavior = .automatic
+
+    // Header view
+
+    let topGrabberView = UIView()
+    topGrabberView.backgroundColor = .systemGray
+    topGrabberView.layer.cornerRadius = 2
+    topGrabberView.layer.cornerCurve = .continuous
+    addSubview(topGrabberView)
+
+    topGrabberView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      topGrabberView.topAnchor.constraint(equalTo: topAnchor, constant:12),
+      topGrabberView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.1),
+      topGrabberView.heightAnchor.constraint(equalToConstant: 4),
+      topGrabberView.centerXAnchor.constraint(equalTo: centerXAnchor),
+    ])
 
     // Container view
 
@@ -90,30 +107,6 @@ public class RecipeDetailView: UIScrollView {
       imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
     ])
 
-    // Ratings
-
-    containerView.addSubview(ratingStarsView)
-
-    ratingLabel.text = ratingToString(ratingAverage: 5, ratingCount: 1200)
-    ratingLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-    ratingLabel.adjustsFontSizeToFitWidth = false
-    ratingLabel.numberOfLines = 1
-    containerView.addSubview(ratingLabel)
-
-    ratingLabel.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      ratingLabel.centerYAnchor.constraint(equalTo: ratingStarsView.centerYAnchor),
-      ratingLabel.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -12),
-    ])
-
-    ratingStarsView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      ratingStarsView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
-      ratingStarsView.trailingAnchor.constraint(equalTo: ratingLabel.leadingAnchor, constant: -8),
-      ratingStarsView.heightAnchor.constraint(equalToConstant: 18),
-      ratingStarsView.widthAnchor.constraint(equalToConstant: 98)
-    ])
-
     // Favorite & Chat Buttons
 
     favoriteButton.setImage(UIImage(systemName: "heart"), for: .normal)
@@ -122,7 +115,11 @@ public class RecipeDetailView: UIScrollView {
     favoriteButton.contentVerticalAlignment = .fill
     favoriteButton.contentHorizontalAlignment = .fill
     favoriteButton.tintColor = .black
-    favoriteButton.addTarget(self, action: #selector(favoriteButtonDidTap(_:)), for: .touchUpInside)
+    favoriteButton.addTarget(
+      self,
+      action: #selector(favoriteButtonDidTap(_:)),
+      for: .touchUpInside
+    )
     containerView.addSubview(favoriteButton)
 
     favoriteButton.translatesAutoresizingMaskIntoConstraints = false
@@ -137,12 +134,16 @@ public class RecipeDetailView: UIScrollView {
       UIImage(systemName: "message")?.withHorizontallyFlippedOrientation(),
       for: .normal
     )
-
     chatButton.imageView?.contentMode = .scaleAspectFit
     chatButton.imageEdgeInsets = .zero
     chatButton.contentVerticalAlignment = .fill
     chatButton.contentHorizontalAlignment = .fill
     chatButton.tintColor = .black
+    chatButton.addTarget(
+      self,
+      action: #selector(chatButtonDidTap(_:)),
+      for: .touchUpInside
+    )
     containerView.addSubview(chatButton)
 
     chatButton.translatesAutoresizingMaskIntoConstraints = false
@@ -151,6 +152,37 @@ public class RecipeDetailView: UIScrollView {
       chatButton.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
       chatButton.widthAnchor.constraint(equalToConstant: 32),
       chatButton.heightAnchor.constraint(equalToConstant: 32),
+    ])
+
+    // Ratings
+
+    containerView.addSubview(ratingStarsView)
+
+    let ratingStarsWidth: CGFloat = 98
+
+    ratingLabel.text = ratingToString(ratingAverage: 5, ratingCount: 1200)
+    ratingLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+    ratingLabel.adjustsFontSizeToFitWidth = true
+    ratingLabel.numberOfLines = 1
+    ratingLabel.minimumScaleFactor = 0.01
+    containerView.addSubview(ratingLabel)
+
+    ratingLabel.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      ratingLabel.centerYAnchor.constraint(equalTo: ratingStarsView.centerYAnchor),
+      ratingLabel.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -12),
+      ratingLabel.leadingAnchor.constraint(
+        greaterThanOrEqualTo: chatButton.trailingAnchor,
+        constant: 20 + ratingStarsWidth
+      ),
+    ])
+
+    ratingStarsView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      ratingStarsView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
+      ratingStarsView.trailingAnchor.constraint(equalTo: ratingLabel.leadingAnchor, constant: -8),
+      ratingStarsView.heightAnchor.constraint(equalToConstant: 18),
+      ratingStarsView.widthAnchor.constraint(equalToConstant: ratingStarsWidth)
     ])
 
     // Recipe Details
@@ -241,8 +273,24 @@ public class RecipeDetailView: UIScrollView {
     )
     NSLayoutConstraint.activate([
       containerViewBottomConstraintWithoutNotes,
+      containerView.topAnchor.constraint(equalTo: topGrabberView.bottomAnchor, constant: 12),
       containerView.widthAnchor.constraint(equalTo: widthAnchor),
     ])
+
+    // Register KVO
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(keyboardWillShow(notification:)),
+      name:UIResponder.keyboardWillShowNotification,
+      object: nil
+    )
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(keyboardWillHide(notification:)),
+      name:UIResponder.keyboardWillHideNotification,
+      object: nil
+    )
   }
 
   required init?(coder: NSCoder) {
@@ -251,10 +299,12 @@ public class RecipeDetailView: UIScrollView {
 
   public func updateData(_ recipeDetailModel: RecipeDetailModel) {
     titleLabel.text = recipeDetailModel.title
-    if let image = try? UIImage(data: Data(contentsOf: recipeDetailModel.mainImage)) {
-      imageView.image = image
-    } else {
-      imageView.backgroundColor = .systemGray
+
+    imageView.backgroundColor = .systemGray
+    RecipeServices.sharedInstance.loadImageData(
+      forRecipeID: recipeDetailModel.recipeID,
+      url: recipeDetailModel.mainImage) { image in
+      self.imageView.image = image
     }
 
     if recipeDetailModel.isFavorited {
@@ -277,7 +327,6 @@ public class RecipeDetailView: UIScrollView {
     super.layoutSubviews()
 
     recipeDetailsContentLabel.sizeToFit()
-    notesTextView.sizeToFit()
     contentSize = containerView.frame.size
   }
 
@@ -285,6 +334,10 @@ public class RecipeDetailView: UIScrollView {
 
   @objc func favoriteButtonDidTap(_ sender: Any?) {
     recipeDetailViewDelegate?.favoriteButtonDidTap(favoriteButton)
+  }
+
+  @objc func chatButtonDidTap(_ sender: Any?) {
+    recipeDetailViewDelegate?.chatButtonDidTap(chatButton)
   }
 
   // MARK: - Public Methods
@@ -335,6 +388,38 @@ public class RecipeDetailView: UIScrollView {
 
   public var currentNotes: String {
     return notesTextView.text ?? ""
+  }
+
+  // MARK: - KVO
+
+  @objc func keyboardWillShow(notification:NSNotification){
+    let userInfo = notification.userInfo!
+    let keyboardFrame = convert(
+      (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue,
+      from: nil
+    )
+
+    var contentInset = self.contentInset
+    contentInset.bottom = keyboardFrame.height
+    self.contentInset = contentInset
+
+    let contentOffset = CGPoint(
+      x: 0,
+      y: max(0, self.contentSize.height - self.bounds.height + keyboardFrame.height)
+    )
+    self.setContentOffset(contentOffset, animated: true)
+  }
+
+  @objc func keyboardWillHide(notification:NSNotification){
+    var contentInset = self.contentInset
+    contentInset.bottom = 0
+    self.contentInset = contentInset
+
+    let contentOffset = CGPoint(
+      x: 0,
+      y: max(0, self.contentSize.height - self.bounds.height)
+    )
+    self.setContentOffset(contentOffset, animated: true)
   }
 
   // MARK: - Helper

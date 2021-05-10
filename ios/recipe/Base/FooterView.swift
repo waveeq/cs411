@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FooterView: UIView {
+public class FooterView: UIView {
 
   let height = 60
   let buttonSize: CGFloat = 44
@@ -23,7 +23,7 @@ class FooterView: UIView {
     fatalError("init(coder:) has not been implemented")
   }
 
-  override init(frame: CGRect) {
+  public override init(frame: CGRect) {
     super.init(frame: frame)
 
     let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .prominent))
@@ -75,17 +75,19 @@ class FooterView: UIView {
     self.footerStack.addArrangedSubview(self.messageButton)
   }
 
-  override var intrinsicContentSize: CGSize {
+  public override var intrinsicContentSize: CGSize {
     return CGSize(width: -1, height: height)
   }
 
   @objc func footerButtonTapped(sender: NSObject?) {
-    UIView.animate(withDuration: 0.2, animations: {
-      self.myrecipeButton.isSelected = sender == self.myrecipeButton
-      self.exploreButton.isSelected = sender == self.exploreButton
-      self.messageButton.isSelected = sender == self.messageButton
-    })
-
     delegate?.footerButtonTapped(sender: sender)
+  }
+
+  public func tabDidChange(to tabType: TabType) {
+    UIView.animate(withDuration: 0.2, animations: {
+      self.myrecipeButton.isSelected = tabType == .myRecipes
+      self.exploreButton.isSelected = tabType == .explore
+      self.messageButton.isSelected = tabType == .messages
+    })
   }
 }

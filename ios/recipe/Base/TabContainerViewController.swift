@@ -13,7 +13,7 @@ public class TabContainerViewController: UIViewController {
   let exploreTabViewController = TabViewController(tabType: .explore)
   let messagesTabViewController = TabViewController(tabType: .messages)
 
-  var activeTabViewController: UIViewController! {
+  var activeTabViewController: TabViewController! {
     didSet {
       guard oldValue != activeTabViewController else { return }
 
@@ -54,5 +54,29 @@ public class TabContainerViewController: UIViewController {
     case .messages:
       activeTabViewController = messagesTabViewController
     }
+  }
+
+  public func shareRecipe(
+    _ recipeDetailModel: RecipeDetailModel,
+    toFriend friend: FriendModel
+  ) {
+    popAllModalViewController(animated: true)
+    messagesTabViewController.popToRootViewController(animated: false)
+    messagesTabViewController.pushViewController(
+      MessageDetailViewController(friend: friend, shareRecipe: recipeDetailModel),
+      animated: false
+    )
+    activeTabViewController = messagesTabViewController
+  }
+}
+
+
+extension UIViewController {
+
+  func popAllModalViewController(animated: Bool) {
+    guard let presentedViewController = self.presentedViewController else { return }
+
+    presentedViewController.popAllModalViewController(animated: animated)
+    presentedViewController.dismiss(animated: animated)
   }
 }

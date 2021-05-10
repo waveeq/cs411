@@ -88,7 +88,7 @@ public struct RESTAPIHelper {
         )
         completion(["success": true, "result": jsonResult])
       } catch {
-        completion(["success": false])
+        completion(["success": true])
       }
     }
 

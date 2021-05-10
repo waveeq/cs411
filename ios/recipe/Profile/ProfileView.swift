@@ -25,8 +25,6 @@ public class ProfileView: UIView {
   let editProfileButton = LightButton()
   let logoutButton = DarkButton()
 
-  public let loadingIndicatorView = UIActivityIndicatorView()
-
   public override init(frame: CGRect) {
     super.init(frame: frame)
 
@@ -157,18 +155,6 @@ public class ProfileView: UIView {
       action: #selector(editProfileButtonDidTap(_:)),
       for: .touchUpInside
     )
-
-    // Loading indicator view
-
-    addSubview(loadingIndicatorView)
-    loadingIndicatorView.hidesWhenStopped = true
-    loadingIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      loadingIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
-      loadingIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
-      loadingIndicatorView.heightAnchor.constraint(equalToConstant: 64),
-      loadingIndicatorView.widthAnchor.constraint(equalTo: loadingIndicatorView.heightAnchor),
-    ])
   }
 
   required init?(coder: NSCoder) {

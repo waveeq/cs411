@@ -24,15 +24,15 @@ class UserFavorites(flask.views.MethodView):
             if first_idx != None and last_idx != None:
                 last_idx = int(last_idx)
                 first_idx = int(first_idx)
-                result = connection.execute("SELECT f.recipeid, r.main_image FROM User_Favorites_Recipe f, Recipe r WHERE uid = %s AND r.recipeid=f.recipeid ORDER BY recipeid desc LIMIT %s OFFSET %s", [user_id, last_idx - first_idx, first_idx])
+                result = connection.execute("SELECT recipeid, main_image FROM UserFavoriteView WHERE uid = %s  ORDER BY recipeid desc LIMIT %s OFFSET %s", [user_id, last_idx - first_idx, first_idx])
             elif first_idx != None and last_idx == None:
                 first_idx = int(first_idx)
-                result = connection.execute("SELECT f.recipeid, r.main_image FROM User_Favorites_Recipe f, Recipe r WHERE uid = %s AND r.recipeid=f.recipeid ORDER BY recipeid desc LIMIT 18446744073709551610 OFFSET %s", [user_id, first_idx])
+                result = connection.execute("SELECT recipeid, main_image FROM UserFavoriteView WHERE uid = %s  ORDER BY recipeid desc LIMIT 18446744073709551610 OFFSET %s", [user_id, first_idx])
             elif first_idx == None and last_idx != None:
                 last_idx = int(last_idx)
-                result = connection.execute("SELECT f.recipeid, r.main_image FROM User_Favorites_Recipe f, Recipe r WHERE uid = %s AND r.recipeid=f.recipeid ORDER BY recipeid desc LIMIT %s", [user_id, last_idx])
+                result = connection.execute("SELECT recipeid, main_image FROM UserFavoriteView WHERE uid = %s  ORDER BY recipeid desc LIMIT %s", [user_id, last_idx])
             else:
-                result = connection.execute("SELECT f.recipeid, r.main_image FROM User_Favorites_Recipe f, Recipe r WHERE uid = %s AND r.recipeid=f.recipeid ORDER BY recipeid desc", [user_id])
+                result = connection.execute("SELECT recipeid, main_image FROM UserFavoriteView WHERE uid = %s  ORDER BY recipeid desc", [user_id])
             data = [[str(row[0]) ,str(row[1])] for row in result]
             return data
 

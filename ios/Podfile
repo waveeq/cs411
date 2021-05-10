@@ -1,0 +1,5 @@
+use_frameworks!
+
+target 'recipe' do
+    pod 'Socket.IO-Client-Swift', '~> 15.2.0'
+end

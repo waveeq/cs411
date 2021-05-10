@@ -9,7 +9,7 @@ import UIKit
 
 public class MyRecipesCell: UICollectionViewCell {
 
-  public let imageView = UIImageView()
+  let imageView = UIImageView()
 
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
@@ -18,6 +18,7 @@ public class MyRecipesCell: UICollectionViewCell {
   public override init(frame: CGRect) {
     super.init(frame: frame)
 
+    imageView.backgroundColor = UIColor(white: 0, alpha: 0.1)
     imageView.contentMode = .scaleAspectFill
     imageView.clipsToBounds = true
     contentView.addSubview(imageView)
@@ -31,4 +32,14 @@ public class MyRecipesCell: UICollectionViewCell {
     ])
   }
 
+  public func loadImageAsync(
+    forRecipeID recipeID: Int,
+    url: URL
+  ) {
+    RecipeServices.sharedInstance.loadImageData(
+      forRecipeID: recipeID,
+      url: url) { image in
+      self.imageView.image = image
+    }
+  }
 }

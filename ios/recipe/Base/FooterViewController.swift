@@ -28,11 +28,8 @@ class FooterViewController: UIViewController {
     self.view = footerView
   }
 
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    // Do any additional setup after loading the view.
-
+  public func tabDidChange(to tabType: TabType) {
+    let footerView = view as! FooterView
+    footerView.tabDidChange(to: tabType)
   }
-
-
 }

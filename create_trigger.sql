@@ -1,0 +1,6 @@
+DELIMITER ;;
+CREATE TRIGGER `create_date` BEFORE INSERT ON `User` FOR EACH ROW
+BEGIN
+    SET NEW.created_date = NOW();
+END;;
+DELIMITER ;

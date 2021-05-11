@@ -57,6 +57,7 @@ app.add_url_rule('/register',view_func=User.as_view('user'), methods=["PUT"])
 app.add_url_rule('/messages',view_func=Messages.as_view('messages'), methods=["GET"])
 app.add_url_rule('/explore/0',view_func=Recommender.as_view('recommender'), methods=["GET"])
 app.add_url_rule('/search/user',view_func=SearchUserAPI.as_view('searchUser'), methods=["GET"])
+app.add_url_rule('/user',view_func=User.as_view('getuser'), methods=["GET"])
 
 if __name__ == '__main__':
     formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")

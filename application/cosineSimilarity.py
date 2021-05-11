@@ -31,4 +31,4 @@ def cosine_similarity(recipevector, uservector, loc):
     cos['cosscore'] = score
     return cos
 
-print(cosine_similarity([0.3,0.6,0.3],[0.2,0.3,0.4],1))0
+

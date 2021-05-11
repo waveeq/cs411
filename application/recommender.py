@@ -74,16 +74,20 @@ class Recommender(flask.views.MethodView):
         #print(len(recipematrix))
         #print(len(recipematrix[0]))
         #print(len(uservector))
-
+        #print(recipematrix[:10])
         return recipematrix,uservector
+
 
 
     def _recommendations(self,listcos,allrecipesdf):
         recommendations = []
-        listtop = sorted(listcos,reverse=True)[:9]
+        listtop = sorted(listcos,key = lambda i: i['cosscore'],reverse=True)[:21]
         for val in listtop:
-            i = listcos.index(val)
+            i = val['recipeindex']
             recommendation = {'recipeid': int(allrecipesdf['recipeid'].iloc[i]),
-                              'main_image': allrecipesdf['main_image'].iloc[i],}
+                              'main_image': allrecipesdf['main_image'].iloc[i]}
+                              #'score': val}
             recommendations.append(recommendation)
+
+
         return flask.jsonify(recommendations)

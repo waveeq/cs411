@@ -1,17 +1,18 @@
 from numba import jit
 import math
 
-@jit(nopython=True)
 def get_list_cos(recipematrix, uservector):
     listcos = []
+    loc = 0
     for recipevector in recipematrix:
-        cosinesimilarity = cosine_similarity(recipevector, uservector)
-        listcos.append(cosinesimilarity)
+        cos = cosine_similarity(recipevector, uservector, loc)
+        listcos.append(cos)
+        loc += 1
     return listcos
 
-@jit(nopython=True)
-def cosine_similarity(recipevector, uservector):
-    cos = 0
+
+def cosine_similarity(recipevector, uservector, loc):
+    cos = {}
     dot = 0
     lenr = 0
     lenu = 0
@@ -25,6 +26,9 @@ def cosine_similarity(recipevector, uservector):
     lenu = math.sqrt(lenu)
     lenr = math.sqrt(lenr)
     if lenu != 0 and lenr != 0:
-        cos = dot / (lenu * lenr)
+        score = dot / (lenu * lenr)
+    cos['recipeindex'] = loc
+    cos['cosscore'] = score
     return cos
 
+print(cosine_similarity([0.3,0.6,0.3],[0.2,0.3,0.4],1))0

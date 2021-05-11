@@ -20,7 +20,7 @@ class SearchUserAPI(flask.views.MethodView):
         engine = create_engine(myDatabase, pool_recycle=3600)
         connection = engine.connect()
         with connection:
-            result = connection.execute("select uid from User u where user_name like %s",[s])
+            result = connection.execute("select uid, user_name from User u where user_name like %s",[s])
             list_result = [dict(row) for row in result]
         if not list_result:
             return flask.abort(404)

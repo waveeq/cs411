@@ -60,7 +60,7 @@ class User(flask.views.MethodView):
         engine = create_engine(myDatabase, pool_recycle=3600)
         connection = engine.connect()
         with connection:
-            result = connection.execute("select * from User u where uid=%s",[uid])
+            result = connection.execute("select profile_image,user_name,email,first_name,last_name,birth_date,country from User u where uid=%s",[uid])
             list_result = [dict(row) for row in result]
         if not list_result:
             return flask.abort(404)

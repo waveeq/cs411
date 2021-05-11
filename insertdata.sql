@@ -11,7 +11,7 @@ VALUES ('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1oEqijEs3QbbwL6w
 INSERT INTO User(profile_image,user_name,
 email,first_name,last_name,password,birth_date,country) 
 VALUES ('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1oEqijEs3QbbwL6wCXlQTKWmgQ6CNTfhGJGazw34dxFRyLUlTkjmn56hsR7WPNmyagQQfTLgL&usqp=CAc',
-'chris boojah', 'chris@gmail.com','chris','boojah','ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb',STR_TO_DATE('03/08/1994', '%m/%d/%Y'),'United States'
+'admin', 'chris@gmail.com','chris','boojah','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4',STR_TO_DATE('03/08/1994', '%m/%d/%Y'),'United States'
 );
 INSERT INTO FRIEND(first_uid,second_uid) VALUES ((SELECT uid FROM User WHERE user_name = 'claire molens'),(SELECT uid FROM User WHERE user_name = 'spencer boojah'));
 INSERT INTO FRIEND(first_uid ,second_uid ) VALUES ((SELECT uid FROM User WHERE user_name = 'spencer boojah'),(SELECT uid FROM User WHERE user_name = 'claire molens'));

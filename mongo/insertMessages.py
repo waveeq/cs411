@@ -35,4 +35,4 @@ if __name__ == "__main__":
     client = MongoClient()
     db = client.cs411
     clearAllMessages(db)
-    insertMessage(db)
+    insertMessages(db,10000)

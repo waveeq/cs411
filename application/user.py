@@ -5,6 +5,7 @@ import settings
 import json
 import hashlib
 import hmac
+from sqlalchemy import exc
 
 
 class User(flask.views.MethodView):
@@ -29,22 +30,20 @@ class User(flask.views.MethodView):
         if email == None or user_name == None or password == None :
             return
 
-        hashed_password = self.hash_password(password_param)
+        hashed_password = self.hash_password(password)
         
 
         with connection:
-
-
-            result = connection.execute('select uid, email, user_name from User where email = %s or user_name = %s', [uid, email, user_name])
-
-            data =  [[str(row[0])] for row in result]
-
-            if data:
-                return flask.abort(404)
-
-            else:
-                connection.execute('INSERT INTO User  (profile_image, user_name, email, first_name, last_name, password, birth_date, country) VALUES ("%s","%s", "%s", "%s", "%s", "%s" , "%s" , "%s")', 
-                [profile_image, user_name, email_param , first_name, last_name, hashed_password, birth_date, country])
+            try:
+                birth_date_fmt = '%m/%d/%Y'
+                connection.execute("INSERT INTO User  (profile_image, user_name, email, first_name, last_name, password, birth_date, country) VALUES (%s,%s, %s, %s, %s, %s , STR_TO_DATE(%s,%s), %s)", 
+                [profile_image, user_name, email , first_name, last_name, hashed_password, birth_date,birth_date_fmt,country])
+            except exc.SQLAlchemyError as e:
+                error = str(e.__dict__['orig'])
+                r = Response(status=400)
+                r.set_data(error)
+                return r
+            
             return Response(status=200)
 
     def hash_password(self,password):

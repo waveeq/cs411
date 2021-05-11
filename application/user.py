@@ -61,7 +61,7 @@ class User(flask.views.MethodView):
         birth_date = flask.request.args.get('birth_date')
         country = flask.request.args.get('country')                        
 
-        return self._put_User(profile_image, user_name, email, first_name, last_name, password, birth_date, country)
+        return self._put_user(profile_image, user_name, email, first_name, last_name, password, birth_date, country)
 
 
     def _get_user(self,uid):

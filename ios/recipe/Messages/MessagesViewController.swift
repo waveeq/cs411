@@ -87,8 +87,9 @@ public class MessagesViewController: UIViewController, UITextFieldDelegate {
     }
     dismissTextEditingTapRecognizer = nil
 
-    if let query = textField.text, query.count > 0 {
-      fetchSearchUsername(withQuery: query)
+    if let query = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+       query.count > 0 {
+      fetchSearchUsername(withQuery: query.trimmingCharacters(in: .whitespacesAndNewlines))
     } else {
       clearSearchedUsername()
     }

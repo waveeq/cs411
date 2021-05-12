@@ -56,12 +56,17 @@ public class RecipeServices {
 
   public func getExploreList(
     forUserID userID: Int,
+    query: String?,
     completion: @escaping ([ExploreModel]?) -> Void
   ) {
+    let isZeroState = (query?.count ?? 0) > 0
+    let urlString = isZeroState ? "\(Self.endpoint)/explore/0" : "\(Self.endpoint)/explore"
+    let params: [String:Any] = isZeroState ? ["user_id":userID] : ["title":query!]
+
 
     RESTAPIHelper.requestGet(
-      withUrl: URL(string: "\(Self.endpoint)/explore")!,
-      params: nil
+      withUrl: URL(string: urlString)!,
+      params: params
     ) { (result) in
 
       var exploreModels: [ExploreModel] = []

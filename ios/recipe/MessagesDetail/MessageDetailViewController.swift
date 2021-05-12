@@ -16,7 +16,7 @@ public class MessageDetailViewController: UIViewController,
 
   let cellIdentifier = "messageBubbleCellIdentifer"
 
-  let friendModel: FriendModel
+  let friendID: Int
   var recipeDetailModelToShare: RecipeDetailModel?
 
   var socketManager : SocketManager!
@@ -24,22 +24,19 @@ public class MessageDetailViewController: UIViewController,
 
   var dismissTextEditingTapRecognizer: UIGestureRecognizer?
 
-  var messageBubbles: [MessageBubbleModel] = []
+  var messageModels: [MessageModel] = []
 
-  public required init(friend: FriendModel) {
-    self.friendModel = friend
+  public required init(friendID: Int) {
+    self.friendID = friendID
 
     super.init(nibName: nil, bundle: nil)
 
     navigationItem.largeTitleDisplayMode = .never
     navigationItem.leftItemsSupplementBackButton = true
-    navigationItem.leftBarButtonItem = UIBarButtonItem(
-      customView: MessageNavBarFriendView(friend: friend)
-    )
   }
 
-  public convenience init(friend: FriendModel, shareRecipe recipeDetailModel: RecipeDetailModel) {
-    self.init(friend: friend)
+  public convenience init(friendID: Int, shareRecipe recipeDetailModel: RecipeDetailModel) {
+    self.init(friendID: friendID)
 
     recipeDetailModelToShare = recipeDetailModel
   }
@@ -65,23 +62,58 @@ public class MessageDetailViewController: UIViewController,
     collectionView.delegate = self
     collectionView.dataSource = self
 
-    // Navigation Bar cover
-    connectSocketIO()
+    UserServices.sharedInstance.getUserProfile(forUserID: friendID) { userModel in
+      guard let userModel = userModel else { return }
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem(
+        customView: MessageNavBarFriendView(friend: userModel)
+      )
+    }
+
+    fetchHistoricalData()
+
+    self.connectSocketIO()
   }
+
+  // MARK: - Data Fetch
+
+  func fetchHistoricalData() {
+    LoadingOverlayView.startOverlay()
+
+    MessageServices.sharedInstance.getHistoricalMessagesList(
+      forUserID: AccountManager.sharedInstance.currentUserID,
+      friendID: friendID)
+    { messageModels in
+      self.messageModels = messageModels.reversed()
+
+      let messageDetailView = self.view as! MessageDetailView
+      messageDetailView.collectionView.reloadData()
+
+      messageDetailView.collectionView.scrollToItem(
+        at: IndexPath(item: messageModels.count - 1, section: 0),
+        at: .bottom,
+        animated: false
+      )
+
+      LoadingOverlayView.stopOverlay()
+    }
+  }
+
+  // MARK: - Socket IO
 
   func connectSocketIO() {
     socketManager = SocketManager(
-      socketURL: URL(string: "http://127.0.0.1:5000")!,
-      config: [.log(false), .compress]
+      socketURL: URL(string: MessageServices.socketIOEndpoint)!,
+      config: [.log(true), .compress]
     )
-    socket = socketManager.socket(forNamespace: "/chat")
+    print("endpoint = ", MessageServices.socketIOEndpoint)
+    socket = socketManager.socket(forNamespace: MessageServices.socketIONamespace)
 
     socket.on("connect") { data, ack in
       self.socket.emit(
         "joined",
         SocketJoinRoomModel(
           sender: AccountManager.sharedInstance.currentUserID,
-          friend: self.friendModel.userID
+          friend: self.friendID
         )
       )
       self.logSocketData(data)
@@ -90,15 +122,14 @@ public class MessageDetailViewController: UIViewController,
         print("===== share model: \(recipeDetailModel)")
         self.socket.emit(
           "text",
-          MessageBubbleModel(
-            sender: AccountManager.sharedInstance.currentUserID,
-            friend: self.friendModel.userID,
-            isText: false,
+          MessageModel(
             date: Date(),
-            text: nil,
-            recipeID: recipeDetailModel.recipeID,
-            recipeName: recipeDetailModel.title,
-            recipeImageURL: recipeDetailModel.mainImage.absoluteString
+            senderID: AccountManager.sharedInstance.currentUserID,
+            friendID: self.friendID,
+            text: "share recipe"
+//            recipeID: recipeDetailModel.recipeID,
+//            recipeName: recipeDetailModel.title,
+//            recipeImageURL: recipeDetailModel.mainImage.absoluteString
           )
         )
       }
@@ -126,25 +157,21 @@ public class MessageDetailViewController: UIViewController,
     guard let dict = data.first as? [String:Any],
           let sender = dict["sender"] as? Int,
           let friend = dict["friend"] as? Int,
-          let isText = dict["isText"] as? Bool,
-          let dateTimeEpoch = dict["date"] as? TimeInterval
+          let dateTimeEpoch = dict["date"] as? TimeInterval,
+          let text = dict["text"] as? String
     else {
       print("===== invalid socket data format: \(data)")
       return
     }
 
-    let messageBubbleModel = MessageBubbleModel(
-      sender: sender,
-      friend: friend,
-      isText: isText,
+    let messageModel = MessageModel(
       date: Date(timeIntervalSince1970: dateTimeEpoch),
-      text: dict["text"] as? String,
-      recipeID: dict["recipeID"] as? Int,
-      recipeName: dict["recipeName"] as? String,
-      recipeImageURL: dict["recipeImageURL"] as? String
+      senderID: sender,
+      friendID: friend,
+      text: text
     )
 
-    messageBubbles.append(messageBubbleModel)
+    messageModels.append(messageModel)
 
     let messageDetailView = view as! MessageDetailView
     let collectionView = messageDetailView.collectionView
@@ -165,13 +192,11 @@ public class MessageDetailViewController: UIViewController,
     let messageDetailView = view as! MessageDetailView
     socket.emit(
       "text",
-      MessageBubbleModel(
-        sender: AccountManager.sharedInstance.currentUserID,
-        friend: self.friendModel.userID,
-        isText: true,
+      MessageModel(
         date: Date(),
-        text: textView.text,
-        recipeID: nil
+        senderID: AccountManager.sharedInstance.currentUserID,
+        friendID: self.friendID,
+        text: textView.text
       )
     )
 
@@ -189,7 +214,7 @@ public class MessageDetailViewController: UIViewController,
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return messageBubbles.count
+    return messageModels.count
   }
 
   public func collectionView(
@@ -201,7 +226,7 @@ public class MessageDetailViewController: UIViewController,
       for: indexPath
     ) as! MessageBubbleCell
     cell.delegate = self
-    cell.configure(with: messageBubbles[indexPath.row])
+    cell.configure(with: messageModels[indexPath.row])
 
     return cell
   }
@@ -238,7 +263,7 @@ public class MessageDetailViewController: UIViewController,
     sizeForItemAt indexPath: IndexPath
   ) -> CGSize {
     return MessageBubbleCell.preferredSize(
-      forModel: messageBubbles[indexPath.row],
+      forModel: messageModels[indexPath.row],
       parentView: view
     )
   }

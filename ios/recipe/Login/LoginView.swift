@@ -7,19 +7,23 @@
 
 import UIKit
 
-public protocol LoginViewDelegate: class {
-  func loginButtonDidTap()
+public protocol LoginViewDelegate: UITextFieldDelegate {
+  func login(withUsername username: String, password: String)
   func signUpButtonDidTap()
 }
 
 public class LoginView: UIView {
 
-  public weak var delegate: LoginViewDelegate?
-  public weak var textFieldDelegate: UITextFieldDelegate?
+  public weak var delegate: LoginViewDelegate? {
+    didSet {
+      usernameTextField.delegate = delegate
+      passwordTextField.delegate = delegate
+    }
+  }
 
   let titleLabel = UILabel()
-  let nameLabel = UILabel()
-  let nameTextField = InsettedTextField()
+  let usernameLabel = UILabel()
+  let usernameTextField = InsettedTextField()
   let passwordLabel = UILabel()
   let passwordTextField = InsettedTextField()
   let loginButton = DarkButton()
@@ -44,28 +48,29 @@ public class LoginView: UIView {
 
     // Username
 
-    nameTextField.text = nil
-    nameTextField.placeholder = "Username"
-    nameTextField.textContentType = .name
-    nameTextField.delegate = textFieldDelegate
-    nameTextField.layer.borderColor = UIColor.black.cgColor
-    nameTextField.layer.borderWidth = 2
-    addSubview(nameTextField)
-    nameTextField.translatesAutoresizingMaskIntoConstraints = false
+    usernameTextField.autocapitalizationType = .none
+    usernameTextField.text = nil
+    usernameTextField.placeholder = "Username"
+    usernameTextField.textContentType = .name
+    usernameTextField.delegate = delegate
+    usernameTextField.layer.borderColor = UIColor.black.cgColor
+    usernameTextField.layer.borderWidth = 2
+    addSubview(usernameTextField)
+    usernameTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      nameTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 80),
-      nameTextField.centerXAnchor.constraint(equalTo: centerXAnchor),
-      nameTextField.heightAnchor.constraint(equalToConstant: 44),
-      nameTextField.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.9),
+      usernameTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 80),
+      usernameTextField.centerXAnchor.constraint(equalTo: centerXAnchor),
+      usernameTextField.heightAnchor.constraint(equalToConstant: 44),
+      usernameTextField.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.9),
     ])
 
-    nameLabel.text = "Username"
-    nameLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-    addSubview(nameLabel)
-    nameLabel.translatesAutoresizingMaskIntoConstraints = false
+    usernameLabel.text = "Username"
+    usernameLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+    addSubview(usernameLabel)
+    usernameLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      nameLabel.bottomAnchor.constraint(equalTo: nameTextField.topAnchor, constant: -8),
-      nameLabel.leadingAnchor.constraint(equalTo: nameTextField.leadingAnchor),
+      usernameLabel.bottomAnchor.constraint(equalTo: usernameTextField.topAnchor, constant: -8),
+      usernameLabel.leadingAnchor.constraint(equalTo: usernameTextField.leadingAnchor),
     ])
 
     // Password
@@ -75,15 +80,16 @@ public class LoginView: UIView {
     addSubview(passwordLabel)
     passwordLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      passwordLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
-      passwordLabel.leadingAnchor.constraint(equalTo: nameTextField.leadingAnchor),
+      passwordLabel.topAnchor.constraint(equalTo: usernameTextField.bottomAnchor, constant: 24),
+      passwordLabel.leadingAnchor.constraint(equalTo: usernameTextField.leadingAnchor),
     ])
 
+    passwordTextField.autocapitalizationType = .none
     passwordTextField.text = nil
     passwordTextField.placeholder = "Password"
     passwordTextField.isSecureTextEntry = true
     passwordTextField.textContentType = .password
-    passwordTextField.delegate = textFieldDelegate
+    passwordTextField.delegate = delegate
     passwordTextField.layer.borderColor = UIColor.black.cgColor
     passwordTextField.layer.borderWidth = 2
     addSubview(passwordTextField)
@@ -91,8 +97,8 @@ public class LoginView: UIView {
     NSLayoutConstraint.activate([
       passwordTextField.topAnchor.constraint(equalTo: passwordLabel.bottomAnchor, constant: 8),
       passwordTextField.centerXAnchor.constraint(equalTo: centerXAnchor),
-      passwordTextField.heightAnchor.constraint(equalTo: nameTextField.heightAnchor),
-      passwordTextField.widthAnchor.constraint(equalTo: nameTextField.widthAnchor),
+      passwordTextField.heightAnchor.constraint(equalTo: usernameTextField.heightAnchor),
+      passwordTextField.widthAnchor.constraint(equalTo: usernameTextField.widthAnchor),
     ])
 
     // Login button
@@ -129,7 +135,14 @@ public class LoginView: UIView {
   // MARK: - Target Actions
 
   @objc func loginButtonDidTap(_ sender: Any?) {
-    delegate?.loginButtonDidTap()
+    guard let username = usernameTextField.text,
+          let _ = passwordTextField.text
+    else { return }
+
+    passwordTextField.isSecureTextEntry = false
+    let password = passwordTextField.text!
+    passwordTextField.isSecureTextEntry = true
+    delegate?.login(withUsername: username, password: password)
   }
 
   @objc func signUpButtonDidTap(_ sender: Any?) {

@@ -17,7 +17,7 @@ public class RecipeServices {
   static let sharedInstance = RecipeServices()
   static let endpoint = "http://44.192.111.170"
 
-  let imageCache: [Int:UIImage] = [:]
+  let recipeImageCache: [Int:UIImage] = [:]
 
   public func getRecipeDetails(
     forUserID userID: Int,
@@ -170,12 +170,12 @@ public class RecipeServices {
     }
   }
 
-  public func loadImageData(
+  public func loadImage(
     forRecipeID recipeID: Int,
     url: URL,
     completion: @escaping (UIImage?) -> Void
   ) {
-    var imageCache = Self.sharedInstance.imageCache
+    var imageCache = Self.sharedInstance.recipeImageCache
 
     if let image = imageCache[recipeID] {
       completion(image)

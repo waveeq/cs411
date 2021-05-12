@@ -85,34 +85,93 @@ public class RecentMessageCell: UICollectionViewCell {
     profilePictureView.layer.cornerRadius = profilePictureView.bounds.width * 0.5
   }
 
-  public func configure(with model: RecentMessageModel) {
-    nameLabel.text = model.friend.name
+  public func configure(with messageModel: MessageModel) {
+    let friendID = messageModel.senderID == AccountManager.sharedInstance.currentUserID
+      ? messageModel.friendID
+      : messageModel.senderID
 
-    guard let message = model.message else {
-      recentTextLabel.text = "No history - start chatting now!"
-      recentTextLabel.font = UIFont.italicSystemFont(ofSize: 14)
-      return
+    UserServices.sharedInstance.getUserProfile(forUserID: friendID) { userModel in
+      guard let userModel = userModel else { return }
+
+      self.profilePictureView.image = UIImage(named: "avatar_placeholder")
+      if let profileImage = userModel.profileImage {
+        UserServices.sharedInstance.loadImage(
+          forUserID: userModel.userID,
+          url: profileImage
+        ) { image in
+          self.profilePictureView.image = image
+        }
+      }
+
+      self.nameLabel.text =
+        userModel.firstName + " " + userModel.lastName + " (" + userModel.username + ")"
+
+      self.recentTextLabel.text = messageModel.text
+      self.recentTextLabel.font = UIFont.systemFont(ofSize: 14)
+
+      let deltaTime = -messageModel.date.timeIntervalSinceNow
+      if deltaTime >= 86400 {
+        let daysDiff = Int(floor(deltaTime / 86400))
+        self.recentTextTimeLabel.text = "・\(daysDiff)d"
+      } else if deltaTime >= 3600 {
+        let hoursDiff = Int(floor(deltaTime / 3600))
+        self.recentTextTimeLabel.text = "・\(hoursDiff)h"
+      } else {
+        let minutesDiff = Int(floor(deltaTime / 60))
+        self.recentTextTimeLabel.text = "・\(minutesDiff)m"
+      }
     }
 
-    if message.isText {
-      recentTextLabel.text = message.text
-      recentTextLabel.font = UIFont.systemFont(ofSize: 14)
-    } else {
-      recentTextLabel.text = "Shared a recipe"
-      recentTextLabel.font = UIFont.italicSystemFont(ofSize: 14)
-    }
-
-    let deltaTime = -message.date.timeIntervalSinceNow
-    if deltaTime >= 86400 {
-      let daysDiff = Int(floor(deltaTime / 86400))
-      recentTextTimeLabel.text = "・\(daysDiff)d"
-    } else if deltaTime >= 3600 {
-      let hoursDiff = Int(floor(deltaTime / 3600))
-      recentTextTimeLabel.text = "・\(hoursDiff)h"
-    } else {
-      let minutesDiff = Int(floor(deltaTime / 60))
-      recentTextTimeLabel.text = "・\(minutesDiff)m"
-    }
+//    nameLabel.text = model.friend.name
+//
+//    guard let message = model.message else {
+//      recentTextLabel.text = "No history - start chatting now!"
+//      recentTextLabel.font = UIFont.italicSystemFont(ofSize: 14)
+//      return
+//    }
+//
+//    if message.isText {
+//      recentTextLabel.text = message.text
+//      recentTextLabel.font = UIFont.systemFont(ofSize: 14)
+//    } else {
+//      recentTextLabel.text = "Shared a recipe"
+//      recentTextLabel.font = UIFont.italicSystemFont(ofSize: 14)
+//    }
+//
+//    let deltaTime = -message.date.timeIntervalSinceNow
+//    if deltaTime >= 86400 {
+//      let daysDiff = Int(floor(deltaTime / 86400))
+//      recentTextTimeLabel.text = "・\(daysDiff)d"
+//    } else if deltaTime >= 3600 {
+//      let hoursDiff = Int(floor(deltaTime / 3600))
+//      recentTextTimeLabel.text = "・\(hoursDiff)h"
+//    } else {
+//      let minutesDiff = Int(floor(deltaTime / 60))
+//      recentTextTimeLabel.text = "・\(minutesDiff)m"
+//    }
   }
 
+  public func configure(with searchUsernameModel: SearchUsernameModel) {
+    UserServices.sharedInstance.getUserProfile(forUserID: searchUsernameModel.userID) { userModel in
+      guard let userModel = userModel else { return }
+
+      self.profilePictureView.image = UIImage(named: "avatar_placeholder")
+      if let profileImage = userModel.profileImage {
+        UserServices.sharedInstance.loadImage(
+          forUserID: userModel.userID,
+          url: profileImage
+        ) { image in
+          self.profilePictureView.image = image
+        }
+      }
+
+      self.nameLabel.text =
+        userModel.firstName + " " + userModel.lastName + " (" + userModel.username + ")"
+
+      self.recentTextLabel.text = ""
+      self.recentTextLabel.font = UIFont.systemFont(ofSize: 14)
+
+      self.recentTextTimeLabel.text = ""
+    }
+  }
 }

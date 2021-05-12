@@ -23,13 +23,25 @@ public class LoginViewController: UIViewController, LoginViewDelegate {
 
   // MARK: - LoginViewDelegate
 
-  public func loginButtonDidTap() {
-    let loginView = view as! LoginView
-
+  public func login(withUsername username: String, password: String) {
     LoadingOverlayView.startOverlay()
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      self.navigationController?.pushViewController(RootViewController(), animated: true)
+
+    AccountManager.sharedInstance.login(
+      withUsername: username, password: password) { userModel in
       LoadingOverlayView.stopOverlay()
+      
+      if let _ = userModel {
+        self.navigationController?.pushViewController(RootViewController(), animated: true)
+      } else {
+        let alert = UIAlertController(
+          title: "Login Error",
+          message: "Incorrect username or password.",
+          preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+
+        self.present(alert, animated: true, completion: nil)
+      }
     }
   }
 

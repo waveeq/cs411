@@ -54,11 +54,13 @@ public class ExploreViewController: UIViewController, UITextFieldDelegate {
     fetchData()
   }
 
-  // MARK: - Private
+  // MARK: - Data Fetch
 
   func fetchData() {
     LoadingOverlayView.startOverlay()
-    RecipeServices.sharedInstance.getExploreList(forUserID: 1) { exploreModels in
+    RecipeServices.sharedInstance.getExploreList(
+      forUserID: AccountManager.sharedInstance.currentUserID
+    ) { exploreModels in
       self.exploreCollectionViewManager.textFieldDelegate = self
       self.exploreCollectionViewManager.updateData(exploreModels: exploreModels!)
       LoadingOverlayView.stopOverlay()

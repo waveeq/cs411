@@ -16,6 +16,19 @@ public class ProfileView: UIView {
 
   public weak var delegate: ProfileViewDelegate?
 
+  lazy var countryNameToCodeDict: [String:String] = {
+    var dict: [String:String] = [:]
+    if let path = Bundle.main.path(forResource: "Countries", ofType: "plist") {
+      let countriesList = NSArray(contentsOfFile: path) as? [[String:String]]
+      countriesList?.forEach({ countryDict in
+        dict[countryDict["name"]!] = countryDict["code"]!
+      })
+    }
+    return dict
+  }()
+
+  let userModel: UserModel
+
   let profileImageView = UIImageView(image: UIImage(named: "avatar_placeholder"))
   let nameLabel = UILabel()
   let locationLabel = UILabel()
@@ -25,12 +38,22 @@ public class ProfileView: UIView {
   let editProfileButton = LightButton()
   let logoutButton = DarkButton()
 
-  public override init(frame: CGRect) {
-    super.init(frame: frame)
+  required init(forUserModel userModel: UserModel) {
+    self.userModel = userModel
+    super.init(frame: .zero)
 
     backgroundColor = .white
 
     // Profile Image
+
+    if let profileImage = userModel.profileImage {
+      UserServices.sharedInstance.loadImage(
+        forUserID: userModel.userID,
+        url: profileImage
+      ) { image in
+        self.profileImageView.image = image
+      }
+    }
 
     addSubview(profileImageView)
     profileImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -50,7 +73,7 @@ public class ProfileView: UIView {
 
     // Name
 
-    nameLabel.text = "Sam Adams"
+    nameLabel.text =  userModel.firstName + " " + userModel.lastName
     nameLabel.font = UIFont.systemFont(ofSize: 36)
     nameLabel.adjustsFontSizeToFitWidth = true
     nameLabel.numberOfLines = 1
@@ -67,8 +90,7 @@ public class ProfileView: UIView {
 
     // Location
 
-    let countryCode = "US"
-    locationLabel.text = "samadams84 " + countryFlag(from: countryCode)
+    locationLabel.text = userModel.username + " " + countryFlag(fromCountryName: userModel.country)
     locationLabel.font = UIFont.systemFont(ofSize: 16, weight: .black)
     locationLabel.adjustsFontSizeToFitWidth = true
     locationLabel.numberOfLines = 1
@@ -85,7 +107,7 @@ public class ProfileView: UIView {
 
     // Email
 
-    emailLabel.text = "samadams@fridaynight.com"
+    emailLabel.text = userModel.email
     emailLabel.font = UIFont.systemFont(ofSize: 16)
     emailLabel.adjustsFontSizeToFitWidth = true
     emailLabel.numberOfLines = 1
@@ -103,7 +125,7 @@ public class ProfileView: UIView {
 
     // Birthday
 
-    birthdayLabel.text = "Birthday: 9/27/1984 🎉"
+    birthdayLabel.text = "Birthday: " + userModel.birthdateString + " 🎉"
     birthdayLabel.font = UIFont.systemFont(ofSize: 16)
     birthdayLabel.adjustsFontSizeToFitWidth = true
     birthdayLabel.numberOfLines = 1
@@ -139,6 +161,8 @@ public class ProfileView: UIView {
 
     // Edit profile button
 
+    editProfileButton.adjustsImageWhenDisabled = true
+    editProfileButton.isEnabled = false
     editProfileButton.setTitle("Edit Profile", for: .normal)
     addSubview(editProfileButton)
     editProfileButton.translatesAutoresizingMaskIntoConstraints = false
@@ -187,7 +211,12 @@ public class ProfileView: UIView {
     }
   }
 
-  func countryFlag(from countryCode:String) -> String {
+  func countryFlag(fromCountryName countryName: String) -> String {
+    let countryCode = countryNameToCodeDict[countryName] ?? "US"
+    return countryFlag(fromCountryCode: countryCode)
+  }
+
+  func countryFlag(fromCountryCode countryCode: String) -> String {
       let base : UInt32 = 127397
       var s = ""
       for v in countryCode.uppercased().unicodeScalars {

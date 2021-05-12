@@ -54,8 +54,22 @@ public class ShareSelectFriendCell: UICollectionViewCell {
     profilePictureView.layer.cornerRadius = profilePictureView.bounds.width * 0.5
   }
 
-  public func configure(with model: FriendModel) {
-    nameLabel.text = model.name
+  public func configure(with model: SearchUsernameModel) {
+    UserServices.sharedInstance.getUserProfile(forUserID: model.userID) { userModel in
+      guard let userModel = userModel else { return }
+
+      self.nameLabel.text =
+        userModel.firstName + " " + userModel.lastName + " (" + userModel.username + ")"
+
+      if let profileImage = userModel.profileImage {
+        UserServices.sharedInstance.loadImage(
+          forUserID: userModel.userID,
+          url: profileImage
+        ) { image in
+          self.profilePictureView.image = image
+        }
+      }
+    }
   }
 
 }

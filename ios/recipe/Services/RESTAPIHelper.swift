@@ -8,7 +8,7 @@
 import Foundation
 
 public struct RESTAPIHelper {
-  
+
   public static func requestGet(
     withUrl url: URL,
     params: [String: Any]?,
@@ -69,15 +69,16 @@ public struct RESTAPIHelper {
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
       guard let data = data, let response = response as? HTTPURLResponse, error == nil else {
         // check for fundamental networking error
-        print("===== Request error", error ?? "Unknown error")
-        completion(["success": false])
+        let errorMessage = error?.localizedDescription ?? "Unknown error"
+        print("===== Request error", errorMessage)
+        completion(["success": false, "error": errorMessage])
         return
       }
 
       guard (200 ... 299) ~= response.statusCode else {                    // check for http errors
           print("===== Request statusCode should be 2xx, but is \(response.statusCode)")
           print("===== Request response = \(response)")
-          completion(["success": false])
+          completion(["success": false, "result": String(data: data, encoding: .utf8) ?? ""])
           return
       }
 

@@ -13,8 +13,8 @@ public class UserServices {
   static let sharedInstance = UserServices()
   static let endpoint = "http://44.192.111.170"
 
-  let userModelCache: [Int:UserModel] = [:]
-  let profileImageCache: [Int:UIImage] = [:]
+  var userModelCache: [Int:UserModel] = [:]
+  var profileImageCache: [Int:UIImage] = [:]
 
   public func getUserID(
     forUsername username: String,
@@ -75,7 +75,7 @@ public class UserServices {
     forUserID userID: Int,
     completion: @escaping (UserModel?) -> Void
   ) {
-    if let userModel = Self.sharedInstance.userModelCache[userID] {
+    if let userModel = userModelCache[userID] {
       completion(userModel)
       return
     }
@@ -120,6 +120,8 @@ public class UserServices {
               birthdate: birthdate!,
               profileImage: profileImage
             )
+
+            self.userModelCache[userID] = userModel
           }
         }
       }
@@ -161,9 +163,7 @@ public class UserServices {
     url: URL,
     completion: @escaping (UIImage?) -> Void
   ) {
-    var imageCache = Self.sharedInstance.profileImageCache
-
-    if let image = imageCache[userID] {
+    if let image = profileImageCache[userID] {
       completion(image)
       return
     }
@@ -172,7 +172,7 @@ public class UserServices {
       let image = try? UIImage(data: Data(contentsOf: url))
 
       DispatchQueue.main.async {
-        imageCache[userID] = image
+      self.profileImageCache[userID] = image
         completion(image)
       }
     }

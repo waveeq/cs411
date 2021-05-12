@@ -70,7 +70,15 @@ public class MessagesCollectionViewManager: NSObject,
     ) as! RecentMessageCell
 
     if searchedUsernames.count > 0 {
-      cell.configure(with: searchedUsernames[indexPath.row])
+      if let recentMessage = recentMessages.first(
+          where: {
+            $0.friendID == searchedUsernames[indexPath.row].userID
+            || $0.senderID == searchedUsernames[indexPath.row].userID
+          }) {
+        cell.configure(with: recentMessage)
+      } else {
+        cell.configure(with: searchedUsernames[indexPath.row])
+      }
     } else {
       cell.configure(with: recentMessages[indexPath.row])
     }

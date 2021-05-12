@@ -103,11 +103,16 @@ public class RecentMessageCell: UICollectionViewCell {
         }
       }
 
-      self.nameLabel.text =
-        userModel.firstName + " " + userModel.lastName + " (" + userModel.username + ")"
+      self.nameLabel.text = userModel.fullNameAndUsername
 
-      self.recentTextLabel.text = messageModel.text
-      self.recentTextLabel.font = UIFont.systemFont(ofSize: 14)
+
+      if let _ = messageModel.shareRecipeDict {
+        self.recentTextLabel.text = "Shared a recipe"
+        self.recentTextLabel.font = UIFont.italicSystemFont(ofSize: 14)
+      } else {
+        self.recentTextLabel.text = messageModel.text
+        self.recentTextLabel.font = UIFont.systemFont(ofSize: 14)
+      }
 
       let deltaTime = -messageModel.date.timeIntervalSinceNow
       if deltaTime >= 86400 {
@@ -121,37 +126,12 @@ public class RecentMessageCell: UICollectionViewCell {
         self.recentTextTimeLabel.text = "・\(minutesDiff)m"
       }
     }
-
-//    nameLabel.text = model.friend.name
-//
-//    guard let message = model.message else {
-//      recentTextLabel.text = "No history - start chatting now!"
-//      recentTextLabel.font = UIFont.italicSystemFont(ofSize: 14)
-//      return
-//    }
-//
-//    if message.isText {
-//      recentTextLabel.text = message.text
-//      recentTextLabel.font = UIFont.systemFont(ofSize: 14)
-//    } else {
-//      recentTextLabel.text = "Shared a recipe"
-//      recentTextLabel.font = UIFont.italicSystemFont(ofSize: 14)
-//    }
-//
-//    let deltaTime = -message.date.timeIntervalSinceNow
-//    if deltaTime >= 86400 {
-//      let daysDiff = Int(floor(deltaTime / 86400))
-//      recentTextTimeLabel.text = "・\(daysDiff)d"
-//    } else if deltaTime >= 3600 {
-//      let hoursDiff = Int(floor(deltaTime / 3600))
-//      recentTextTimeLabel.text = "・\(hoursDiff)h"
-//    } else {
-//      let minutesDiff = Int(floor(deltaTime / 60))
-//      recentTextTimeLabel.text = "・\(minutesDiff)m"
-//    }
   }
 
   public func configure(with searchUsernameModel: SearchUsernameModel) {
+    nameLabel.text = nil
+    profilePictureView.image = UIImage(named: "avatar_placeholder")
+    
     UserServices.sharedInstance.getUserProfile(forUserID: searchUsernameModel.userID) { userModel in
       guard let userModel = userModel else { return }
 
@@ -165,11 +145,10 @@ public class RecentMessageCell: UICollectionViewCell {
         }
       }
 
-      self.nameLabel.text =
-        userModel.firstName + " " + userModel.lastName + " (" + userModel.username + ")"
+      self.nameLabel.text = userModel.fullNameAndUsername
 
-      self.recentTextLabel.text = ""
-      self.recentTextLabel.font = UIFont.systemFont(ofSize: 14)
+      self.recentTextLabel.text = "No history - start chatting now!"
+      self.recentTextLabel.font = UIFont.italicSystemFont(ofSize: 14)
 
       self.recentTextTimeLabel.text = ""
     }

@@ -47,12 +47,12 @@ public class MessagesViewController: UIViewController, UITextFieldDelegate {
   public override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
 
-    fetchData()
+    fetchRecentMessages()
   }
 
   // MARK: - Data Fetch
 
-  func fetchData() {
+  func fetchRecentMessages() {
     MessageServices.sharedInstance.getRecentMessagesList(
       forUserID: AccountManager.sharedInstance.currentUserID) { recentMessages in
       self.messagesCollectionViewManager.updateRecentMessages(recentMessages)

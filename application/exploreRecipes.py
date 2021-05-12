@@ -45,12 +45,13 @@ class ExploreRecipes(flask.views.MethodView):
         sortedrecipes = sortedrecipes + listnoratings
 
         sortedrecipes = sorted(sortedrecipes, key = lambda x: (x['main_image'] is not None,x['mean']), reverse=True)
-        print(len(sortedrecipes))
+        sortedrecipes = sortedrecipes[:90]
+        #print(len(sortedrecipes))
         return flask.jsonify(sortedrecipes)
 
     def get(self):
         title= flask.request.args.get('title')
-        if title == None or len(title)<3:
+        if title == None:
             return flask.abort(404)
         return self._explore_API(title)
 

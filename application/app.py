@@ -51,7 +51,6 @@ app.add_url_rule('/recipe/details',view_func=RecipeDetails.as_view('recipeDetail
 app.add_url_rule('/recipe/note',view_func=RecipeNote.as_view('recipeNote'), methods=["PUT"])
 app.add_url_rule('/recipe',view_func=FavoritesDelete.as_view('FavoritesDelete'), methods=["DELETE"])
 app.add_url_rule('/recipe',view_func=FavoritesInsert.as_view('FavoritesInsert'), methods=["POST"])
-app.add_url_rule('/explore',view_func=SearchAPI.as_view('searchAPI'), methods=["GET"])
 app.add_url_rule('/login',view_func=Login.as_view('login'), methods=["GET"])
 app.add_url_rule('/register',view_func=User.as_view('user'), methods=["PUT"])
 app.add_url_rule('/messages',view_func=Messages.as_view('messages'), methods=["GET"])

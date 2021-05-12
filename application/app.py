@@ -12,7 +12,6 @@ from userFavorites import UserFavorites
 from recipeDetails import RecipeDetails
 from recipeNote import RecipeNote
 from favoritesDelete import FavoritesDelete
-from searchAPI import SearchAPI
 from favoritesInsert import FavoritesInsert
 from messages import Messages
 from login import Login

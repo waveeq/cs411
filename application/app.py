@@ -14,8 +14,11 @@ from recipeNote import RecipeNote
 from favoritesDelete import FavoritesDelete
 from searchAPI import SearchAPI
 from favoritesInsert import FavoritesInsert
+from messages import Messages
 from login import Login
 from user import User
+from recommender import Recommender
+from searchUserAPI import SearchUserAPI
 
 app = flask.Flask(__name__)
 
@@ -51,6 +54,10 @@ app.add_url_rule('/recipe',view_func=FavoritesInsert.as_view('FavoritesInsert'),
 app.add_url_rule('/explore',view_func=SearchAPI.as_view('searchAPI'), methods=["GET"])
 app.add_url_rule('/login',view_func=Login.as_view('login'), methods=["GET"])
 app.add_url_rule('/register',view_func=User.as_view('user'), methods=["PUT"])
+app.add_url_rule('/messages',view_func=Messages.as_view('messages'), methods=["GET"])
+app.add_url_rule('/explore/0',view_func=Recommender.as_view('recommender'), methods=["GET"])
+app.add_url_rule('/search/user',view_func=SearchUserAPI.as_view('searchUser'), methods=["GET"])
+app.add_url_rule('/user',view_func=User.as_view('getuser'), methods=["GET"])
 
 if __name__ == '__main__':
     formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")

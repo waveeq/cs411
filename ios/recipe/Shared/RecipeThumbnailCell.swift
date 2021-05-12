@@ -36,9 +36,10 @@ public class RecipeThumbnailCell: UICollectionViewCell {
     forRecipeID recipeID: Int,
     url: URL
   ) {
-    RecipeServices.sharedInstance.loadImageData(
+    RecipeServices.sharedInstance.loadImage(
       forRecipeID: recipeID,
-      url: url) { image in
+      url: url
+    ) { image in
       self.imageView.image = image
     }
   }

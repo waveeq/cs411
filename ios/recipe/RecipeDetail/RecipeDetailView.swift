@@ -301,7 +301,7 @@ public class RecipeDetailView: UIScrollView {
     titleLabel.text = recipeDetailModel.title
 
     imageView.backgroundColor = .systemGray
-    RecipeServices.sharedInstance.loadImageData(
+    RecipeServices.sharedInstance.loadImage(
       forRecipeID: recipeDetailModel.recipeID,
       url: recipeDetailModel.mainImage) { image in
       self.imageView.image = image

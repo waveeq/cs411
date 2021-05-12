@@ -172,7 +172,7 @@ public class MessageBubbleCell: UICollectionViewCell {
       recipeImageView.backgroundColor = .systemGray
       recipeImageView.isHidden = false
       if let recipeID = model.recipeID, let imageURL = model.recipeImageURL {
-        RecipeServices.sharedInstance.loadImageData(
+        RecipeServices.sharedInstance.loadImage(
           forRecipeID: recipeID,
           url: URL(string: imageURL)!
         ) { image in

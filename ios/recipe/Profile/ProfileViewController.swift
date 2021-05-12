@@ -10,7 +10,7 @@ import UIKit
 public class ProfileViewController: UIViewController, ProfileViewDelegate {
 
   public override func loadView() {
-    let profileView = ProfileView()
+    let profileView = ProfileView(forUserModel: AccountManager.sharedInstance.currentUserModel!)
     profileView.delegate = self
     view = profileView
   }

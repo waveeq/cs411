@@ -8,15 +8,19 @@
 import UIKit
 
 public class ProfileEditViewController: UIViewController,
-                                        ProfileEditViewDelegate,
-                                        UITextFieldDelegate {
+                                        ProfileEditViewDelegate {
 
   var dismissTextEditingTapRecognizer: UIGestureRecognizer?
+  var countriesList: NSArray? {
+    if let path = Bundle.main.path(forResource: "Countries", ofType: "plist") {
+      return NSArray(contentsOfFile: path)
+    }
+    return nil
+  }
 
   public override func loadView() {
     let profileEditView = ProfileEditView()
     profileEditView.delegate = self
-    profileEditView.textFieldDelegate = self
     view = profileEditView
   }
 
@@ -115,5 +119,21 @@ public class ProfileEditViewController: UIViewController,
   public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
     textField.resignFirstResponder()
     return true
+  }
+
+  // MARK: - UIPickerViewDataSource
+
+  public func numberOfComponents(in pickerView: UIPickerView) -> Int {
+    return 1
+  }
+
+  public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    return countriesList?.count ?? 0
+  }
+
+  // MARK: - UIPickerViewDelegate
+
+  public func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+    return (countriesList?[row] as? NSDictionary)?["name"] as? String
   }
 }

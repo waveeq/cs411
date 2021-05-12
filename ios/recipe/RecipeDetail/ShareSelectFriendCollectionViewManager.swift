@@ -15,19 +15,19 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
   let cellIdentifier = "shareSelectFriendCellIdentifer"
   let headerIdentifier = "shareSelectFriendHeaderIdentifier"
 
-  lazy var friends: [FriendModel] = {
+  lazy var friends: [OldFriendModel] = {
     let data = [
-      FriendModel(
+      OldFriendModel(
           userID: 2,
           name: "Eva",
           profilePicture: nil
       ),
-      FriendModel(
+      OldFriendModel(
         userID: 3,
         name: "Maggie",
         profilePicture: nil
       ),
-      FriendModel(
+      OldFriendModel(
         userID: 4,
         name: "Jessica",
         profilePicture: nil

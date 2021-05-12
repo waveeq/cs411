@@ -12,7 +12,7 @@ public class MessageNavBarFriendView: UIView {
   var friendImageView: UIImageView!
   var friendNameLabel: UILabel!
 
-  required init(friend: FriendModel) {
+  required init(friend: OldFriendModel) {
     super.init(frame: .zero)
 
     friendImageView = UIImageView(image: UIImage(named: "avatar_placeholder")!)

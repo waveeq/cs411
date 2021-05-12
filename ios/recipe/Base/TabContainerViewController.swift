@@ -58,7 +58,7 @@ public class TabContainerViewController: UIViewController {
 
   public func shareRecipe(
     _ recipeDetailModel: RecipeDetailModel,
-    toFriend friend: FriendModel
+    toFriend friend: OldFriendModel
   ) {
     popAllModalViewController(animated: true)
     messagesTabViewController.popToRootViewController(animated: false)

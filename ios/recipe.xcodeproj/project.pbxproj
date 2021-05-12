@@ -17,6 +17,8 @@
 		490F3B73260E14C8007F2921 /* ExploreFilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490F3B72260E14C8007F2921 /* ExploreFilterCell.swift */; };
 		491D5188263E5D3300F3FAF6 /* SocketIOModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491D5187263E5D3300F3FAF6 /* SocketIOModels.swift */; };
 		491D5190263E80ED00F3FAF6 /* MessageBubbleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491D518F263E80ED00F3FAF6 /* MessageBubbleCell.swift */; };
+		4925BFA0264A018100231539 /* Countries.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4925BF9F264A018100231539 /* Countries.plist */; };
+		4925BFA4264A138000231539 /* MessageServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4925BFA3264A138000231539 /* MessageServices.swift */; };
 		4941EA9D263DCA6E001369DD /* MessageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4941EA9C263DCA6E001369DD /* MessageDetailView.swift */; };
 		496227E5260AFE3A0001B29F /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496227E4260AFE3A0001B29F /* MessageDetailViewController.swift */; };
 		497D1860262078B900DB4A29 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497D185F262078B900DB4A29 /* AccountManager.swift */; };
@@ -39,6 +41,7 @@
 		49A003EA2606D74400A27038 /* MessagesSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A003E92606D74400A27038 /* MessagesSectionHeader.swift */; };
 		49A003EE2606D79A00A27038 /* MessagesCollectionViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A003ED2606D79A00A27038 /* MessagesCollectionViewManager.swift */; };
 		49A9ACE82639D16A004EE333 /* LoadingOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A9ACE72639D16A004EE333 /* LoadingOverlayView.swift */; };
+		49B41CD1264AFA1300BA7E51 /* UserServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B41CD0264AFA1300BA7E51 /* UserServices.swift */; };
 		49C6D6892608FFCC00FE327A /* RecipeDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C6D6882608FFCC00FE327A /* RecipeDetailViewController.swift */; };
 		49CE726D2619855A004201B6 /* FooterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CE726C2619855A004201B6 /* FooterButton.swift */; };
 		49CE727126198572004201B6 /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CE727026198572004201B6 /* FooterView.swift */; };
@@ -73,6 +76,8 @@
 		490F3B72260E14C8007F2921 /* ExploreFilterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreFilterCell.swift; sourceTree = "<group>"; };
 		491D5187263E5D3300F3FAF6 /* SocketIOModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketIOModels.swift; sourceTree = "<group>"; };
 		491D518F263E80ED00F3FAF6 /* MessageBubbleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubbleCell.swift; sourceTree = "<group>"; };
+		4925BF9F264A018100231539 /* Countries.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Countries.plist; sourceTree = "<group>"; };
+		4925BFA3264A138000231539 /* MessageServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageServices.swift; sourceTree = "<group>"; };
 		4941EA9C263DCA6E001369DD /* MessageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailView.swift; sourceTree = "<group>"; };
 		496227E4260AFE3A0001B29F /* MessageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailViewController.swift; sourceTree = "<group>"; };
 		497D185F262078B900DB4A29 /* AccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
@@ -95,6 +100,7 @@
 		49A003E92606D74400A27038 /* MessagesSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesSectionHeader.swift; sourceTree = "<group>"; };
 		49A003ED2606D79A00A27038 /* MessagesCollectionViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesCollectionViewManager.swift; sourceTree = "<group>"; };
 		49A9ACE72639D16A004EE333 /* LoadingOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingOverlayView.swift; sourceTree = "<group>"; };
+		49B41CD0264AFA1300BA7E51 /* UserServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserServices.swift; sourceTree = "<group>"; };
 		49C6D6882608FFCC00FE327A /* RecipeDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailViewController.swift; sourceTree = "<group>"; };
 		49CE726C2619855A004201B6 /* FooterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterButton.swift; sourceTree = "<group>"; };
 		49CE727026198572004201B6 /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
@@ -183,8 +189,10 @@
 			isa = PBXGroup;
 			children = (
 				497D185F262078B900DB4A29 /* AccountManager.swift */,
+				4925BFA3264A138000231539 /* MessageServices.swift */,
 				49925FEB2619C71C005001A8 /* RecipeServices.swift */,
 				497D186226208BB200DB4A29 /* RESTAPIHelper.swift */,
+				49B41CD0264AFA1300BA7E51 /* UserServices.swift */,
 				49925FEF2619C832005001A8 /* Models */,
 			);
 			path = Services;
@@ -278,6 +286,7 @@
 		49F09F512601A8E8005B1398 /* recipe */ = {
 			isa = PBXGroup;
 			children = (
+				4925BF9F264A018100231539 /* Countries.plist */,
 				49F09F602601A8E9005B1398 /* Info.plist */,
 				49E26C6F2605A6FD0041FD0C /* LaunchScreen.storyboard */,
 				49F09F522601A8E8005B1398 /* AppDelegate.swift */,
@@ -374,6 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49F09F5C2601A8E9005B1398 /* Assets.xcassets in Resources */,
+				4925BFA0264A018100231539 /* Countries.plist in Resources */,
 				49E26C702605A6FD0041FD0C /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -452,11 +462,13 @@
 				491D5190263E80ED00F3FAF6 /* MessageBubbleCell.swift in Sources */,
 				49964E802618C3AA00548BCC /* ProfileEditViewController.swift in Sources */,
 				49CE727E26199503004201B6 /* InsettedTextField.swift in Sources */,
+				4925BFA4264A138000231539 /* MessageServices.swift in Sources */,
 				49A003E62606BFF200A27038 /* ExploreFilterCollectionViewManager.swift in Sources */,
 				49964E7A2618B3AD00548BCC /* LightButton.swift in Sources */,
 				490F3B52260E0101007F2921 /* RecentMessageCell.swift in Sources */,
 				49EE0459263C72CC00431BCF /* RecipeThumbnailCell.swift in Sources */,
 				49925FE82619AB53005001A8 /* SignUpView.swift in Sources */,
+				49B41CD1264AFA1300BA7E51 /* UserServices.swift in Sources */,
 				49094F01263F5EFD0059D93A /* ShareSelectFriendViewController.swift in Sources */,
 				49E26CAA26060CC60041FD0C /* TabContainerViewController.swift in Sources */,
 				49925FF62619DC38005001A8 /* RatingStarsView.swift in Sources */,
@@ -533,7 +545,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -588,7 +600,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

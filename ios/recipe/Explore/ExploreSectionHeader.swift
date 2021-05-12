@@ -10,13 +10,13 @@ import UIKit
 public class ExploreSectionHeader: UICollectionReusableView {
 
   static let searchBarHeight: CGFloat = 52
-  static let filterListHeight: CGFloat = 44
+//  static let filterListHeight: CGFloat = 44
 
   public static var headerHeight: CGFloat {
-    return searchBarHeight + 12 + filterListHeight
+    return searchBarHeight + 12// + filterListHeight
   }
 
-  var filterCollectionViewManager: ExploreFilterCollectionViewManager!
+//  var filterCollectionViewManager: ExploreFilterCollectionViewManager!
 
   lazy var textField: InsettedTextField = {
     let textField = InsettedTextField()
@@ -28,25 +28,25 @@ public class ExploreSectionHeader: UICollectionReusableView {
     return textField
   }()
 
-  lazy var filterCollectionView: UICollectionView = {
-    let layout = UICollectionViewFlowLayout()
-    layout.scrollDirection = .horizontal
-
-    let filterCollectionView = UICollectionView(
-      frame: .zero,
-      collectionViewLayout: layout
-    )
-    filterCollectionView.showsHorizontalScrollIndicator = false
-    filterCollectionView.clipsToBounds = false
-    
-    filterCollectionViewManager = ExploreFilterCollectionViewManager(
-      collectionView: filterCollectionView
-    )
-    filterCollectionView.delegate = filterCollectionViewManager
-    filterCollectionView.dataSource = filterCollectionViewManager
-
-    return filterCollectionView
-  }()
+//  lazy var filterCollectionView: UICollectionView = {
+//    let layout = UICollectionViewFlowLayout()
+//    layout.scrollDirection = .horizontal
+//
+//    let filterCollectionView = UICollectionView(
+//      frame: .zero,
+//      collectionViewLayout: layout
+//    )
+//    filterCollectionView.showsHorizontalScrollIndicator = false
+//    filterCollectionView.clipsToBounds = false
+//    
+//    filterCollectionViewManager = ExploreFilterCollectionViewManager(
+//      collectionView: filterCollectionView
+//    )
+//    filterCollectionView.delegate = filterCollectionViewManager
+//    filterCollectionView.dataSource = filterCollectionViewManager
+//
+//    return filterCollectionView
+//  }()
 
   weak var textFieldDelegate: UITextFieldDelegate? {
     didSet {
@@ -71,18 +71,18 @@ public class ExploreSectionHeader: UICollectionReusableView {
     ])
     textField.delegate = textFieldDelegate
 
-    addSubview(filterCollectionView)
-
-    filterCollectionView.backgroundColor = .white
-
-    filterCollectionView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      filterCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
-      filterCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
-      filterCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
-      filterCollectionView.heightAnchor.constraint(equalToConstant: Self.filterListHeight),
-    ])
-    filterCollectionView.contentInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+//    addSubview(filterCollectionView)
+//
+//    filterCollectionView.backgroundColor = .white
+//
+//    filterCollectionView.translatesAutoresizingMaskIntoConstraints = false
+//    NSLayoutConstraint.activate([
+//      filterCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
+//      filterCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+//      filterCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+//      filterCollectionView.heightAnchor.constraint(equalToConstant: Self.filterListHeight),
+//    ])
+//    filterCollectionView.contentInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
   }
 
   required init?(coder aDecoder: NSCoder) {

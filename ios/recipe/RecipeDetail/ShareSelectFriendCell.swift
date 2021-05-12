@@ -54,7 +54,7 @@ public class ShareSelectFriendCell: UICollectionViewCell {
     profilePictureView.layer.cornerRadius = profilePictureView.bounds.width * 0.5
   }
 
-  public func configure(with model: FriendModel) {
+  public func configure(with model: OldFriendModel) {
     nameLabel.text = model.name
   }
 

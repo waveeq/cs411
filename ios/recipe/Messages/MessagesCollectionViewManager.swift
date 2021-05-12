@@ -15,14 +15,14 @@ public class MessagesCollectionViewManager: NSObject,
   let cellIdentifier = "messagesCellIdentifer"
   let headerIdentifier = "messagesHeaderIdentifier"
 
-  lazy var recentMessages: [RecentMessageModel] = {
+  lazy var recentMessages: [OldRecentMessageModel] = {
     let data = [
-      RecentMessageModel(
-        friend: FriendModel(
+      OldRecentMessageModel(
+        friend: OldFriendModel(
           userID: 2,
           name: "Eva",
           profilePicture: nil
-        ), message: MessageModel(
+        ), message: OldMessageModel(
           date: Date(timeIntervalSinceNow: -5.0 * 60.0),
           isText: true,
           text: "I've been looking for this recipe my whole life. Thank you!",
@@ -35,12 +35,12 @@ public class MessagesCollectionViewManager: NSObject,
 //        recentChat: "I've been looking for this recipe my whole life. Thank you!",
 //        recentChatTime: "・5m"
       ),
-      RecentMessageModel(
-        friend: FriendModel(
+      OldRecentMessageModel(
+        friend: OldFriendModel(
           userID: 3,
           name: "Maggie",
           profilePicture: nil
-        ), message: MessageModel(
+        ), message: OldMessageModel(
           date: Date(timeIntervalSinceNow: -30.0 * 60.0),
           isText: true,
           text: "Thanks :)",
@@ -54,12 +54,12 @@ public class MessagesCollectionViewManager: NSObject,
 //        recentChat: "Thanks :)",
 //        recentChatTime: "・30m"
       ),
-      RecentMessageModel(
-        friend: FriendModel(
+      OldRecentMessageModel(
+        friend: OldFriendModel(
           userID: 4,
           name: "Jessica",
           profilePicture: nil
-        ), message: MessageModel(
+        ), message: OldMessageModel(
           date: Date(timeIntervalSinceNow: -2 * 3600.0),
           isText: true,
           text: "Loved this app!!",

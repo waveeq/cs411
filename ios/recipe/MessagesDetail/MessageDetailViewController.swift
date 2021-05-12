@@ -16,7 +16,7 @@ public class MessageDetailViewController: UIViewController,
 
   let cellIdentifier = "messageBubbleCellIdentifer"
 
-  let friendModel: FriendModel
+  let friendModel: OldFriendModel
   var recipeDetailModelToShare: RecipeDetailModel?
 
   var socketManager : SocketManager!
@@ -26,7 +26,7 @@ public class MessageDetailViewController: UIViewController,
 
   var messageBubbles: [MessageBubbleModel] = []
 
-  public required init(friend: FriendModel) {
+  public required init(friend: OldFriendModel) {
     self.friendModel = friend
 
     super.init(nibName: nil, bundle: nil)
@@ -38,7 +38,7 @@ public class MessageDetailViewController: UIViewController,
     )
   }
 
-  public convenience init(friend: FriendModel, shareRecipe recipeDetailModel: RecipeDetailModel) {
+  public convenience init(friend: OldFriendModel, shareRecipe recipeDetailModel: RecipeDetailModel) {
     self.init(friend: friend)
 
     recipeDetailModelToShare = recipeDetailModel
@@ -71,10 +71,11 @@ public class MessageDetailViewController: UIViewController,
 
   func connectSocketIO() {
     socketManager = SocketManager(
-      socketURL: URL(string: "http://127.0.0.1:5000")!,
-      config: [.log(false), .compress]
+      socketURL: URL(string: MessageServices.socketIOEndpoint)!,
+      config: [.log(true), .compress]
     )
-    socket = socketManager.socket(forNamespace: "/chat")
+    print("endpoint = ", MessageServices.socketIOEndpoint)
+    socket = socketManager.socket(forNamespace: MessageServices.socketIONamespace)
 
     socket.on("connect") { data, ack in
       self.socket.emit(

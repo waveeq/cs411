@@ -85,7 +85,7 @@ public class RecentMessageCell: UICollectionViewCell {
     profilePictureView.layer.cornerRadius = profilePictureView.bounds.width * 0.5
   }
 
-  public func configure(with model: RecentMessageModel) {
+  public func configure(with model: OldRecentMessageModel) {
     nameLabel.text = model.friend.name
 
     guard let message = model.message else {

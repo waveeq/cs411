@@ -15,26 +15,7 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
   let cellIdentifier = "shareSelectFriendCellIdentifer"
   let headerIdentifier = "shareSelectFriendHeaderIdentifier"
 
-  lazy var friends: [OldFriendModel] = {
-    let data = [
-      OldFriendModel(
-          userID: 2,
-          name: "Eva",
-          profilePicture: nil
-      ),
-      OldFriendModel(
-        userID: 3,
-        name: "Maggie",
-        profilePicture: nil
-      ),
-      OldFriendModel(
-        userID: 4,
-        name: "Jessica",
-        profilePicture: nil
-      ),
-    ]
-    return data
-  }()
+  lazy var searchUsernameModels: [SearchUsernameModel] = []
 
   let recipeDetailModel: RecipeDetailModel
 
@@ -66,7 +47,7 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return friends.count
+    return searchUsernameModels.count
   }
 
   public func collectionView(
@@ -78,7 +59,7 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
       for: indexPath
     ) as! ShareSelectFriendCell
 
-    cell.configure(with: friends[indexPath.row])
+    cell.configure(with: searchUsernameModels[indexPath.row])
 
     return cell
   }
@@ -106,7 +87,7 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
   public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     viewController?.rootViewController?.shareRecipe(
       recipeDetailModel,
-      toFriend: friends[indexPath.row]
+      toFriendID: searchUsernameModels[indexPath.row].userID
     )
   }
 

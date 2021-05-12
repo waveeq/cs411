@@ -58,12 +58,12 @@ public class TabContainerViewController: UIViewController {
 
   public func shareRecipe(
     _ recipeDetailModel: RecipeDetailModel,
-    toFriend friend: OldFriendModel
+    toFriendID friendID: Int
   ) {
     popAllModalViewController(animated: true)
     messagesTabViewController.popToRootViewController(animated: false)
     messagesTabViewController.pushViewController(
-      MessageDetailViewController(friend: friend, shareRecipe: recipeDetailModel),
+      MessageDetailViewController(friendID: friendID, shareRecipe: recipeDetailModel),
       animated: false
     )
     activeTabViewController = messagesTabViewController

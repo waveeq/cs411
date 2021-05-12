@@ -15,75 +15,17 @@ public class MessagesCollectionViewManager: NSObject,
   let cellIdentifier = "messagesCellIdentifer"
   let headerIdentifier = "messagesHeaderIdentifier"
 
-  lazy var recentMessages: [OldRecentMessageModel] = {
-    let data = [
-      OldRecentMessageModel(
-        friend: OldFriendModel(
-          userID: 2,
-          name: "Eva",
-          profilePicture: nil
-        ), message: OldMessageModel(
-          date: Date(timeIntervalSinceNow: -5.0 * 60.0),
-          isText: true,
-          text: "I've been looking for this recipe my whole life. Thank you!",
-          recipeID: nil,
-          mainImage: nil,
-          summary: nil
-        )
-//        name: "Eva",
-//        image: UIImage(named: "avatar_placeholder")!,
-//        recentChat: "I've been looking for this recipe my whole life. Thank you!",
-//        recentChatTime: "・5m"
-      ),
-      OldRecentMessageModel(
-        friend: OldFriendModel(
-          userID: 3,
-          name: "Maggie",
-          profilePicture: nil
-        ), message: OldMessageModel(
-          date: Date(timeIntervalSinceNow: -30.0 * 60.0),
-          isText: true,
-          text: "Thanks :)",
-          recipeID: nil,
-          mainImage: nil,
-          summary: nil
-        )
-//      MessageData(
-//        name: "Maggie",
-//        image: UIImage(named: "avatar_placeholder")!,
-//        recentChat: "Thanks :)",
-//        recentChatTime: "・30m"
-      ),
-      OldRecentMessageModel(
-        friend: OldFriendModel(
-          userID: 4,
-          name: "Jessica",
-          profilePicture: nil
-        ), message: OldMessageModel(
-          date: Date(timeIntervalSinceNow: -2 * 3600.0),
-          isText: true,
-          text: "Loved this app!!",
-          recipeID: nil,
-          mainImage: nil,
-          summary: nil
-        )
-//      MessageData(
-//        name: "Jessica",
-//        image: UIImage(named: "avatar_placeholder")!,
-//        recentChat: "Loved this app!!",
-//        recentChatTime: "・2h"
-      ),
-    ]
-    return data
-  }()
-
+  var recentMessages: [MessageModel] = []
+  var searchedUsernames: [SearchUsernameModel] = []
   weak var textFieldDelegate: UITextFieldDelegate?
   weak var viewController: UIViewController?
+  weak var collectionView: UICollectionView?
 
   required init(viewController: UIViewController, collectionView: UICollectionView) {
     super.init()
 
     self.viewController = viewController
+    self.collectionView = collectionView
     
     collectionView.register(RecentMessageCell.self, forCellWithReuseIdentifier: cellIdentifier)
     collectionView.register(
@@ -91,6 +33,18 @@ public class MessagesCollectionViewManager: NSObject,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
       withReuseIdentifier: headerIdentifier
     )
+  }
+
+  // MARK: - Data Update
+
+  public func updateRecentMessages(_ recentMessages: [MessageModel]) {
+    self.recentMessages = recentMessages
+    collectionView?.reloadData()
+  }
+
+  public func updateSearchedUsernames(_ searchedUsernames: [SearchUsernameModel]) {
+    self.searchedUsernames = searchedUsernames
+    collectionView?.reloadData()
   }
 
   // MARK: - UICollectionViewDataSource
@@ -103,7 +57,7 @@ public class MessagesCollectionViewManager: NSObject,
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return recentMessages.count
+    return searchedUsernames.count > 0 ? searchedUsernames.count : recentMessages.count
   }
 
   public func collectionView(
@@ -115,8 +69,11 @@ public class MessagesCollectionViewManager: NSObject,
       for: indexPath
     ) as! RecentMessageCell
 
-    cell.configure(with: recentMessages[indexPath.row])
-    
+    if searchedUsernames.count > 0 {
+      cell.configure(with: searchedUsernames[indexPath.row])
+    } else {
+      cell.configure(with: recentMessages[indexPath.row])
+    }
     return cell
   }
 
@@ -140,9 +97,24 @@ public class MessagesCollectionViewManager: NSObject,
 
   // MARK: - UICollectionViewDelegate
 
-  public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    didSelectItemAt indexPath: IndexPath
+  ) {
+    var friendID: Int!
+
+    if searchedUsernames.count > 0 {
+      friendID = searchedUsernames[indexPath.row].userID
+    } else {
+      if recentMessages[indexPath.row].senderID != AccountManager.sharedInstance.currentUserID {
+        friendID = recentMessages[indexPath.row].senderID
+      } else {
+        friendID = recentMessages[indexPath.row].friendID
+      }
+    }
+
     viewController?.navigationController?.pushViewController(
-      MessageDetailViewController(friend: recentMessages[indexPath.row].friend),
+      MessageDetailViewController(friendID: friendID),
       animated: true
     )
   }

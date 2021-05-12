@@ -13,6 +13,7 @@ public class UserServices {
   static let sharedInstance = UserServices()
   static let endpoint = "http://44.192.111.170"
 
+  let userModelCache: [Int:UserModel] = [:]
   let profileImageCache: [Int:UIImage] = [:]
 
   public func getUserID(
@@ -47,7 +48,6 @@ public class UserServices {
     password: String,
     completion: @escaping (String?) -> Void
   ) {
-
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "MM/dd/yyyy"
     let birthdateString = dateFormatter.string(from: birthdate)
@@ -75,6 +75,11 @@ public class UserServices {
     forUserID userID: Int,
     completion: @escaping (UserModel?) -> Void
   ) {
+    if let userModel = Self.sharedInstance.userModelCache[userID] {
+      completion(userModel)
+      return
+    }
+    
     RESTAPIHelper.requestGet(
       withUrl: URL(string: "\(Self.endpoint)/user")!,
       params: ["user_id" : userID]
@@ -96,9 +101,14 @@ public class UserServices {
               profileImage = URL(string: profileImageString)
             }
 
-//            let dateFormatter = DateFormatter()
-//            dateFormatter.dateFormat = "yyyy-MM-dd"
-//            let birthDate = dateFormatter.date(from: birthDateString)!
+            let birthdateComponents = birthdateString.components(separatedBy: " ")
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd MMM yyyy"
+            dateFormatter.locale = Locale(identifier: "en")
+            let birthdate = dateFormatter.date(
+              from:
+                birthdateComponents[1] + " " + birthdateComponents[2] + " " + birthdateComponents[3]
+            )
 
             userModel = UserModel(
               userID: userID,
@@ -107,7 +117,7 @@ public class UserServices {
               lastName: lastName,
               email: email,
               country: country,
-              birthdate: Date(),//birthDate,
+              birthdate: birthdate!,
               profileImage: profileImage
             )
           }
@@ -119,7 +129,33 @@ public class UserServices {
       }
     }
   }
-  
+
+  public func searchUsername(
+    withQuery query: String,
+    completion: @escaping ([SearchUsernameModel]) -> Void
+  ) {
+    RESTAPIHelper.requestGet(
+      withUrl: URL(string: "\(Self.endpoint)/search/user")!,
+      params: ["partial_user_name" : query]
+    ) { result in
+      var searchUsernameModels: [SearchUsernameModel] = []
+
+      if let searchUsernameModelDictList = result?["result"] as? [[String:Any]] {
+        searchUsernameModelDictList.forEach { searchUsernameModelDict in
+          if let userID = searchUsernameModelDict["uid"] as? Int,
+             userID != AccountManager.sharedInstance.currentUserID,
+             let username = searchUsernameModelDict["user_name"] as? String {
+            searchUsernameModels.append(SearchUsernameModel(userID: userID, username: username))
+          }
+        }
+      }
+
+      DispatchQueue.main.async {
+        completion(searchUsernameModels)
+      }
+    }
+  }
+
   public func loadImage(
     forUserID userID: Int,
     url: URL,

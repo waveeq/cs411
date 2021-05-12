@@ -70,4 +70,7 @@ public struct UserModel {
   }
 }
 
-
+public struct SearchUsernameModel {
+  var userID: Int
+  var username: String
+}

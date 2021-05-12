@@ -28,9 +28,10 @@ public class LoginViewController: UIViewController, LoginViewDelegate {
 
     AccountManager.sharedInstance.login(
       withUsername: username, password: password) { userModel in
+      LoadingOverlayView.stopOverlay()
+      
       if let _ = userModel {
         self.navigationController?.pushViewController(RootViewController(), animated: true)
-        LoadingOverlayView.stopOverlay()
       } else {
         let alert = UIAlertController(
           title: "Login Error",

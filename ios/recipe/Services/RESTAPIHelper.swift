@@ -8,7 +8,7 @@
 import Foundation
 
 public struct RESTAPIHelper {
-  
+
   public static func requestGet(
     withUrl url: URL,
     params: [String: Any]?,

@@ -20,32 +20,74 @@ public class MessageServices {
 
   public func getRecentMessagesList(
     forUserID userID: Int,
-    completion: @escaping ([ExploreModel]?) -> Void
+    completion: @escaping ([MessageModel]) -> Void
   ) {
-
     RESTAPIHelper.requestGet(
-      withUrl: URL(string: "\(Self.endpoint)/explore")!,
-      params: nil
+      withUrl: URL(string: "\(Self.endpoint)/messages")!,
+      params: ["user_id" : userID, "limit_one" : "yes"]
     ) { (result) in
 
-      var exploreModels: [ExploreModel] = []
+      var messageModels: [MessageModel] = []
 
-      if let exploreModelDictList = result?["result"] as? [[String:Any]] {
-        exploreModelDictList.forEach { exploreModelDict in
-          if let recipeID = exploreModelDict["recipeid"] as? Int,
-             let title = exploreModelDict["title"] as? String,
-             let mainImageUrlString = exploreModelDict["main_image"] as? String {
-            exploreModels.append(ExploreModel(
-              recipeID: recipeID,
-              title: title,
-              mainImage: URL(string: mainImageUrlString)!
-            ))
+      if let messageModelDictList = result?["result"] as? [[String:Any]] {
+        messageModelDictList.forEach { messageModelDict in
+          if let dateEpoch = messageModelDict["date"] as? Double,
+             let friend = messageModelDict["friend"] as? Int,
+             let sender = messageModelDict["sender"] as? Int,
+             let text = messageModelDict["text"] as? String {
+
+            if sender != friend {
+              messageModels.append(
+                MessageModel(
+                  date: Date(timeIntervalSince1970: dateEpoch),
+                  senderID: sender,
+                  friendID: friend,
+                  text: text
+                )
+              )
+            }
           }
         }
       }
 
       DispatchQueue.main.async {
-        completion(exploreModels)
+        completion(messageModels)
+      }
+    }
+  }
+
+  public func getHistoricalMessagesList(
+    forUserID userID: Int,
+    friendID: Int,
+    completion: @escaping ([MessageModel]) -> Void
+  ) {
+    RESTAPIHelper.requestGet(
+      withUrl: URL(string: "\(Self.endpoint)/messages")!,
+      params: ["user_id" : userID, "friend_id" : friendID]
+    ) { (result) in
+      var messageModels: [MessageModel] = []
+
+      if let messageModelDictList = result?["result"] as? [[String:Any]] {
+        messageModelDictList.forEach { messageModelDict in
+          if let dateEpoch = messageModelDict["date"] as? Double,
+             let friend = messageModelDict["friend"] as? Int,
+             let sender = messageModelDict["sender"] as? Int,
+             let text = messageModelDict["text"] as? String {
+
+            messageModels.append(
+              MessageModel(
+                date: Date(timeIntervalSince1970: dateEpoch),
+                senderID: sender,
+                friendID: friend,
+                text: text
+              )
+            )
+          }
+        }
+      }
+
+      DispatchQueue.main.async {
+        completion(messageModels)
       }
     }
   }

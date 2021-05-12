@@ -20,6 +20,7 @@ public class ExploreSectionHeader: UICollectionReusableView {
 
   lazy var textField: InsettedTextField = {
     let textField = InsettedTextField()
+    textField.autocapitalizationType = .none
     textField.backgroundColor = UIColor.white
     textField.layer.borderWidth = 2
     textField.layer.borderColor = UIColor.black.cgColor

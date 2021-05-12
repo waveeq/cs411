@@ -54,7 +54,7 @@ public class ExploreViewController: UIViewController, UITextFieldDelegate {
     fetchData()
   }
 
-  // MARK: - Private
+  // MARK: - Data Fetch
 
   func fetchData() {
     LoadingOverlayView.startOverlay()

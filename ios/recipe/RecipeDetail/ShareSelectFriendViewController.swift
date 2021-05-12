@@ -90,7 +90,6 @@ public class ShareSelectFriendViewController: UIViewController, UITextFieldDeleg
 
   func fetchSearchUsername(withQuery query: String) {
     UserServices.sharedInstance.searchUsername(withQuery: query) { searchUsernameModels in
-      print("===== searchUsernameModels = \(searchUsernameModels)")
       self.shareSelectFriendCollectionViewManager.updateSearchedUsernames(searchUsernameModels)
     }
   }
@@ -112,8 +111,9 @@ public class ShareSelectFriendViewController: UIViewController, UITextFieldDeleg
       navigationController?.view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
     }
     dismissTextEditingTapRecognizer = nil
-    fetchSearchUsername(withQuery: textField.text ?? "")
-    
+    fetchSearchUsername(
+      withQuery: textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    )
   }
 
   public func textFieldShouldReturn(_ textField: UITextField) -> Bool {

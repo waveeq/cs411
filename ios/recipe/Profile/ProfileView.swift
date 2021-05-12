@@ -161,7 +161,7 @@ public class ProfileView: UIView {
 
     // Edit profile button
 
-    editProfileButton.adjustsImageWhenDisabled = true
+    editProfileButton.alpha = 0.2
     editProfileButton.isEnabled = false
     editProfileButton.setTitle("Edit Profile", for: .normal)
     addSubview(editProfileButton)

@@ -68,9 +68,27 @@ public struct UserModel {
     dateFormatter.dateFormat = "yyyy-MM-dd"
     return dateFormatter.string(from: birthdate)
   }
+
+  var fullName: String {
+    return firstName.capitalizingFirstLetter() + " " + lastName.capitalizingFirstLetter()
+  }
+
+  var fullNameAndUsername: String {
+    return fullName + " (" + username + ")"
+  }
 }
 
 public struct SearchUsernameModel {
   var userID: Int
   var username: String
+}
+
+extension String {
+    func capitalizingFirstLetter() -> String {
+        return prefix(1).capitalized + dropFirst()
+    }
+
+    mutating func capitalizeFirstLetter() {
+        self = self.capitalizingFirstLetter()
+    }
 }

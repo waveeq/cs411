@@ -28,7 +28,7 @@ public class MessageNavBarFriendView: UIView {
     }
 
     friendNameLabel = UILabel()
-    friendNameLabel.text = friend.firstName + " " + friend.lastName
+    friendNameLabel.text = friend.fullName
     friendNameLabel.adjustsFontSizeToFitWidth = false
     friendNameLabel.numberOfLines = 1
     friendNameLabel.sizeToFit()

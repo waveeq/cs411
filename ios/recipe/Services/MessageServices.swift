@@ -26,7 +26,6 @@ public class MessageServices {
       withUrl: URL(string: "\(Self.endpoint)/messages")!,
       params: ["user_id" : userID, "limit_one" : "yes"]
     ) { (result) in
-
       var messageModels: [MessageModel] = []
 
       if let messageModelDictList = result?["result"] as? [[String:Any]] {

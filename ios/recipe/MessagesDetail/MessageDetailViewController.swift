@@ -105,7 +105,6 @@ public class MessageDetailViewController: UIViewController,
       socketURL: URL(string: MessageServices.socketIOEndpoint)!,
       config: [.log(true), .compress]
     )
-    print("endpoint = ", MessageServices.socketIOEndpoint)
     socket = socketManager.socket(forNamespace: MessageServices.socketIONamespace)
 
     socket.on("connect") { data, ack in
@@ -119,19 +118,24 @@ public class MessageDetailViewController: UIViewController,
       self.logSocketData(data)
 
       if let recipeDetailModel = self.recipeDetailModelToShare {
-        print("===== share model: \(recipeDetailModel)")
-        self.socket.emit(
-          "text",
-          MessageModel(
-            date: Date(),
-            senderID: AccountManager.sharedInstance.currentUserID,
-            friendID: self.friendID,
-            text: "share recipe"
-//            recipeID: recipeDetailModel.recipeID,
-//            recipeName: recipeDetailModel.title,
-//            recipeImageURL: recipeDetailModel.mainImage.absoluteString
+        let shareRecipeDict: [String:Any] = [
+          "recipeID": recipeDetailModel.recipeID,
+          "recipeName": recipeDetailModel.title,
+          "recipeImageURL": recipeDetailModel.mainImage.absoluteString
+        ]
+
+        if let jsonData = try? JSONSerialization.data(withJSONObject: shareRecipeDict, options: []),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+          self.socket.emit(
+            "text",
+            MessageModel(
+              date: Date(),
+              senderID: AccountManager.sharedInstance.currentUserID,
+              friendID: self.friendID,
+              text: jsonString
+            )
           )
-        )
+        }
       }
     }
 

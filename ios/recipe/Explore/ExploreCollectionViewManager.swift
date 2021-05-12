@@ -53,7 +53,7 @@ class ExploreCollectionViewManager: NSObject,
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return exploreModels.count * 2
+    return exploreModels.count
   }
 
   public func collectionView(
@@ -65,8 +65,8 @@ class ExploreCollectionViewManager: NSObject,
       for: indexPath
     ) as! RecipeThumbnailCell
     cell.loadImageAsync(
-      forRecipeID: exploreModels[indexPath.row % exploreModels.count].recipeID,
-      url: exploreModels[indexPath.row % exploreModels.count].mainImage
+      forRecipeID: exploreModels[indexPath.row].recipeID,
+      url: exploreModels[indexPath.row].mainImage
     )
     return cell
   }
@@ -96,7 +96,7 @@ class ExploreCollectionViewManager: NSObject,
     didSelectItemAt indexPath: IndexPath
   ) {
     viewController?.present(
-      RecipeDetailViewController(recipeID: exploreModels[indexPath.row % exploreModels.count].recipeID),
+      RecipeDetailViewController(recipeID: exploreModels[indexPath.row].recipeID),
       animated: true
     )
   }

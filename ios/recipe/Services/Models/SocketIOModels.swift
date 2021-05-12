@@ -21,6 +21,26 @@ public struct MessageModel: SocketData {
       "text": text
     ]
   }
+
+  var shareRecipeDict: [String:Any]? {
+    if let data = text.data(using: .utf8),
+       let dict = try? JSONSerialization.jsonObject(
+        with: data,
+        options:.mutableContainers
+       ) as? [String:Any],
+       let recipeID = dict["recipeID"],
+       let recipeName = dict["recipeName"],
+       let recipeImageURLString = dict["recipeImageURL"] as? String,
+       let recipeImageURL = URL(string: recipeImageURLString)
+    {
+      return [
+        "recipeID": recipeID,
+        "recipeName": recipeName,
+        "recipeImageURL": recipeImageURL
+      ]
+    }
+    return nil
+  }
 }
 
 public struct SocketJoinRoomModel: SocketData {

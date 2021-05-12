@@ -55,12 +55,14 @@ public class ShareSelectFriendCell: UICollectionViewCell {
   }
 
   public func configure(with model: SearchUsernameModel) {
+    nameLabel.text = nil
+    profilePictureView.image = UIImage(named: "avatar_placeholder")
+
     UserServices.sharedInstance.getUserProfile(forUserID: model.userID) { userModel in
       guard let userModel = userModel else { return }
 
-      self.nameLabel.text =
-        userModel.firstName + " " + userModel.lastName + " (" + userModel.username + ")"
-
+      self.nameLabel.text = userModel.fullNameAndUsername
+      self.profilePictureView.image = UIImage(named: "avatar_placeholder")
       if let profileImage = userModel.profileImage {
         UserServices.sharedInstance.loadImage(
           forUserID: userModel.userID,

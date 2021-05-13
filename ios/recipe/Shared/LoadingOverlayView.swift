@@ -14,38 +14,38 @@ public class LoadingOverlayView: UIView {
   let loadingIndicatorSize: CGFloat = 64
 
   public static func startOverlay() {
-    guard sharedInstance == nil,
-          let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
-    else { return }
-
-    let overlayView = LoadingOverlayView()
-    sharedInstance = overlayView
-
-    window.addSubview(overlayView)
-    overlayView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      overlayView.topAnchor.constraint(equalTo: window.topAnchor),
-      overlayView.bottomAnchor.constraint(equalTo: window.bottomAnchor),
-      overlayView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
-      overlayView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
-    ])
-
-    overlayView.alpha = 0
-    UIView.animate(withDuration: 0.3) {
-      overlayView.alpha = 1
-    }
+//    guard sharedInstance == nil,
+//          let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
+//    else { return }
+//
+//    let overlayView = LoadingOverlayView()
+//    sharedInstance = overlayView
+//
+//    window.addSubview(overlayView)
+//    overlayView.translatesAutoresizingMaskIntoConstraints = false
+//    NSLayoutConstraint.activate([
+//      overlayView.topAnchor.constraint(equalTo: window.topAnchor),
+//      overlayView.bottomAnchor.constraint(equalTo: window.bottomAnchor),
+//      overlayView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+//      overlayView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+//    ])
+//
+//    overlayView.alpha = 0
+//    UIView.animate(withDuration: 0.3) {
+//      overlayView.alpha = 1
+//    }
   }
 
   public static func stopOverlay() {
-    guard let overlayView = sharedInstance, overlayView.layer.animationKeys() == nil else { return }
-
-    UIView.animate(withDuration: 0.3, animations: {
-      overlayView.alpha = 0
-    }, completion: { (finished) in
-      overlayView.removeFromSuperview()
-    })
-
-    sharedInstance = nil
+//    guard let overlayView = sharedInstance, overlayView.layer.animationKeys() == nil else { return }
+//
+//    UIView.animate(withDuration: 0.3, animations: {
+//      overlayView.alpha = 0
+//    }, completion: { (finished) in
+//      overlayView.removeFromSuperview()
+//    })
+//
+//    sharedInstance = nil
   }
 
   public override init(frame: CGRect) {

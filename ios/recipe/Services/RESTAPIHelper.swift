@@ -87,8 +87,10 @@ public struct RESTAPIHelper {
           with: data,
           options:.mutableContainers
         )
+        print("===== Request success with result: ", jsonResult)
         completion(["success": true, "result": jsonResult])
       } catch {
+        print("===== Request success")
         completion(["success": true])
       }
     }

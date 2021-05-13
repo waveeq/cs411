@@ -31,19 +31,34 @@ public class RecipeServices {
 
       var recipeDetailModel: RecipeDetailModel? = nil
 
-      if let recipeDetailsDict = result?["result"] as? [String:Any] {
+      if let recipeDetailsDict = result?["result"] as? [String:Any],
+         let title = recipeDetailsDict["title"] as? String,
+         let mainImageString = recipeDetailsDict["main_image"] as? String,
+         let isFavoritedSign = recipeDetailsDict["isFavorited"] as? Int {
+
+        let summary = recipeDetailsDict["summary"] as? String
+
+        // Handle the 'quote' character bug.
+        var userNote = recipeDetailsDict["user_note"] as? String
+        if let tempUserNote = userNote, tempUserNote.hasPrefix("'") {
+          userNote?.removeFirst()
+        }
+        if let tempUserNote = userNote, tempUserNote.hasSuffix("'") {
+          userNote?.removeLast()
+        }
+
         recipeDetailModel = RecipeDetailModel(
           recipeID: recipeID,
-          title: recipeDetailsDict["title"] as! String,
-          mainImage: URL(string: recipeDetailsDict["main_image"] as! String)!,
-          isFavorited: (recipeDetailsDict["isFavorited"] as! Int) == 1,
+          title: title,
+          mainImage: URL(string: mainImageString)!,
+          isFavorited: isFavoritedSign == 1,
           cookingTime: nil,
           directions: nil,
           ingredients: nil,
           nutritionalCalories: nil,
           recipeText: nil,
-          summary: recipeDetailsDict["summary"] as? String,
-          userNote: recipeDetailsDict["user_note"] as? String,
+          summary: summary,
+          userNote: userNote,
           userRating: nil
         )
       }
@@ -59,7 +74,7 @@ public class RecipeServices {
     query: String?,
     completion: @escaping ([ExploreModel]?) -> Void
   ) {
-    let isZeroState = (query?.count ?? 0) > 0
+    let isZeroState = query == nil || query?.count == 0
     let urlString = isZeroState ? "\(Self.endpoint)/explore/0" : "\(Self.endpoint)/explore"
     let params: [String:Any] = isZeroState ? ["user_id":userID] : ["title":query!]
 

@@ -89,11 +89,9 @@ public class RecipeServices {
       if let exploreModelDictList = result?["result"] as? [[String:Any]] {
         exploreModelDictList.forEach { exploreModelDict in
           if let recipeID = exploreModelDict["recipeid"] as? Int,
-             let title = exploreModelDict["title"] as? String,
              let mainImageUrlString = exploreModelDict["main_image"] as? String {
             exploreModels.append(ExploreModel(
               recipeID: recipeID,
-              title: title,
               mainImage: URL(string: mainImageUrlString)!
             ))
           }

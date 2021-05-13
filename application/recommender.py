@@ -21,7 +21,7 @@ class Recommender(flask.views.MethodView):
         engine = create_engine(myDatabase, pool_recycle=3600)
         connection = engine.connect()
         with connection:
-            allrecipes = connection.execute('select recipeid,summary,ingredients,title,main_image from recipe where main_image is not null')
+            allrecipes = connection.execute('select recipeid,summary,ingredients,title,main_image from Recipe where main_image is not null')
         allrecipes = [dict(row) for row in allrecipes]
 
         for recipe in allrecipes:
@@ -37,7 +37,7 @@ class Recommender(flask.views.MethodView):
         connection = engine.connect()
         with connection:
             userpreferences = connection.execute('select fr.uid, r.recipeid, r.summary, r.ingredients,r.title from '
-                                                 'User_Favorites_Recipe fr, recipe r where r.recipeid = fr.recipeid and fr.uid = %s',
+                                                 'User_Favorites_Recipe fr, Recipe r where r.recipeid = fr.recipeid and fr.uid = %s',
                                                  [user_id])
         userpreferences = [dict(row) for row in userpreferences]
         if not userpreferences:

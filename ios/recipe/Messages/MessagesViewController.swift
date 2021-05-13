@@ -36,6 +36,37 @@ public class MessagesViewController: UIViewController, UITextFieldDelegate {
     super.viewDidLoad()
 
     title = "Messages"
+
+    // Shows load indicator only on first load
+    LoadingOverlayView.startOverlay()
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      LoadingOverlayView.stopOverlay()
+    }
+  }
+
+  public override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+
+    fetchRecentMessages()
+  }
+
+  // MARK: - Data Fetch
+
+  func fetchRecentMessages() {
+    MessageServices.sharedInstance.getRecentMessagesList(
+      forUserID: AccountManager.sharedInstance.currentUserID) { recentMessages in
+      self.messagesCollectionViewManager.updateRecentMessages(recentMessages)
+    }
+  }
+
+  func fetchSearchUsername(withQuery query: String) {
+    UserServices.sharedInstance.searchUsername(withQuery: query) { searchUsernameModels in
+      self.messagesCollectionViewManager.updateSearchedUsernames(searchUsernameModels)
+    }
+  }
+
+  func clearSearchedUsername() {
+    messagesCollectionViewManager.updateSearchedUsernames([])
   }
 
   // MARK: - UITextFieldDelegate
@@ -55,6 +86,13 @@ public class MessagesViewController: UIViewController, UITextFieldDelegate {
       navigationController?.view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
     }
     dismissTextEditingTapRecognizer = nil
+
+    if let query = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+       query.count > 0 {
+      fetchSearchUsername(withQuery: query.trimmingCharacters(in: .whitespacesAndNewlines))
+    } else {
+      clearSearchedUsername()
+    }
   }
 
   public func textFieldShouldReturn(_ textField: UITextField) -> Bool {

@@ -51,14 +51,17 @@ public class ExploreViewController: UIViewController, UITextFieldDelegate {
 
     title = "Explore"
 
-    fetchData()
+    fetchData(withQuery: nil)
   }
 
-  // MARK: - Private
+  // MARK: - Data Fetch
 
-  func fetchData() {
+  func fetchData(withQuery query: String?) {
     LoadingOverlayView.startOverlay()
-    RecipeServices.sharedInstance.getExploreList(forUserID: 1) { exploreModels in
+    RecipeServices.sharedInstance.getExploreList(
+      forUserID: AccountManager.sharedInstance.currentUserID,
+      query: query
+    ) { exploreModels in
       self.exploreCollectionViewManager.textFieldDelegate = self
       self.exploreCollectionViewManager.updateData(exploreModels: exploreModels!)
       LoadingOverlayView.stopOverlay()
@@ -82,6 +85,8 @@ public class ExploreViewController: UIViewController, UITextFieldDelegate {
       navigationController?.view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
     }
     dismissTextEditingTapRecognizer = nil
+
+    fetchData(withQuery: textField.text?.trimmingCharacters(in: .whitespacesAndNewlines))
   }
 
   public func textFieldShouldReturn(_ textField: UITextField) -> Bool {

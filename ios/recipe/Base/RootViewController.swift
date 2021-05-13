@@ -153,9 +153,9 @@ public class RootViewController: UIViewController,
 
   public func shareRecipe(
     _ recipeDetailModel: RecipeDetailModel,
-    toFriend friend: FriendModel
+    toFriendID friendID: Int
   ) {
-    tabContainerViewController.shareRecipe(recipeDetailModel, toFriend: friend)
+    tabContainerViewController.shareRecipe(recipeDetailModel, toFriendID: friendID)
     footerViewController.tabDidChange(to: .messages)
   }
 }

@@ -7,34 +7,39 @@
 
 import SocketIO
 
-public struct MessageBubbleModel: SocketData {
-  let sender: Int
-  let friend: Int
-  var isText: Bool
+public struct MessageModel: SocketData {
   var date: Date
-  var text: String?
-  var recipeID: Int?
-  var recipeName: String?
-  var recipeImageURL: String?
+  var senderID: Int
+  var friendID: Int
+  var text: String
 
   public func socketRepresentation() -> SocketData {
-    var dict: [String : Any] = [
-      "sender": sender,
-      "friend": friend,
-      "isText": isText,
-      "date": date.timeIntervalSince1970
+    return [
+      "sender": senderID,
+      "friend": friendID,
+      "date": date.timeIntervalSince1970,
+      "text": text
     ]
+  }
 
-
-    if isText {
-      dict["text"] = text
-    } else {
-      dict["recipeID"] = recipeID
-      dict["recipeName"] = recipeName
-      dict["recipeImageURL"] = recipeImageURL
+  var shareRecipeDict: [String:Any]? {
+    if let data = text.data(using: .utf8),
+       let dict = try? JSONSerialization.jsonObject(
+        with: data,
+        options:.mutableContainers
+       ) as? [String:Any],
+       let recipeID = dict["recipeID"],
+       let recipeName = dict["recipeName"],
+       let recipeImageURLString = dict["recipeImageURL"] as? String,
+       let recipeImageURL = URL(string: recipeImageURLString)
+    {
+      return [
+        "recipeID": recipeID,
+        "recipeName": recipeName,
+        "recipeImageURL": recipeImageURL
+      ]
     }
-
-    return dict
+    return nil
   }
 }
 

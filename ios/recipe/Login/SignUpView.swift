@@ -7,7 +7,9 @@
 
 import UIKit
 
-public protocol SignUpViewDelegate: class {
+public protocol SignUpViewDelegate: UIPickerViewDataSource,
+                                    UIPickerViewDelegate,
+                                    UITextFieldDelegate {
   func profileImageChangeDidTap()
 }
 
@@ -19,12 +21,14 @@ public class SignUpView: UIView {
   let profileImageView = UIImageView(image: UIImage(named: "avatar_placeholder"))
   let profileImageSubtitle = UIButton()
 
-  let nameLabel = UILabel()
-  let nameTextField = UITextField()
+  let firstNameLabel = UILabel()
+  let firstNameTextField = UITextField()
+  let lastNameLabel = UILabel()
+  let lastNameTextField = UITextField()
   let usernameLabel = UILabel()
   let usernameTextField = UITextField()
   let countryLabel = UILabel()
-  let countryTextField = UITextField()
+  let countryPicker = UIPickerView()
   let emailLabel = UILabel()
   let emailTextField = UITextField()
   let birthdateLabel = UILabel()
@@ -36,15 +40,16 @@ public class SignUpView: UIView {
   let reenterNewPasswordLabel = UILabel()
   let reenterNewPasswordTextField = UITextField()
 
-  public weak var delegate: SignUpViewDelegate?
-  public weak var textFieldDelegate: UITextFieldDelegate? {
+  public weak var delegate: SignUpViewDelegate? {
     didSet {
-      nameTextField.delegate = textFieldDelegate
-      usernameTextField.delegate = textFieldDelegate
-      countryTextField.delegate = textFieldDelegate
-      emailTextField.delegate = textFieldDelegate
-      newPasswordTextField.delegate = textFieldDelegate
-      reenterNewPasswordTextField.delegate = textFieldDelegate
+      firstNameTextField.delegate = delegate
+      lastNameTextField.delegate = delegate
+      usernameTextField.delegate = delegate
+      emailTextField.delegate = delegate
+      newPasswordTextField.delegate = delegate
+      reenterNewPasswordTextField.delegate = delegate
+      countryPicker.dataSource = delegate
+      countryPicker.delegate = delegate
     }
   }
 
@@ -84,7 +89,7 @@ public class SignUpView: UIView {
 
     // Profile Image label
 
-    profileImageSubtitle.setTitle("Change Profile Photo", for: .normal)
+    profileImageSubtitle.setTitle("Upload Profile Photo", for: .normal)
     profileImageSubtitle.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
     profileImageSubtitle.setTitleColor(.systemBlue, for: .normal)
     profileImageSubtitle.backgroundColor = nil
@@ -118,44 +123,13 @@ public class SignUpView: UIView {
       profileSeparatorView.heightAnchor.constraint(equalToConstant: 1),
     ])
 
-    // Name
-
-    nameLabel.text = "Name"
-    containerView.addSubview(nameLabel)
-    nameLabel.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      nameLabel.topAnchor.constraint(equalTo: profileSeparatorView.bottomAnchor, constant: 12),
-      nameLabel.leadingAnchor.constraint(
-        equalTo: containerView.leadingAnchor,
-        constant: 24
-      ),
-      nameLabel.widthAnchor.constraint(equalToConstant: 80),
-    ])
-
-    nameTextField.text = nil
-    nameTextField.placeholder = "Name"
-    nameTextField.textContentType = .name
-    nameTextField.delegate = textFieldDelegate
-    containerView.addSubview(nameTextField)
-    nameTextField.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      nameTextField.topAnchor.constraint(equalTo: nameLabel.topAnchor),
-      nameTextField.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor),
-      nameTextField.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 24),
-      nameTextField.trailingAnchor.constraint(
-        equalTo: containerView.trailingAnchor,
-        constant: -24
-      ),
-    ])
-    addUnderlineForView(nameTextField)
-
     // Username
 
     usernameLabel.text = "Username"
     containerView.addSubview(usernameLabel)
     usernameLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      usernameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 24),
+      usernameLabel.topAnchor.constraint(equalTo: profileSeparatorView.bottomAnchor, constant: 12),
       usernameLabel.leadingAnchor.constraint(
         equalTo: containerView.leadingAnchor,
         constant: 24
@@ -163,10 +137,11 @@ public class SignUpView: UIView {
       usernameLabel.widthAnchor.constraint(equalToConstant: 80),
     ])
 
+    usernameTextField.autocapitalizationType = .none
     usernameTextField.text = nil
     usernameTextField.placeholder = "Username"
     usernameTextField.textContentType = .username
-    usernameTextField.delegate = textFieldDelegate
+    usernameTextField.delegate = delegate
     containerView.addSubview(usernameTextField)
     usernameTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -180,36 +155,69 @@ public class SignUpView: UIView {
     ])
     addUnderlineForView(usernameTextField)
 
-    // Country
+    // First name
 
-    countryLabel.text = "Country"
-    containerView.addSubview(countryLabel)
-    countryLabel.translatesAutoresizingMaskIntoConstraints = false
+    firstNameLabel.text = "First name"
+    containerView.addSubview(firstNameLabel)
+    firstNameLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      countryLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 24),
-      countryLabel.leadingAnchor.constraint(
+      firstNameLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 24),
+      firstNameLabel.leadingAnchor.constraint(
         equalTo: containerView.leadingAnchor,
         constant: 24
       ),
-      countryLabel.widthAnchor.constraint(equalToConstant: 80),
+      firstNameLabel.widthAnchor.constraint(equalToConstant: 80),
     ])
 
-    countryTextField.text = nil
-    countryTextField.placeholder = "Country"
-    countryTextField.textContentType = .countryName
-    countryTextField.delegate = textFieldDelegate
-    containerView.addSubview(countryTextField)
-    countryTextField.translatesAutoresizingMaskIntoConstraints = false
+    firstNameTextField.autocapitalizationType = .sentences
+    firstNameTextField.text = nil
+    firstNameTextField.placeholder = "First name"
+    firstNameTextField.textContentType = .name
+    firstNameTextField.delegate = delegate
+    containerView.addSubview(firstNameTextField)
+    firstNameTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      countryTextField.topAnchor.constraint(equalTo: countryLabel.topAnchor),
-      countryTextField.bottomAnchor.constraint(equalTo: countryLabel.bottomAnchor),
-      countryTextField.leadingAnchor.constraint(equalTo: countryLabel.trailingAnchor, constant: 24),
-      countryTextField.trailingAnchor.constraint(
+      firstNameTextField.topAnchor.constraint(equalTo: firstNameLabel.topAnchor),
+      firstNameTextField.bottomAnchor.constraint(equalTo: firstNameLabel.bottomAnchor),
+      firstNameTextField.leadingAnchor.constraint(equalTo: firstNameLabel.trailingAnchor, constant: 24),
+      firstNameTextField.trailingAnchor.constraint(
         equalTo: containerView.trailingAnchor,
         constant: -24
       ),
     ])
-    addUnderlineForView(countryTextField)
+    addUnderlineForView(firstNameTextField)
+
+    // Last name
+
+    lastNameLabel.text = "Last name"
+    containerView.addSubview(lastNameLabel)
+    lastNameLabel.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      lastNameLabel.topAnchor.constraint(equalTo: firstNameLabel.bottomAnchor, constant: 24),
+      lastNameLabel.leadingAnchor.constraint(
+        equalTo: containerView.leadingAnchor,
+        constant: 24
+      ),
+      lastNameLabel.widthAnchor.constraint(equalToConstant: 80),
+    ])
+
+    lastNameTextField.autocapitalizationType = .sentences
+    lastNameTextField.text = nil
+    lastNameTextField.placeholder = "Last name"
+    lastNameTextField.textContentType = .name
+    lastNameTextField.delegate = delegate
+    containerView.addSubview(lastNameTextField)
+    lastNameTextField.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      lastNameTextField.topAnchor.constraint(equalTo: lastNameLabel.topAnchor),
+      lastNameTextField.bottomAnchor.constraint(equalTo: lastNameLabel.bottomAnchor),
+      lastNameTextField.leadingAnchor.constraint(equalTo: lastNameLabel.trailingAnchor, constant: 24),
+      lastNameTextField.trailingAnchor.constraint(
+        equalTo: containerView.trailingAnchor,
+        constant: -24
+      ),
+    ])
+    addUnderlineForView(lastNameTextField)
 
     // Email
 
@@ -217,18 +225,16 @@ public class SignUpView: UIView {
     containerView.addSubview(emailLabel)
     emailLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      emailLabel.topAnchor.constraint(equalTo: countryLabel.bottomAnchor, constant: 24),
-      emailLabel.leadingAnchor.constraint(
-        equalTo: containerView.leadingAnchor,
-        constant: 24
-      ),
+      emailLabel.topAnchor.constraint(equalTo: lastNameLabel.bottomAnchor, constant: 24),
+      emailLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 24),
       emailLabel.widthAnchor.constraint(equalToConstant: 80),
     ])
 
+    emailTextField.autocapitalizationType = .none
     emailTextField.text = nil
     emailTextField.placeholder = "Email"
     emailTextField.textContentType = .emailAddress
-    emailTextField.delegate = textFieldDelegate
+    emailTextField.delegate = delegate
     containerView.addSubview(emailTextField)
     emailTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -242,13 +248,38 @@ public class SignUpView: UIView {
     ])
     addUnderlineForView(emailTextField)
 
+    // Country
+
+    countryLabel.text = "Country"
+    containerView.addSubview(countryLabel)
+    countryLabel.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      countryLabel.topAnchor.constraint(equalTo: emailLabel.bottomAnchor, constant: 24),
+      countryLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 24),
+      countryLabel.widthAnchor.constraint(equalToConstant: 80),
+      countryLabel.heightAnchor.constraint(equalToConstant: 80),
+    ])
+
+    countryPicker.dataSource = delegate
+    countryPicker.delegate = delegate
+    containerView.addSubview(countryPicker)
+    countryPicker.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      countryPicker.topAnchor.constraint(equalTo: countryLabel.topAnchor),
+      countryPicker.bottomAnchor.constraint(equalTo: countryLabel.bottomAnchor),
+      countryPicker.leadingAnchor.constraint(equalTo: countryLabel.trailingAnchor, constant: 24),
+      countryPicker.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -24),
+    ])
+    addUnderlineForView(countryPicker)
+
     // Birthdate
 
+    birthdateDatePicker.maximumDate = Date()
     birthdateLabel.text = "Birthday"
     containerView.addSubview(birthdateLabel)
     birthdateLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      birthdateLabel.topAnchor.constraint(equalTo: emailLabel.bottomAnchor, constant: 24),
+      birthdateLabel.topAnchor.constraint(equalTo: countryLabel.bottomAnchor, constant: 24),
       birthdateLabel.leadingAnchor.constraint(
         equalTo: containerView.leadingAnchor,
         constant: 24
@@ -313,11 +344,12 @@ public class SignUpView: UIView {
       newPasswordLabel.widthAnchor.constraint(equalToConstant: 80),
     ])
 
+    newPasswordTextField.autocapitalizationType = .none
     newPasswordTextField.text = nil
     newPasswordTextField.placeholder = "New Password"
     newPasswordTextField.isSecureTextEntry = true
     newPasswordTextField.textContentType = .newPassword
-    newPasswordTextField.delegate = textFieldDelegate
+    newPasswordTextField.delegate = delegate
     containerView.addSubview(newPasswordTextField)
     newPasswordTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -345,11 +377,12 @@ public class SignUpView: UIView {
       reenterNewPasswordLabel.widthAnchor.constraint(equalToConstant: 80),
     ])
 
+    reenterNewPasswordTextField.autocapitalizationType = .none
     reenterNewPasswordTextField.text = nil
     reenterNewPasswordTextField.placeholder = "Re-enter New Password"
     reenterNewPasswordTextField.isSecureTextEntry = true
     reenterNewPasswordTextField.textContentType = .newPassword
-    reenterNewPasswordTextField.delegate = textFieldDelegate
+    reenterNewPasswordTextField.delegate = delegate
     containerView.addSubview(reenterNewPasswordTextField)
     reenterNewPasswordTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([

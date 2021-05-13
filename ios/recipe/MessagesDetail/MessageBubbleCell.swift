@@ -14,7 +14,8 @@ public protocol MessageBubbleCellDelegate: class {
 public class MessageBubbleCell: UICollectionViewCell {
 
   weak var delegate: MessageBubbleCellDelegate?
-  var model: MessageBubbleModel?
+  var model: MessageModel?
+  var recipeIDToShare: Int?
 
   let bubble = UIButton()
   let timestamp = UILabel()
@@ -128,22 +129,48 @@ public class MessageBubbleCell: UICollectionViewCell {
     return bubble.frame.size
   }
 
-//  public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-//    return bubble.hitTest(self.convert(point, to: bubble), with: event)
-//  }
-
-  public func configure(with model: MessageBubbleModel) {
+  public func configure(with model: MessageModel) {
     // Deactivate all
     NSLayoutConstraint.deactivate(textBaseConstraints)
     NSLayoutConstraint.deactivate(shareRecipeBaseConstraints)
     NSLayoutConstraint.deactivate(alignLeftConstraints)
     NSLayoutConstraint.deactivate(alignRightConstraints)
 
-    let fromSelf = model.sender == AccountManager.sharedInstance.currentUserID
+    let fromSelf = model.senderID == AccountManager.sharedInstance.currentUserID
     bubble.backgroundColor = UIColor(white: fromSelf ? 0.8 : 0.9, alpha: 1)
 
     NSLayoutConstraint.activate(fromSelf ? alignRightConstraints : alignLeftConstraints)
-    if model.isText {
+
+    if let shareRecipeDict = model.shareRecipeDict,
+       let recipeName = shareRecipeDict["recipeName"] as? String,
+       let recipeID = shareRecipeDict["recipeID"] as? Int,
+       let recipeImageURL = shareRecipeDict["recipeImageURL"] as? URL {
+      recipeIDToShare = recipeID
+
+      NSLayoutConstraint.activate(shareRecipeBaseConstraints)
+      label.text = recipeName
+      label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+      label.adjustsFontSizeToFitWidth = true
+      label.numberOfLines = 1
+      label.lineBreakMode = .byTruncatingTail
+      label.sizeToFit()
+
+      bubble.isEnabled = true
+      subtitle.isHidden = false
+
+      recipeImageView.image = nil
+      recipeImageView.backgroundColor = .systemGray
+      recipeImageView.isHidden = false
+
+      RecipeServices.sharedInstance.loadImage(
+        forRecipeID: recipeID,
+        url: recipeImageURL
+      ) { image in
+        self.recipeImageView.image = image
+      }
+    } else {
+      recipeIDToShare = nil
+
       NSLayoutConstraint.activate(textBaseConstraints)
       label.text = model.text
       label.font = UIFont.systemFont(ofSize: 16)
@@ -155,30 +182,6 @@ public class MessageBubbleCell: UICollectionViewCell {
       bubble.isEnabled = false
       subtitle.isHidden = true
       recipeImageView.isHidden = true
-    } else {
-
-      print("===== model = \(model)")
-      NSLayoutConstraint.activate(shareRecipeBaseConstraints)
-      label.text = model.recipeName
-      label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-      label.adjustsFontSizeToFitWidth = true
-      label.numberOfLines = 1
-      label.lineBreakMode = .byTruncatingTail
-      label.sizeToFit()
-
-      bubble.isEnabled = true
-      subtitle.isHidden = false
-
-      recipeImageView.backgroundColor = .systemGray
-      recipeImageView.isHidden = false
-      if let recipeID = model.recipeID, let imageURL = model.recipeImageURL {
-        RecipeServices.sharedInstance.loadImageData(
-          forRecipeID: recipeID,
-          url: URL(string: imageURL)!
-        ) { image in
-          self.recipeImageView.image = image
-        }
-      }
     }
 
     let dateFormatter = DateFormatter()
@@ -192,7 +195,7 @@ public class MessageBubbleCell: UICollectionViewCell {
   // MARK: Target Action
 
   @objc func openSharedRecipePage(_ sender: Any?) {
-    guard let recipeID = model?.recipeID else { return }
+    guard let recipeID = recipeIDToShare else { return }
 
     delegate?.openSharedRecipePage(forRecipeID: recipeID)
   }
@@ -200,10 +203,12 @@ public class MessageBubbleCell: UICollectionViewCell {
   // MARK: - Class methods
 
   public static func preferredSize(
-    forModel model: MessageBubbleModel,
+    forModel model: MessageModel,
     parentView: UIView
   ) -> CGSize {
-    if model.isText {
+    if let _ = model.shareRecipeDict {
+      return CGSize(width: parentView.frame.width, height: 96)
+    } else {
       let tempLabel = UILabel()
 
       tempLabel.font = UIFont.systemFont(ofSize: 16)
@@ -217,8 +222,6 @@ public class MessageBubbleCell: UICollectionViewCell {
       ).height
 
       return CGSize(width: parentView.frame.width, height: estimatedHeight + 36)
-    } else {
-      return CGSize(width: parentView.frame.width, height: 96)
     }
   }
 }

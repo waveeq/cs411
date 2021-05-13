@@ -60,7 +60,7 @@ public class MyRecipesViewController: UIViewController,
     NotificationCenter.default.removeObserver(self)
   }
 
-  // MARK: - Private
+  // MARK: - Data Fetch
 
   func fetchData() {
     shouldFetchData = false

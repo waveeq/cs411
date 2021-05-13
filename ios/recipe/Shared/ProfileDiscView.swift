@@ -9,7 +9,6 @@ import UIKit
 
 public class ProfileDiscView: UIView {
 
-  let placeholderAssetName = "avatar_placeholder"
   public let imageSize: CGFloat = 44
 
   var profileImageView: UIImageView!
@@ -17,8 +16,16 @@ public class ProfileDiscView: UIView {
   override required init(frame: CGRect) {
     super.init(frame: frame)
 
-    let profileImage = UIImage(named: placeholderAssetName)
-    profileImageView = UIImageView(image: profileImage)
+    let userID = AccountManager.sharedInstance.currentUserID
+    profileImageView = UIImageView(image: UIImage(named: "avatar_placeholder"))
+    UserServices.sharedInstance.getUserProfile(forUserID: userID) { userModel in
+      if let profileImage = userModel?.profileImage {
+        UserServices.sharedInstance.loadImage(
+          forUserID: userID, url: profileImage) { image in
+          self.profileImageView.image = image
+        }
+      }
+    }
 
     addSubview(profileImageView)
     profileImageView.translatesAutoresizingMaskIntoConstraints = false

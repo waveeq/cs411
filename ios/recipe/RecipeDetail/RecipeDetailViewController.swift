@@ -40,7 +40,7 @@ public class RecipeDetailViewController: UIViewController, RecipeDetailViewDeleg
 
     LoadingOverlayView.startOverlay()
     RecipeServices.sharedInstance.getRecipeDetails(
-      forUserID: 1,
+      forUserID: AccountManager.sharedInstance.currentUserID,
       recipeID: recipeID
     ) { recipeDetailModel in
 

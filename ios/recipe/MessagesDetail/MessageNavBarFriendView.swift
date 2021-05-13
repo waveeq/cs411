@@ -12,15 +12,23 @@ public class MessageNavBarFriendView: UIView {
   var friendImageView: UIImageView!
   var friendNameLabel: UILabel!
 
-  required init(friend: FriendModel) {
+  required init(friend: UserModel) {
     super.init(frame: .zero)
 
     friendImageView = UIImageView(image: UIImage(named: "avatar_placeholder")!)
     friendImageView.clipsToBounds = true
     addSubview(friendImageView)
 
+    if let profileImage = friend.profileImage {
+      UserServices.sharedInstance.loadImage(
+        forUserID: friend.userID,
+        url: profileImage) { image in
+        self.friendImageView.image = image
+      }
+    }
+
     friendNameLabel = UILabel()
-    friendNameLabel.text = friend.name
+    friendNameLabel.text = friend.fullName
     friendNameLabel.adjustsFontSizeToFitWidth = false
     friendNameLabel.numberOfLines = 1
     friendNameLabel.sizeToFit()

@@ -15,31 +15,13 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
   let cellIdentifier = "shareSelectFriendCellIdentifer"
   let headerIdentifier = "shareSelectFriendHeaderIdentifier"
 
-  lazy var friends: [FriendModel] = {
-    let data = [
-      FriendModel(
-          userID: 2,
-          name: "Eva",
-          profilePicture: nil
-      ),
-      FriendModel(
-        userID: 3,
-        name: "Maggie",
-        profilePicture: nil
-      ),
-      FriendModel(
-        userID: 4,
-        name: "Jessica",
-        profilePicture: nil
-      ),
-    ]
-    return data
-  }()
+  var searchedUsernames: [SearchUsernameModel] = []
 
   let recipeDetailModel: RecipeDetailModel
 
   weak var textFieldDelegate: UITextFieldDelegate?
   weak var viewController: UIViewController?
+  weak var collectionView: UICollectionView?
 
   required init(viewController: UIViewController, collectionView: UICollectionView, recipeDetailModel: RecipeDetailModel) {
     self.recipeDetailModel = recipeDetailModel
@@ -47,6 +29,7 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
     super.init()
 
     self.viewController = viewController
+    self.collectionView = collectionView
 
     collectionView.register(ShareSelectFriendCell.self, forCellWithReuseIdentifier: cellIdentifier)
     collectionView.register(
@@ -54,6 +37,13 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
       withReuseIdentifier: headerIdentifier
     )
+  }
+
+  // MARK: - Data Update
+
+  public func updateSearchedUsernames(_ searchedUsernames: [SearchUsernameModel]) {
+    self.searchedUsernames = searchedUsernames
+    collectionView?.reloadData()
   }
 
   // MARK: - UICollectionViewDataSource
@@ -66,7 +56,7 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
     _ collectionView: UICollectionView,
     numberOfItemsInSection section: Int
   ) -> Int {
-    return friends.count
+    return searchedUsernames.count
   }
 
   public func collectionView(
@@ -77,9 +67,7 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
       withReuseIdentifier: cellIdentifier,
       for: indexPath
     ) as! ShareSelectFriendCell
-
-    cell.configure(with: friends[indexPath.row])
-
+    cell.configure(with: searchedUsernames[indexPath.row])
     return cell
   }
 
@@ -96,7 +84,7 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
       ) as! ShareSelectFriendHeader
       header.textFieldDelegate = textFieldDelegate
       return header
-    } else { //No footer in this case but can add option for that
+    } else {
          return UICollectionReusableView()
     }
   }
@@ -106,7 +94,7 @@ public class ShareSelectFriendCollectionViewManager: NSObject,
   public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     viewController?.rootViewController?.shareRecipe(
       recipeDetailModel,
-      toFriend: friends[indexPath.row]
+      toFriendID: searchedUsernames[indexPath.row].userID
     )
   }
 

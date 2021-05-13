@@ -17,7 +17,7 @@ public class RecipeServices {
   static let sharedInstance = RecipeServices()
   static let endpoint = "http://44.192.111.170"
 
-  let imageCache: [Int:UIImage] = [:]
+  var recipeImageCache: [Int:UIImage] = [:]
 
   public func getRecipeDetails(
     forUserID userID: Int,
@@ -56,12 +56,17 @@ public class RecipeServices {
 
   public func getExploreList(
     forUserID userID: Int,
+    query: String?,
     completion: @escaping ([ExploreModel]?) -> Void
   ) {
+    let isZeroState = (query?.count ?? 0) > 0
+    let urlString = isZeroState ? "\(Self.endpoint)/explore/0" : "\(Self.endpoint)/explore"
+    let params: [String:Any] = isZeroState ? ["user_id":userID] : ["title":query!]
+
 
     RESTAPIHelper.requestGet(
-      withUrl: URL(string: "\(Self.endpoint)/explore")!,
-      params: nil
+      withUrl: URL(string: urlString)!,
+      params: params
     ) { (result) in
 
       var exploreModels: [ExploreModel] = []
@@ -170,14 +175,12 @@ public class RecipeServices {
     }
   }
 
-  public func loadImageData(
+  public func loadImage(
     forRecipeID recipeID: Int,
     url: URL,
     completion: @escaping (UIImage?) -> Void
   ) {
-    var imageCache = Self.sharedInstance.imageCache
-
-    if let image = imageCache[recipeID] {
+    if let image = recipeImageCache[recipeID] {
       completion(image)
       return
     }
@@ -186,7 +189,7 @@ public class RecipeServices {
       let image = try? UIImage(data: Data(contentsOf: url))
 
       DispatchQueue.main.async {
-        imageCache[recipeID] = image
+        self.recipeImageCache[recipeID] = image
         completion(image)
       }
     }

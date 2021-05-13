@@ -23,7 +23,6 @@ public class ShareSelectFriendViewController: UIViewController, UITextFieldDeleg
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-  
 
   public override func viewDidLoad() {
     super.viewDidLoad()
@@ -83,7 +82,16 @@ public class ShareSelectFriendViewController: UIViewController, UITextFieldDeleg
       collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
-    
+
+    fetchSearchUsername(withQuery: "")
+  }
+
+  // MARK: - Data Fetch
+
+  func fetchSearchUsername(withQuery query: String) {
+    UserServices.sharedInstance.searchUsername(withQuery: query) { searchUsernameModels in
+      self.shareSelectFriendCollectionViewManager.updateSearchedUsernames(searchUsernameModels)
+    }
   }
 
   // MARK: - UITextFieldDelegate
@@ -103,6 +111,9 @@ public class ShareSelectFriendViewController: UIViewController, UITextFieldDeleg
       navigationController?.view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
     }
     dismissTextEditingTapRecognizer = nil
+    fetchSearchUsername(
+      withQuery: textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    )
   }
 
   public func textFieldShouldReturn(_ textField: UITextField) -> Bool {

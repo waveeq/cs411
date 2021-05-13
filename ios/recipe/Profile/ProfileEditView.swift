@@ -7,7 +7,9 @@
 
 import UIKit
 
-public protocol ProfileEditViewDelegate: class {
+public protocol ProfileEditViewDelegate: UIPickerViewDataSource,
+                                         UIPickerViewDelegate,
+                                         UITextFieldDelegate {
   func profileImageChangeDidTap()
 }
 
@@ -24,7 +26,7 @@ public class ProfileEditView: UIView {
   let usernameLabel = UILabel()
   let usernameTextField = UITextField()
   let countryLabel = UILabel()
-  let countryTextField = UITextField()
+  let countryPicker = UIPickerView()
   let emailLabel = UILabel()
   let emailTextField = UITextField()
   let birthdateLabel = UILabel()
@@ -38,16 +40,14 @@ public class ProfileEditView: UIView {
   let reenterNewPasswordLabel = UILabel()
   let reenterNewPasswordTextField = UITextField()
 
-  public weak var delegate: ProfileEditViewDelegate?
-  public weak var textFieldDelegate: UITextFieldDelegate? {
+  public weak var delegate: ProfileEditViewDelegate? {
     didSet {
-      nameTextField.delegate = textFieldDelegate
-      usernameTextField.delegate = textFieldDelegate
-      countryTextField.delegate = textFieldDelegate
-      emailTextField.delegate = textFieldDelegate
-      currentPasswordTextField.delegate = textFieldDelegate
-      newPasswordTextField.delegate = textFieldDelegate
-      reenterNewPasswordTextField.delegate = textFieldDelegate
+      nameTextField.delegate = delegate
+      usernameTextField.delegate = delegate
+      emailTextField.delegate = delegate
+      currentPasswordTextField.delegate = delegate
+      newPasswordTextField.delegate = delegate
+      reenterNewPasswordTextField.delegate = delegate
     }
   }
 
@@ -138,7 +138,7 @@ public class ProfileEditView: UIView {
     nameTextField.text = "Sam Adams"
     nameTextField.placeholder = "Name"
     nameTextField.textContentType = .name
-    nameTextField.delegate = textFieldDelegate
+    nameTextField.delegate = delegate
     containerView.addSubview(nameTextField)
     nameTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -169,7 +169,7 @@ public class ProfileEditView: UIView {
     usernameTextField.text = "samadams84"
     usernameTextField.placeholder = "Username"
     usernameTextField.textContentType = .username
-    usernameTextField.delegate = textFieldDelegate
+    usernameTextField.delegate = delegate
     containerView.addSubview(usernameTextField)
     usernameTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -195,24 +195,20 @@ public class ProfileEditView: UIView {
         constant: 24
       ),
       countryLabel.widthAnchor.constraint(equalToConstant: 80),
+      countryLabel.heightAnchor.constraint(equalToConstant: 80),
     ])
 
-    countryTextField.text = "United States"
-    countryTextField.placeholder = "Country"
-    countryTextField.textContentType = .countryName
-    countryTextField.delegate = textFieldDelegate
-    containerView.addSubview(countryTextField)
-    countryTextField.translatesAutoresizingMaskIntoConstraints = false
+    countryPicker.dataSource = delegate
+    countryPicker.delegate = delegate
+    containerView.addSubview(countryPicker)
+    countryPicker.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      countryTextField.topAnchor.constraint(equalTo: countryLabel.topAnchor),
-      countryTextField.bottomAnchor.constraint(equalTo: countryLabel.bottomAnchor),
-      countryTextField.leadingAnchor.constraint(equalTo: countryLabel.trailingAnchor, constant: 24),
-      countryTextField.trailingAnchor.constraint(
-        equalTo: containerView.trailingAnchor,
-        constant: -24
-      ),
+      countryPicker.topAnchor.constraint(equalTo: countryLabel.topAnchor),
+      countryPicker.bottomAnchor.constraint(equalTo: countryLabel.bottomAnchor),
+      countryPicker.leadingAnchor.constraint(equalTo: countryLabel.trailingAnchor, constant: 24),
+      countryPicker.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -24),
     ])
-    addUnderlineForView(countryTextField)
+    addUnderlineForView(countryPicker)
 
     // Email
 
@@ -231,7 +227,7 @@ public class ProfileEditView: UIView {
     emailTextField.text = "samadams@fridaynight.com"
     emailTextField.placeholder = "Email"
     emailTextField.textContentType = .emailAddress
-    emailTextField.delegate = textFieldDelegate
+    emailTextField.delegate = delegate
     containerView.addSubview(emailTextField)
     emailTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -323,7 +319,7 @@ public class ProfileEditView: UIView {
     currentPasswordTextField.placeholder = "Current Password"
     currentPasswordTextField.isSecureTextEntry = true
     currentPasswordTextField.textContentType = .password
-    currentPasswordTextField.delegate = textFieldDelegate
+    currentPasswordTextField.delegate = delegate
     containerView.addSubview(currentPasswordTextField)
     currentPasswordTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -355,7 +351,7 @@ public class ProfileEditView: UIView {
     newPasswordTextField.placeholder = "New Password"
     newPasswordTextField.isSecureTextEntry = true
     newPasswordTextField.textContentType = .newPassword
-    newPasswordTextField.delegate = textFieldDelegate
+    newPasswordTextField.delegate = delegate
     containerView.addSubview(newPasswordTextField)
     newPasswordTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -387,7 +383,7 @@ public class ProfileEditView: UIView {
     reenterNewPasswordTextField.placeholder = "Re-enter New Password"
     reenterNewPasswordTextField.isSecureTextEntry = true
     reenterNewPasswordTextField.textContentType = .newPassword
-    reenterNewPasswordTextField.delegate = textFieldDelegate
+    reenterNewPasswordTextField.delegate = delegate
     containerView.addSubview(reenterNewPasswordTextField)
     reenterNewPasswordTextField.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([

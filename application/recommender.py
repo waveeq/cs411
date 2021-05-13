@@ -6,6 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from cosineSimilarity import get_list_cos
 from processText import process_text
+import random
 
 
 mysqlUN = settings.MYSQL_USER
@@ -21,7 +22,7 @@ class Recommender(flask.views.MethodView):
         engine = create_engine(myDatabase, pool_recycle=3600)
         connection = engine.connect()
         with connection:
-            allrecipes = connection.execute('select recipeid,summary,ingredients,title,main_image from recipe where main_image is not null')
+            allrecipes = connection.execute('select recipeid,summary,ingredients,title,main_image from Recipe where main_image is not null')
         allrecipes = [dict(row) for row in allrecipes]
 
         for recipe in allrecipes:
@@ -31,6 +32,21 @@ class Recommender(flask.views.MethodView):
 
         return allrecipesdf
 
+    def _check_user_preferences(self, user_id):
+        engine = create_engine(myDatabase, pool_recycle=3600)
+        connection = engine.connect()
+        with connection:
+            userpreferences = connection.execute('select fr.uid, r.recipeid, r.summary, r.ingredients,r.title from '
+                                                 'User_Favorites_Recipe fr, Recipe r where r.recipeid = fr.recipeid and fr.uid = %s',
+                                                 [user_id])
+        userpreferences = [dict(row) for row in userpreferences]
+
+        if userpreferences == []:
+            allrecipesdf = self._grab_recipes()
+            recommendations = self._random_results(allrecipesdf)
+            return recommendations
+        else:
+            return []
 
     def _grab_user_preferences(self, user_id):
         engine = create_engine(myDatabase, pool_recycle=3600)
@@ -40,9 +56,7 @@ class Recommender(flask.views.MethodView):
                                                  'User_Favorites_Recipe fr, Recipe r where r.recipeid = fr.recipeid and fr.uid = %s',
                                                  [user_id])
         userpreferences = [dict(row) for row in userpreferences]
-        if not userpreferences:
-            recommendations = [{}]
-            return flask.jsonify(recommendations)
+
         for recipe in userpreferences:
             recipe['text'] = recipe['title'] + recipe['summary'] + recipe['ingredients']
         userpreferencedf = pd.DataFrame(userpreferences)
@@ -51,16 +65,17 @@ class Recommender(flask.views.MethodView):
 
     def get(self):
         user_id = flask.request.args.get('user_id')
+        randomresults = self._check_user_preferences(user_id)
+        if randomresults:
+            return flask.jsonify(randomresults)
 
-        userpreferencedf = self._grab_user_preferences(user_id)
-        allrecipesdf = self._grab_recipes()
-
-        recipematrix,uservector = self._fit_transform(allrecipesdf, userpreferencedf)
-
-        listcos = get_list_cos(recipematrix, uservector)
-
-        recommendations = self._recommendations(listcos, allrecipesdf, userpreferencedf)
-        return recommendations
+        else:
+            userpreferencedf = self._grab_user_preferences(user_id)
+            allrecipesdf = self._grab_recipes()
+            recipematrix,uservector = self._fit_transform(allrecipesdf, userpreferencedf)
+            listcos = get_list_cos(recipematrix, uservector)
+            recommendations = self._recommendations(listcos, allrecipesdf, userpreferencedf)
+            return recommendations
 
     def _fit_transform(self, allrecipesdf, userpreferencedf):
         userpreferencedf = userpreferencedf.groupby('uid')['text'].apply(' '.join).reset_index()
@@ -97,6 +112,20 @@ class Recommender(flask.views.MethodView):
                               'main_image': allrecipesdf['main_image'].iloc[i]}
                               #'score': val}
             recommendations.append(recommendation)
-
-
         return flask.jsonify(recommendations)
+
+    def _random_results(self, allrecipesdf):
+        i = 0
+        len = allrecipesdf.shape[0]
+        recommendations = []
+        while i <= 21:
+            j = random.randint(0,len)
+            recommendation = {'recipeid': int(allrecipesdf['recipeid'].iloc[j]),
+                              'main_image': allrecipesdf['main_image'].iloc[j]}
+            recommendations.append(recommendation)
+            i += 1
+        return recommendations
+
+
+
+

@@ -40,10 +40,12 @@ class Recommender(flask.views.MethodView):
                                                  'User_Favorites_Recipe fr, recipe r where r.recipeid = fr.recipeid and fr.uid = %s',
                                                  [user_id])
         userpreferences = [dict(row) for row in userpreferences]
+        if not userpreferences:
+            recommendations = [{}]
+            return flask.jsonify(recommendations)
         for recipe in userpreferences:
             recipe['text'] = recipe['title'] + recipe['summary'] + recipe['ingredients']
         userpreferencedf = pd.DataFrame(userpreferences)
-        print(userpreferencedf['text'])
         userpreferencedf['text'] = userpreferencedf['text'].apply(process_text)
         return userpreferencedf
 

@@ -37,7 +37,7 @@ class Recommender(flask.views.MethodView):
         connection = engine.connect()
         with connection:
             userpreferences = connection.execute('select fr.uid, r.recipeid, r.summary, r.ingredients,r.title from '
-                                                 'User_Favorites_Recipe fr, recipe r where r.recipeid = fr.recipeid and fr.uid = %s',
+                                                 'User_Favorites_Recipe fr, Recipe r where r.recipeid = fr.recipeid and fr.uid = %s',
                                                  [user_id])
         userpreferences = [dict(row) for row in userpreferences]
         if not userpreferences:

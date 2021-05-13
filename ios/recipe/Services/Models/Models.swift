@@ -24,7 +24,6 @@ public struct RecipeDetailModel {
 
 public struct ExploreModel {
   var recipeID: Int
-  var title: String
   var mainImage: URL
 }
 

@@ -52,14 +52,12 @@ public class RecipeServices {
           title: title,
           mainImage: URL(string: mainImageString)!,
           isFavorited: isFavoritedSign == 1,
-          cookingTime: nil,
-          directions: nil,
-          ingredients: nil,
-          nutritionalCalories: nil,
-          recipeText: nil,
+          cookingTime: recipeDetailsDict["cookingTime"] as? Int,
+          directions: recipeDetailsDict["directions"] as? String,
+          ingredients: recipeDetailsDict["ingredients"] as? String,
+          nutritionalCalories: recipeDetailsDict["nutritional_calories"] as? Double,
           summary: summary,
-          userNote: userNote,
-          userRating: nil
+          userNote: userNote
         )
       }
 
@@ -89,11 +87,9 @@ public class RecipeServices {
       if let exploreModelDictList = result?["result"] as? [[String:Any]] {
         exploreModelDictList.forEach { exploreModelDict in
           if let recipeID = exploreModelDict["recipeid"] as? Int,
-             let title = exploreModelDict["title"] as? String,
              let mainImageUrlString = exploreModelDict["main_image"] as? String {
             exploreModels.append(ExploreModel(
               recipeID: recipeID,
-              title: title,
               mainImage: URL(string: mainImageUrlString)!
             ))
           }

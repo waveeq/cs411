@@ -9,6 +9,8 @@ import UIKit
 
 public class LoginViewController: UIViewController, LoginViewDelegate {
 
+  var dismissTextEditingTapRecognizer: UIGestureRecognizer?
+  
   public override func loadView() {
     let loginView = LoginView()
     loginView.delegate = self
@@ -52,5 +54,32 @@ public class LoginViewController: UIViewController, LoginViewDelegate {
     signUpNavigationController.modalTransitionStyle = .coverVertical
     signUpNavigationController.modalPresentationStyle = .fullScreen
     present(signUpNavigationController, animated: true, completion: nil)
+  }
+
+  // MARK: - UITextFieldDelegate
+
+  @objc func dismissTextEditing(_ sender: Any?) {
+    view.endEditing(true)
+  }
+
+  public func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+    dismissTextEditingTapRecognizer = UITapGestureRecognizer(
+      target: self,
+      action: #selector(dismissTextEditing(_:))
+    )
+    view.addGestureRecognizer(dismissTextEditingTapRecognizer!)
+    return true
+  }
+
+  public func textFieldDidEndEditing(_ textField: UITextField) {
+    if let _ = dismissTextEditingTapRecognizer {
+      view.removeGestureRecognizer(dismissTextEditingTapRecognizer!)
+    }
+    dismissTextEditingTapRecognizer = nil
+  }
+
+  public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    textField.resignFirstResponder()
+    return true
   }
 }

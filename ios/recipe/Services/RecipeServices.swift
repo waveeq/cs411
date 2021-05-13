@@ -52,14 +52,12 @@ public class RecipeServices {
           title: title,
           mainImage: URL(string: mainImageString)!,
           isFavorited: isFavoritedSign == 1,
-          cookingTime: nil,
-          directions: nil,
-          ingredients: nil,
-          nutritionalCalories: nil,
-          recipeText: nil,
+          cookingTime: recipeDetailsDict["cookingTime"] as? Int,
+          directions: recipeDetailsDict["directions"] as? String,
+          ingredients: recipeDetailsDict["ingredients"] as? String,
+          nutritionalCalories: recipeDetailsDict["nutritional_calories"] as? Double,
           summary: summary,
-          userNote: userNote,
-          userRating: nil
+          userNote: userNote
         )
       }
 

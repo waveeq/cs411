@@ -25,15 +25,23 @@ public class RecipeDetailView: UIScrollView {
   var containerViewBottomConstraintWithoutNotes: NSLayoutConstraint!
 
   let titleLabel = UILabel()
-  let sourceLabel = UILabel()
   let imageView = UIImageView()
   let ratingStarsView = RatingStarsView()
   let ratingLabel = UILabel()
   let favoriteButton = UIButton()
   let chatButton = UIButton()
 
-  let recipeDetailsTitleLabel = UILabel()
-  let recipeDetailsContentLabel = UILabel()
+  let caloriesLabel = UILabel()
+
+  let summaryHeaderLabel = UILabel()
+  let summaryContentLabel = UILabel()
+
+  let ingredientsHeaderLabel = UILabel()
+  let ingredientsContentLabel = UILabel()
+
+  let cookingTimeLabel = UILabel()
+  let directionsHeaderLabel = UILabel()
+  let directionsContentLabel = UILabel()
 
   let notesLabel = UILabel()
   let notesTextView = UITextView()
@@ -83,25 +91,15 @@ public class RecipeDetailView: UIScrollView {
       titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12)
     ])
 
-    sourceLabel.text = "http://allrecipe.com/lorem/ipsum"
-    sourceLabel.font = UIFont.systemFont(ofSize: 14)
-    sourceLabel.textColor = .systemGray
-    containerView.addSubview(sourceLabel)
-
-    sourceLabel.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      sourceLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-      sourceLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
-    ])
-
     // Image view
 
     imageView.contentMode = .scaleAspectFill
+    imageView.clipsToBounds = true
     containerView.addSubview(imageView)
 
     imageView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      imageView.topAnchor.constraint(equalTo: sourceLabel.bottomAnchor, constant: 8),
+      imageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
       imageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
       imageView.widthAnchor.constraint(equalTo: containerView.widthAnchor),
       imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
@@ -156,73 +154,147 @@ public class RecipeDetailView: UIScrollView {
 
     // Ratings
 
-    containerView.addSubview(ratingStarsView)
+    containerView.addSubview(caloriesLabel)
 
-    let ratingStarsWidth: CGFloat = 98
+    caloriesLabel.font = UIFont.systemFont(ofSize: 18)
+    caloriesLabel.adjustsFontSizeToFitWidth = false
+    caloriesLabel.numberOfLines = 1
 
-    ratingLabel.text = ratingToString(ratingAverage: 5, ratingCount: 1200)
-    ratingLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-    ratingLabel.adjustsFontSizeToFitWidth = true
-    ratingLabel.numberOfLines = 1
-    ratingLabel.minimumScaleFactor = 0.01
-    containerView.addSubview(ratingLabel)
-
-    ratingLabel.translatesAutoresizingMaskIntoConstraints = false
+    caloriesLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      ratingLabel.centerYAnchor.constraint(equalTo: ratingStarsView.centerYAnchor),
-      ratingLabel.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -12),
-      ratingLabel.leadingAnchor.constraint(
-        greaterThanOrEqualTo: chatButton.trailingAnchor,
-        constant: 20 + ratingStarsWidth
-      ),
+      caloriesLabel.centerYAnchor.constraint(equalTo: chatButton.centerYAnchor),
+      caloriesLabel.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -12),
     ])
 
-    ratingStarsView.translatesAutoresizingMaskIntoConstraints = false
+    // Summary
+
+    summaryHeaderLabel.text = "Summary"
+    summaryHeaderLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+    containerView.addSubview(summaryHeaderLabel)
+
+    summaryHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      ratingStarsView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
-      ratingStarsView.trailingAnchor.constraint(equalTo: ratingLabel.leadingAnchor, constant: -8),
-      ratingStarsView.heightAnchor.constraint(equalToConstant: 18),
-      ratingStarsView.widthAnchor.constraint(equalToConstant: ratingStarsWidth)
-    ])
-
-    // Recipe Details
-
-    recipeDetailsTitleLabel.text = "Recipe Details"
-    recipeDetailsTitleLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-    containerView.addSubview(recipeDetailsTitleLabel)
-
-    recipeDetailsTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      recipeDetailsTitleLabel.leadingAnchor.constraint(
+      summaryHeaderLabel.leadingAnchor.constraint(
         equalTo: containerView.leadingAnchor,
         constant: 12
       ),
-      recipeDetailsTitleLabel.topAnchor.constraint(
+      summaryHeaderLabel.topAnchor.constraint(
         equalTo: favoriteButton.bottomAnchor,
         constant: 24
       ),
     ])
 
-    recipeDetailsContentLabel.text = """
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet et felis eget congue. Sed ac egestas ante. Aenean semper augue vitae purus ultricies, sit amet convallis mauris suscipit. Mauris faucibus venenatis turpis, at elementum ipsum mollis ac. Aenean consequat, dolor in rutrum dignissim, magna libero consequat magna, semper convallis erat lorem sed justo. Mauris augue purus, faucibus in mauris vel, posuere ornare diam. Maecenas pharetra tortor quis felis porta gravida. Cras ut nunc in dui ornare varius in in orci. Pellentesque ultrices, nibh nec volutpat egestas, magna lorem sodales ipsum, ultricies laoreet neque erat a mi. Donec pulvinar metus eros, vel faucibus tellus malesuada ac.
-    """
-    recipeDetailsContentLabel.font = UIFont.systemFont(ofSize: 14)
-    recipeDetailsContentLabel.lineBreakMode = .byWordWrapping
-    recipeDetailsContentLabel.lineBreakStrategy = .standard
-    recipeDetailsContentLabel.numberOfLines = 1024
-    containerView.addSubview(recipeDetailsContentLabel)
+    summaryContentLabel.font = UIFont.systemFont(ofSize: 14)
+    summaryContentLabel.lineBreakMode = .byWordWrapping
+    summaryContentLabel.lineBreakStrategy = .standard
+    summaryContentLabel.numberOfLines = 1024
+    containerView.addSubview(summaryContentLabel)
 
-    recipeDetailsContentLabel.translatesAutoresizingMaskIntoConstraints = false
+    summaryContentLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      recipeDetailsContentLabel.topAnchor.constraint(
-        equalTo: recipeDetailsTitleLabel.bottomAnchor,
+      summaryContentLabel.topAnchor.constraint(
+        equalTo: summaryHeaderLabel.bottomAnchor,
         constant: 8
       ),
-      recipeDetailsContentLabel.leadingAnchor.constraint(
+      summaryContentLabel.leadingAnchor.constraint(
         equalTo: containerView.leadingAnchor,
         constant: 12
       ),
-      recipeDetailsContentLabel.trailingAnchor.constraint(
+      summaryContentLabel.trailingAnchor.constraint(
+        equalTo: containerView.trailingAnchor,
+        constant: -12
+      ),
+    ])
+
+    // Ingredients
+
+    ingredientsHeaderLabel.text = "Ingredients"
+    ingredientsHeaderLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+    containerView.addSubview(ingredientsHeaderLabel)
+
+    ingredientsHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      ingredientsHeaderLabel.leadingAnchor.constraint(
+        equalTo: containerView.leadingAnchor,
+        constant: 12
+      ),
+      ingredientsHeaderLabel.topAnchor.constraint(
+        equalTo: summaryContentLabel.bottomAnchor,
+        constant: 24
+      ),
+    ])
+
+    ingredientsContentLabel.font = UIFont.systemFont(ofSize: 14)
+    ingredientsContentLabel.lineBreakMode = .byWordWrapping
+    ingredientsContentLabel.lineBreakStrategy = .standard
+    ingredientsContentLabel.numberOfLines = 1024
+    containerView.addSubview(ingredientsContentLabel)
+
+    ingredientsContentLabel.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      ingredientsContentLabel.topAnchor.constraint(
+        equalTo: ingredientsHeaderLabel.bottomAnchor,
+        constant: 8
+      ),
+      ingredientsContentLabel.leadingAnchor.constraint(
+        equalTo: containerView.leadingAnchor,
+        constant: 12
+      ),
+      ingredientsContentLabel.trailingAnchor.constraint(
+        equalTo: containerView.trailingAnchor,
+        constant: -12
+      ),
+    ])
+
+    // Directions
+
+    directionsHeaderLabel.text = "Directions"
+    directionsHeaderLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+    containerView.addSubview(directionsHeaderLabel)
+
+    directionsHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      directionsHeaderLabel.leadingAnchor.constraint(
+        equalTo: containerView.leadingAnchor,
+        constant: 12
+      ),
+      directionsHeaderLabel.topAnchor.constraint(
+        equalTo: ingredientsContentLabel.bottomAnchor,
+        constant: 24
+      ),
+    ])
+
+    cookingTimeLabel.font = UIFont.italicSystemFont(ofSize: 14)
+    cookingTimeLabel.adjustsFontSizeToFitWidth = false
+    cookingTimeLabel.numberOfLines = 1
+    containerView.addSubview(cookingTimeLabel)
+
+    cookingTimeLabel.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      cookingTimeLabel.leadingAnchor.constraint(
+        equalTo: directionsHeaderLabel.trailingAnchor,
+        constant: 8
+      ),
+      cookingTimeLabel.centerYAnchor.constraint(equalTo: directionsHeaderLabel.centerYAnchor),
+    ])
+
+    directionsContentLabel.font = UIFont.systemFont(ofSize: 14)
+    directionsContentLabel.lineBreakMode = .byWordWrapping
+    directionsContentLabel.lineBreakStrategy = .standard
+    directionsContentLabel.numberOfLines = 1024
+    containerView.addSubview(directionsContentLabel)
+
+    directionsContentLabel.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      directionsContentLabel.topAnchor.constraint(
+        equalTo: directionsHeaderLabel.bottomAnchor,
+        constant: 8
+      ),
+      directionsContentLabel.leadingAnchor.constraint(
+        equalTo: containerView.leadingAnchor,
+        constant: 12
+      ),
+      directionsContentLabel.trailingAnchor.constraint(
         equalTo: containerView.trailingAnchor,
         constant: -12
       ),
@@ -239,7 +311,7 @@ public class RecipeDetailView: UIScrollView {
     NSLayoutConstraint.activate([
       notesLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
       notesLabel.topAnchor.constraint(
-        equalTo: recipeDetailsContentLabel.bottomAnchor,
+        equalTo: directionsContentLabel.bottomAnchor,
         constant: 24
       ),
     ])
@@ -268,7 +340,7 @@ public class RecipeDetailView: UIScrollView {
       constant: 24
     )
     containerViewBottomConstraintWithoutNotes = containerView.bottomAnchor.constraint(
-      equalTo: recipeDetailsContentLabel.bottomAnchor,
+      equalTo: directionsContentLabel.bottomAnchor,
       constant: 24
     )
     NSLayoutConstraint.activate([
@@ -315,10 +387,20 @@ public class RecipeDetailView: UIScrollView {
       UIView.performWithoutAnimation { unsetRecipeAsFavorite() }
     }
 
-    if let summary = recipeDetailModel.summary {
-      recipeDetailsTitleLabel.text = "Summary"
-      recipeDetailsContentLabel.text = summary
+    if let calories = recipeDetailModel.nutritionalCalories {
+      caloriesLabel.text = "\(calories) calories"
+    } else {
+      caloriesLabel.text = "? calories"
     }
+
+    summaryContentLabel.text = recipeDetailModel.summary ?? "?"
+    ingredientsContentLabel.text = recipeDetailModel.ingredients ?? "?"
+    directionsContentLabel.text = recipeDetailModel.directions ?? "?"
+
+    if let cookingTime = recipeDetailModel.cookingTime {
+      cookingTimeLabel.text = "(est. \(cookingTime) minutes)"
+    }
+
 
     containerView.isHidden = false
   }
@@ -326,7 +408,11 @@ public class RecipeDetailView: UIScrollView {
   public override func layoutSubviews() {
     super.layoutSubviews()
 
-    recipeDetailsContentLabel.sizeToFit()
+    caloriesLabel.sizeToFit()
+    summaryContentLabel.sizeToFit()
+    ingredientsContentLabel.sizeToFit()
+    cookingTimeLabel.sizeToFit()
+    directionsContentLabel.sizeToFit()
     contentSize = containerView.frame.size
   }
 
@@ -424,13 +510,13 @@ public class RecipeDetailView: UIScrollView {
 
   // MARK: - Helper
 
-  func ratingToString(ratingAverage: Float, ratingCount: Int) -> String {
-    if ratingCount >= 1000000 {
-      return String(format: "%.1lf / %.1lfM Ratings", ratingAverage, Float(ratingCount) / 1000000.0)
-    } else if ratingCount >= 1000 {
-      return String(format: "%.1lf / %.1lfK Ratings", ratingAverage, Float(ratingCount) / 1000.0)
-    } else {
-      return String(format: "%.1lf / %d Ratings", ratingAverage, ratingCount)
-    }
-  }
+//  func ratingToString(ratingAverage: Float, ratingCount: Int) -> String {
+//    if ratingCount >= 1000000 {
+//      return String(format: "%.1lf / %.1lfM Ratings", ratingAverage, Float(ratingCount) / 1000000.0)
+//    } else if ratingCount >= 1000 {
+//      return String(format: "%.1lf / %.1lfK Ratings", ratingAverage, Float(ratingCount) / 1000.0)
+//    } else {
+//      return String(format: "%.1lf / %d Ratings", ratingAverage, ratingCount)
+//    }
+//  }
 }

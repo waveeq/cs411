@@ -89,6 +89,8 @@ public class SignUpView: UIView {
 
     // Profile Image label
 
+    profileImageSubtitle.isEnabled = false
+    profileImageSubtitle.alpha = 0.2
     profileImageSubtitle.setTitle("Upload Profile Photo", for: .normal)
     profileImageSubtitle.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
     profileImageSubtitle.setTitleColor(.systemBlue, for: .normal)

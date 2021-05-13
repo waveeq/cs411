@@ -12,14 +12,12 @@ public struct RecipeDetailModel {
   var title: String
   var mainImage: URL
   var isFavorited: Bool
-  var cookingTime: TimeInterval?
+  var cookingTime: Int?
   var directions: String?
   var ingredients: String?
-  var nutritionalCalories: Int?
-  var recipeText: String?
+  var nutritionalCalories: Double?
   var summary: String?
   var userNote: String?
-  var userRating: Int?
 }
 
 public struct ExploreModel {

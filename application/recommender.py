@@ -43,6 +43,7 @@ class Recommender(flask.views.MethodView):
         for recipe in userpreferences:
             recipe['text'] = recipe['title'] + recipe['summary'] + recipe['ingredients']
         userpreferencedf = pd.DataFrame(userpreferences)
+        print(userpreferencedf['text'])
         userpreferencedf['text'] = userpreferencedf['text'].apply(process_text)
         return userpreferencedf
 
@@ -56,7 +57,7 @@ class Recommender(flask.views.MethodView):
 
         listcos = get_list_cos(recipematrix, uservector)
 
-        recommendations = self._recommendations(listcos, allrecipesdf)
+        recommendations = self._recommendations(listcos, allrecipesdf, userpreferencedf)
         return recommendations
 
     def _fit_transform(self, allrecipesdf, userpreferencedf):
@@ -79,7 +80,13 @@ class Recommender(flask.views.MethodView):
 
 
 
-    def _recommendations(self,listcos,allrecipesdf):
+    def _recommendations(self,listcos,allrecipesdf, userpreferencedf):
+        existingpreferences = userpreferencedf['recipeid'].to_numpy()
+        for val in listcos[:21]:
+            i = val['recipeindex']
+            recipeid = int(allrecipesdf['recipeid'].iloc[i])
+            if recipeid in existingpreferences:
+                val['cosscore'] = 0
         recommendations = []
         listtop = sorted(listcos,key = lambda i: i['cosscore'],reverse=True)[:21]
         for val in listtop:
